@@ -1,0 +1,1098 @@
+                        .module IO_control.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile IO_control.c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile IO_control.c
+ 0000           _infoMal_teacher::
+ 0000                   .blkb 1
+                        .area idata
+ 0000 00                .byte 0
+                        .area data(ram, con, rel)
+ 0001                   .dbfile IO_control.c
+ 0001                   .blkb 1
+                        .area idata
+ 0001 00                .byte 0
+                        .area data(ram, con, rel)
+ 0002                   .dbfile IO_control.c
+ 0002                   .blkb 1
+                        .area idata
+ 0002 00                .byte 0
+                        .area data(ram, con, rel)
+ 0003                   .dbfile IO_control.c
+ 0003                   .blkb 1
+                        .area idata
+ 0003 00                .byte 0
+                        .area data(ram, con, rel)
+ 0004                   .dbfile IO_control.c
+ 0004                   .blkb 1
+                        .area idata
+ 0004 00                .byte 0
+                        .area data(ram, con, rel)
+ 0005                   .dbfile IO_control.c
+ 0005                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0005                   .dbstruct 0 5 .1
+ 0005                   .dbfield 0 dianfengshan c
+ 0005                   .dbfield 1 dianfanbao c
+ 0005                   .dbfield 2 weibolu c
+ 0005                   .dbfield 3 xiaodugui c
+ 0005                   .dbfield 4 xiyiji c
+ 0005                   .dbend
+ 0005                   .dbsym e infoMal_teacher _infoMal_teacher S[.1]
+ 0005           _infoMal_student::
+ 0005                   .blkb 1
+                        .area idata
+ 0005 00                .byte 0
+                        .area data(ram, con, rel)
+ 0006                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0006                   .blkb 1
+                        .area idata
+ 0006 00                .byte 0
+                        .area data(ram, con, rel)
+ 0007                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0007                   .blkb 1
+                        .area idata
+ 0007 00                .byte 0
+                        .area data(ram, con, rel)
+ 0008                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0008                   .blkb 1
+                        .area idata
+ 0008 00                .byte 0
+                        .area data(ram, con, rel)
+ 0009                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0009                   .blkb 1
+                        .area idata
+ 0009 00                .byte 0
+                        .area data(ram, con, rel)
+ 000A                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 000A                   .dbsym e infoMal_student _infoMal_student S[.1]
+ 000A           _resIOJudge::
+ 000A                   .blkb 1
+                        .area idata
+ 000A 00                .byte 0
+                        .area data(ram, con, rel)
+ 000B                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 000B                   .blkb 8
+                        .area idata
+ 000B 0000000000000000  .byte 0,0,0,0,0,0,0,0
+                        .area data(ram, con, rel)
+ 0013                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0013                   .dbsym e resIOJudge _resIOJudge A[9:9]c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+ 0000                   .dbfunc e IOInit _IOInit fV
+                        .even
+ 0000           _IOInit::
+ 0000                   .dbline -1
+ 0000                   .dbline 8
+ 0000           ; #include "IO_control.h"
+ 0000           ; 
+ 0000           ; infoMal infoMal_teacher = {0,0,0,0,0};
+ 0000           ; infoMal infoMal_student = {0,0,0,0,0};
+ 0000           ; 
+ 0000           ; uchar resIOJudge[9] = {0};
+ 0000           ; 
+ 0000           ; void IOInit(void){
+ 0000                   .dbline 10
+ 0000           ; 
+ 0000           ;       DDRA  |= 0x55;  DDRB  |= 0x55;  DDRC  |= 0x55;  DDRF  |= 0x05;
+ 0000 8AB3              in R24,0x1a
+ 0002 8565              ori R24,85
+ 0004 8ABB              out 0x1a,R24
+ 0006                   .dbline 10
+ 0006 87B3              in R24,0x17
+ 0008 8565              ori R24,85
+ 000A 87BB              out 0x17,R24
+ 000C                   .dbline 10
+ 000C 84B3              in R24,0x14
+ 000E 8565              ori R24,85
+ 0010 84BB              out 0x14,R24
+ 0012                   .dbline 10
+ 0012 80916100          lds R24,97
+ 0016 8560              ori R24,5
+ 0018 80936100          sts 97,R24
+ 001C                   .dbline 11
+ 001C           ;       PORTA |= 0x55;  PORTB |= 0x55;  PORTC |= 0x55;  PORTF |= 0x05;
+ 001C 8BB3              in R24,0x1b
+ 001E 8565              ori R24,85
+ 0020 8BBB              out 0x1b,R24
+ 0022                   .dbline 11
+ 0022 88B3              in R24,0x18
+ 0024 8565              ori R24,85
+ 0026 88BB              out 0x18,R24
+ 0028                   .dbline 11
+ 0028 85B3              in R24,0x15
+ 002A 8565              ori R24,85
+ 002C 85BB              out 0x15,R24
+ 002E                   .dbline 11
+ 002E 80916200          lds R24,98
+ 0032 8560              ori R24,5
+ 0034 80936200          sts 98,R24
+ 0038                   .dbline -2
+ 0038           L4:
+ 0038                   .dbline 0 ; func end
+ 0038 0895              ret
+ 003A                   .dbend
+ 003A                   .dbfunc e IO_test _IO_test fV
+ 003A           ;              a -> R16,R17
+                        .even
+ 003A           _IO_test::
+ 003A                   .dbline -1
+ 003A                   .dbline 14
+ 003A           ; }
+ 003A           ; 
+ 003A           ; void IO_test(void){
+ 003A                   .dbline 16
+ 003A           ; 
+ 003A           ;       uint a = 65535;
+ 003A 0FEF              ldi R16,65535
+ 003C 1FEF              ldi R17,255
+ 003E 24C0              xjmp L7
+ 0040           L6:
+ 0040                   .dbline 18
+ 0040           ; 
+ 0040           ;       while(1){
+ 0040                   .dbline 20
+ 0040           ;  
+ 0040           ;               DDRA  = 0x01;
+ 0040 81E0              ldi R24,1
+ 0042 8ABB              out 0x1a,R24
+ 0044                   .dbline 21
+ 0044           ;               PORTA = 0x01;
+ 0044 8BBB              out 0x1b,R24
+ 0046                   .dbline 23
+ 0046           ;               
+ 0046           ;               DDRF  = 0x00;
+ 0046 2224              clr R2
+ 0048 20926100          sts 97,R2
+ 004C                   .dbline 24
+ 004C           ;               PORTF = 0x00;
+ 004C 20926200          sts 98,R2
+ 0050 01C0              xjmp L10
+ 0052           L9:
+ 0052                   .dbline 26
+ 0052           ; 
+ 0052           ;               while(--a)asm("nop");
+ 0052 0000              nop
+ 0054           L10:
+ 0054                   .dbline 26
+ 0054 C801              movw R24,R16
+ 0056 0197              sbiw R24,1
+ 0058 8C01              movw R16,R24
+ 005A 0030              cpi R16,0
+ 005C 0107              cpc R16,R17
+ 005E C9F7              brne L9
+ 0060           X0:
+ 0060                   .dbline 27
+ 0060           ;               a = 65535;
+ 0060 0FEF              ldi R16,65535
+ 0062 1FEF              ldi R17,255
+ 0064                   .dbline 29
+ 0064           ; 
+ 0064           ;               DDRA  = 0x00;
+ 0064 2224              clr R2
+ 0066 2ABA              out 0x1a,R2
+ 0068                   .dbline 30
+ 0068           ;               PORTA = 0x00;
+ 0068 2BBA              out 0x1b,R2
+ 006A                   .dbline 32
+ 006A           ;               
+ 006A           ;               DDRF  = 0x04;
+ 006A 84E0              ldi R24,4
+ 006C 80936100          sts 97,R24
+ 0070                   .dbline 33
+ 0070           ;               PORTF = 0x04;
+ 0070 80936200          sts 98,R24
+ 0074 01C0              xjmp L13
+ 0076           L12:
+ 0076                   .dbline 35
+ 0076           ;       
+ 0076           ;               while(--a)asm("nop");
+ 0076 0000              nop
+ 0078           L13:
+ 0078                   .dbline 35
+ 0078 C801              movw R24,R16
+ 007A 0197              sbiw R24,1
+ 007C 8C01              movw R16,R24
+ 007E 0030              cpi R16,0
+ 0080 0107              cpc R16,R17
+ 0082 C9F7              brne L12
+ 0084           X1:
+ 0084                   .dbline 36
+ 0084           ;               a = 65535;
+ 0084 0FEF              ldi R16,65535
+ 0086 1FEF              ldi R17,255
+ 0088                   .dbline 37
+ 0088           ;       }
+ 0088           L7:
+ 0088                   .dbline 18
+ 0088 DBCF              xjmp L6
+ 008A           X2:
+ 008A                   .dbline -2
+ 008A           L5:
+ 008A                   .dbline 0 ; func end
+ 008A 0895              ret
+ 008C                   .dbsym r a 16 i
+ 008C                   .dbend
+ 008C                   .dbfunc e IOReinstate _IOReinstate fV
+                        .even
+ 008C           _IOReinstate::
+ 008C                   .dbline -1
+ 008C                   .dbline 40
+ 008C           ; }
+ 008C           ; 
+ 008C           ; void IOReinstate(void){
+ 008C                   .dbline 42
+ 008C           ; 
+ 008C           ;       infoMal_teacher.dianfengshan =\
+ 008C 2224              clr R2
+ 008E 20920300          sts _infoMal_teacher+3,R2
+ 0092 20920400          sts _infoMal_teacher+4,R2
+ 0096 20920100          sts _infoMal_teacher+1,R2
+ 009A 20920200          sts _infoMal_teacher+2,R2
+ 009E 20920000          sts _infoMal_teacher,R2
+ 00A2                   .dbline 49
+ 00A2           ;       infoMal_teacher.weibolu =\
+ 00A2           ;       infoMal_teacher.dianfanbao =\
+ 00A2           ;       infoMal_teacher.xiyiji =\
+ 00A2           ;       infoMal_teacher.xiaodugui \
+ 00A2           ;       = 0;
+ 00A2           ;       
+ 00A2           ;       infoMal_student.dianfengshan =\
+ 00A2 20920800          sts _infoMal_student+3,R2
+ 00A6 20920900          sts _infoMal_student+4,R2
+ 00AA 20920600          sts _infoMal_student+1,R2
+ 00AE 20920700          sts _infoMal_student+2,R2
+ 00B2 20920500          sts _infoMal_student,R2
+ 00B6                   .dbline 56
+ 00B6           ;       infoMal_student.weibolu =\
+ 00B6           ;       infoMal_student.dianfanbao =\
+ 00B6           ;       infoMal_student.xiyiji =\
+ 00B6           ;       infoMal_student.xiaodugui \
+ 00B6           ;       = 0;
+ 00B6           ;       
+ 00B6           ;       IOInit();
+ 00B6                   .dbline -2
+ 00B6           L15:
+ 00B6                   .dbline 0 ; func end
+ 00B6 A4CF              xjmp _IOInit
+ 00B8                   .dbend
+ 00B8                   .dbfunc e OPJudje _OPJudje fV
+ 00B8           ;             pt -> R22
+ 00B8           ;           temp -> R10
+ 00B8           ;           loop -> R20
+ 00B8           ;           Base -> R12
+ 00B8           ;              S -> R10
+ 00B8           ;              T -> R14
+                        .even
+ 00B8           _OPJudje::
+ 00B8 0E940000          xcall push_xgsetF0FC
+ 00BC A22E              mov R10,R18
+ 00BE E02E              mov R14,R16
+ 00C0 CA84              ldd R12,y+10
+ 00C2                   .dbline -1
+ 00C2                   .dbline 59
+ 00C2           ; }
+ 00C2           ; 
+ 00C2           ; void OPJudje(uchar T,uchar S,uchar Base){               //直接异或比较输出结果
+ 00C2                   .dbline 62
+ 00C2           ; 
+ 00C2           ;       uchar temp,loop,pt;
+ 00C2           ;       pt = 0;
+ 00C2 6627              clr R22
+ 00C4                   .dbline 64
+ 00C4           ;       
+ 00C4           ;       temp = T ^ S;
+ 00C4 2E2C              mov R2,R14
+ 00C6 2A24              eor R2,R10
+ 00C8 A22C              mov R10,R2
+ 00CA                   .dbline 65
+ 00CA           ;       for(loop = 0;loop < 8;loop ++){
+ 00CA 4427              clr R20
+ 00CC 15C0              xjmp L28
+ 00CE           L25:
+ 00CE                   .dbline 65
+ 00CE                   .dbline 67
+ 00CE           ;                        
+ 00CE           ;               if((temp >> loop) & 0x01)resIOJudge[pt++] = Base + loop;
+ 00CE 0A2D              mov R16,R10
+ 00D0 142F              mov R17,R20
+ 00D2 0E940000          xcall lsr8
+ 00D6 802F              mov R24,R16
+ 00D8 8170              andi R24,1
+ 00DA 69F0              breq L29
+ 00DC           X3:
+ 00DC                   .dbline 67
+ 00DC 262E              mov R2,R22
+ 00DE 3324              clr R3
+ 00E0 2101              movw R4,R2
+ 00E2 6F5F              subi R22,255    ; addi 1
+ 00E4 2C2C              mov R2,R12
+ 00E6 240E              add R2,R20
+ 00E8 80E0              ldi R24,<_resIOJudge
+ 00EA 90E0              ldi R25,>_resIOJudge
+ 00EC E42D              mov R30,R4
+ 00EE FF27              clr R31
+ 00F0 E80F              add R30,R24
+ 00F2 F91F              adc R31,R25
+ 00F4 2082              std z+0,R2
+ 00F6           L29:
+ 00F6                   .dbline 68
+ 00F6           ;       }
+ 00F6           L26:
+ 00F6                   .dbline 65
+ 00F6 4395              inc R20
+ 00F8           L28:
+ 00F8                   .dbline 65
+ 00F8 4830              cpi R20,8
+ 00FA 48F3              brlo L25
+ 00FC           X4:
+ 00FC                   .dbline -2
+ 00FC           L24:
+ 00FC                   .dbline 0 ; func end
+ 00FC 0C940000          xjmp pop_xgsetF0FC
+ 0100                   .dbsym r pt 22 c
+ 0100                   .dbsym r temp 10 c
+ 0100                   .dbsym r loop 20 c
+ 0100                   .dbsym r Base 12 c
+ 0100                   .dbsym r S 10 c
+ 0100                   .dbsym r T 14 c
+ 0100                   .dbend
+ 0100                   .dbfunc e dianfengshan_IO _dianfengshan_IO fV
+ 0100           ;              a -> R20
+ 0100           ;            obj -> R22
+                        .even
+ 0100           _dianfengshan_IO::
+ 0100 0E940000          xcall push_xgsetF00C
+ 0104 422F              mov R20,R18
+ 0106 602F              mov R22,R16
+ 0108                   .dbline -1
+ 0108                   .dbline 77
+ 0108           ;       
+ 0108           ;       //resIOJudge[6] = temp;                                                          //测试比较结果输出
+ 0108           ;       //resIOJudge[7] = infoMal_teacher.xiaodugui;
+ 0108           ;       //resIOJudge[8] = infoMal_student.xiaodugui;
+ 0108           ; }
+ 0108           ; 
+ 0108           ; //单字节从右到左分别表示设故编号
+ 0108           ; //1-4号电风扇、5-6号电饭煲、7-9号微波炉、10-12号消毒柜、13-14号洗衣机
+ 0108           ; void dianfengshan_IO(uchar obj,uchar a){         //1-4号电风扇
+ 0108                   .dbline 79
+ 0108           ; 
+ 0108           ;       if(obj == 'T'){                                                    //教师端设故信息更新
+ 0108 6435              cpi R22,84
+ 010A 29F5              brne L32
+ 010C           X5:
+ 010C                   .dbline 79
+ 010C                   .dbline 81
+ 010C           ;       
+ 010C           ;               infoMal_teacher.dianfengshan |= (1 << (a-1));
+ 010C 142F              mov R17,R20
+ 010E 1150              subi R17,1
+ 0110 01E0              ldi R16,1
+ 0112 0E940000          xcall lsl8
+ 0116 20900000          lds R2,_infoMal_teacher
+ 011A 202A              or R2,R16
+ 011C 20920000          sts _infoMal_teacher,R2
+ 0120                   .dbline 83
+ 0120           ;               //IO Opreation here
+ 0120           ;               switch(a){
+ 0120 A42E              mov R10,R20
+ 0122 BB24              clr R11
+ 0124 C501              movw R24,R10
+ 0126 8130              cpi R24,1
+ 0128 E0E0              ldi R30,0
+ 012A 9E07              cpc R25,R30
+ 012C 69F0              breq L37
+ 012E           X6:
+ 012E 8230              cpi R24,2
+ 0130 E0E0              ldi R30,0
+ 0132 9E07              cpc R25,R30
+ 0134 59F0              breq L38
+ 0136           X7:
+ 0136 8330              cpi R24,3
+ 0138 E0E0              ldi R30,0
+ 013A 9E07              cpc R25,R30
+ 013C 49F0              breq L39
+ 013E           X8:
+ 013E 8430              cpi R24,4
+ 0140 E0E0              ldi R30,0
+ 0142 9E07              cpc R25,R30
+ 0144 39F0              breq L40
+ 0146           X9:
+ 0146 07C0              xjmp L35
+ 0148           L37:
+ 0148                   .dbline 85
+ 0148           ;       
+ 0148           ;                       case  1:           PORTA &= (~0x01);  break;
+ 0148 D898              cbi 0x1b,0
+ 014A                   .dbline 85
+ 014A 05C0              xjmp L35
+ 014C           L38:
+ 014C                   .dbline 86
+ 014C           ;                       case  2:           PORTA &= (~0x04);  break;
+ 014C DA98              cbi 0x1b,2
+ 014E                   .dbline 86
+ 014E 03C0              xjmp L35
+ 0150           L39:
+ 0150                   .dbline 87
+ 0150           ;                       case  3:           PORTA &= (~0x10);  break;
+ 0150 DC98              cbi 0x1b,4
+ 0152                   .dbline 87
+ 0152 01C0              xjmp L35
+ 0154           L40:
+ 0154                   .dbline 88
+ 0154           ;                       case  4:           PORTA &= (~0x40);  break;
+ 0154 DE98              cbi 0x1b,6
+ 0156                   .dbline 88
+ 0156                   .dbline 89
+ 0156           ;                       default:           break;
+ 0156           L35:
+ 0156                   .dbline 91
+ 0156           ;               }
+ 0156           ;       } 
+ 0156           L32:
+ 0156                   .dbline 92
+ 0156           ;       if(obj == 'S'){                                                   //学生端设故信息更新
+ 0156 6335              cpi R22,83
+ 0158 19F5              brne L41
+ 015A           X10:
+ 015A                   .dbline 92
+ 015A                   .dbline 94
+ 015A           ;       
+ 015A           ;               infoMal_student.dianfengshan |= (1 << (a-1));
+ 015A 142F              mov R17,R20
+ 015C 1150              subi R17,1
+ 015E 01E0              ldi R16,1
+ 0160 0E940000          xcall lsl8
+ 0164 20900500          lds R2,_infoMal_student
+ 0168 202A              or R2,R16
+ 016A 20920500          sts _infoMal_student,R2
+ 016E                   .dbline 96
+ 016E           ;               //IO Opreation here
+ 016E           ;               switch(a){
+ 016E 5527              clr R21
+ 0170 4130              cpi R20,1
+ 0172 E0E0              ldi R30,0
+ 0174 5E07              cpc R21,R30
+ 0176 69F0              breq L46
+ 0178           X11:
+ 0178 4230              cpi R20,2
+ 017A E0E0              ldi R30,0
+ 017C 5E07              cpc R21,R30
+ 017E 59F0              breq L47
+ 0180           X12:
+ 0180 4330              cpi R20,3
+ 0182 E0E0              ldi R30,0
+ 0184 5E07              cpc R21,R30
+ 0186 49F0              breq L48
+ 0188           X13:
+ 0188 4430              cpi R20,4
+ 018A E0E0              ldi R30,0
+ 018C 5E07              cpc R21,R30
+ 018E 39F0              breq L49
+ 0190           X14:
+ 0190 07C0              xjmp L44
+ 0192           L46:
+ 0192                   .dbline 98
+ 0192           ;       
+ 0192           ;                       case  1:           PORTA |= (0x01);  break;
+ 0192 D89A              sbi 0x1b,0
+ 0194                   .dbline 98
+ 0194 05C0              xjmp L44
+ 0196           L47:
+ 0196                   .dbline 99
+ 0196           ;                       case  2:           PORTA |= (0x04);  break;
+ 0196 DA9A              sbi 0x1b,2
+ 0198                   .dbline 99
+ 0198 03C0              xjmp L44
+ 019A           L48:
+ 019A                   .dbline 100
+ 019A           ;                       case  3:           PORTA |= (0x10);  break;
+ 019A DC9A              sbi 0x1b,4
+ 019C                   .dbline 100
+ 019C 01C0              xjmp L44
+ 019E           L49:
+ 019E                   .dbline 101
+ 019E           ;                       case  4:           PORTA |= (0x40);  break;
+ 019E DE9A              sbi 0x1b,6
+ 01A0                   .dbline 101
+ 01A0                   .dbline 102
+ 01A0           ;                       default:           break;
+ 01A0           L44:
+ 01A0                   .dbline 104
+ 01A0           ;               }       
+ 01A0           ;       }
+ 01A0           L41:
+ 01A0                   .dbline -2
+ 01A0           L31:
+ 01A0                   .dbline 0 ; func end
+ 01A0 0C940000          xjmp pop_xgsetF00C
+ 01A4                   .dbsym r a 20 c
+ 01A4                   .dbsym r obj 22 c
+ 01A4                   .dbend
+ 01A4                   .dbfunc e dianfanbao_IO _dianfanbao_IO fV
+ 01A4           ;              a -> R20
+ 01A4           ;            obj -> R22
+                        .even
+ 01A4           _dianfanbao_IO::
+ 01A4 0E940000          xcall push_xgsetF00C
+ 01A8 422F              mov R20,R18
+ 01AA 602F              mov R22,R16
+ 01AC                   .dbline -1
+ 01AC                   .dbline 107
+ 01AC           ; }
+ 01AC           ; 
+ 01AC           ; void dianfanbao_IO(uchar obj,uchar a){                   //5-7号电饭煲
+ 01AC                   .dbline 109
+ 01AC           ; 
+ 01AC           ;       if(obj == 'T'){                                                    //教师端设故信息更新
+ 01AC 6435              cpi R22,84
+ 01AE 19F5              brne L51
+ 01B0           X15:
+ 01B0                   .dbline 109
+ 01B0                   .dbline 111
+ 01B0           ;       
+ 01B0           ;               infoMal_teacher.dianfanbao |= (1 << (a-1));
+ 01B0 142F              mov R17,R20
+ 01B2 1150              subi R17,1
+ 01B4 01E0              ldi R16,1
+ 01B6 0E940000          xcall lsl8
+ 01BA 20900100          lds R2,_infoMal_teacher+1
+ 01BE 202A              or R2,R16
+ 01C0 20920100          sts _infoMal_teacher+1,R2
+ 01C4                   .dbline 113
+ 01C4           ;               //IO Opreation here
+ 01C4           ;               switch(a){
+ 01C4 A42E              mov R10,R20
+ 01C6 BB24              clr R11
+ 01C8 C501              movw R24,R10
+ 01CA 8130              cpi R24,1
+ 01CC E0E0              ldi R30,0
+ 01CE 9E07              cpc R25,R30
+ 01D0 69F0              breq L57
+ 01D2           X16:
+ 01D2 8230              cpi R24,2
+ 01D4 E0E0              ldi R30,0
+ 01D6 9E07              cpc R25,R30
+ 01D8 59F0              breq L58
+ 01DA           X17:
+ 01DA 8330              cpi R24,3
+ 01DC E0E0              ldi R30,0
+ 01DE 9E07              cpc R25,R30
+ 01E0 49F0              breq L59
+ 01E2           X18:
+ 01E2 8430              cpi R24,4
+ 01E4 E0E0              ldi R30,0
+ 01E6 9E07              cpc R25,R30
+ 01E8 31F0              breq L55
+ 01EA           X19:
+ 01EA 05C0              xjmp L55
+ 01EC           L57:
+ 01EC                   .dbline 115
+ 01EC           ;       
+ 01EC           ;                       case  1:           PORTB &= (~0x01);  break;
+ 01EC C098              cbi 0x18,0
+ 01EE                   .dbline 115
+ 01EE 03C0              xjmp L55
+ 01F0           L58:
+ 01F0                   .dbline 116
+ 01F0           ;                       case  2:           PORTB &= (~0x04);  break;
+ 01F0 C298              cbi 0x18,2
+ 01F2                   .dbline 116
+ 01F2 01C0              xjmp L55
+ 01F4           L59:
+ 01F4                   .dbline 117
+ 01F4           ;                       case  3:           PORTB &= (~0x10);  break;
+ 01F4 C498              cbi 0x18,4
+ 01F6                   .dbline 117
+ 01F6                   .dbline 118
+ 01F6           ;                       case  4:           break;
+ 01F6                   .dbline 119
+ 01F6           ;                       default:           break;
+ 01F6           L55:
+ 01F6                   .dbline 121
+ 01F6           ;               }
+ 01F6           ;       }       
+ 01F6           L51:
+ 01F6                   .dbline 122
+ 01F6           ;       if(obj == 'S'){                                                    //学生端设故信息更新
+ 01F6 6335              cpi R22,83
+ 01F8 E9F4              brne L61
+ 01FA           X20:
+ 01FA                   .dbline 122
+ 01FA                   .dbline 124
+ 01FA           ;       
+ 01FA           ;               infoMal_student.dianfanbao |= (1 << (a-1));
+ 01FA 142F              mov R17,R20
+ 01FC 1150              subi R17,1
+ 01FE 01E0              ldi R16,1
+ 0200 0E940000          xcall lsl8
+ 0204 20900600          lds R2,_infoMal_student+1
+ 0208 202A              or R2,R16
+ 020A 20920600          sts _infoMal_student+1,R2
+ 020E                   .dbline 126
+ 020E           ;               //IO Opreation here
+ 020E           ;               switch(a){
+ 020E 5527              clr R21
+ 0210 4130              cpi R20,1
+ 0212 E0E0              ldi R30,0
+ 0214 5E07              cpc R21,R30
+ 0216 49F0              breq L67
+ 0218           X21:
+ 0218 4230              cpi R20,2
+ 021A E0E0              ldi R30,0
+ 021C 5E07              cpc R21,R30
+ 021E 39F0              breq L68
+ 0220           X22:
+ 0220 4330              cpi R20,3
+ 0222 E0E0              ldi R30,0
+ 0224 5E07              cpc R21,R30
+ 0226 29F0              breq L69
+ 0228           X23:
+ 0228 05C0              xjmp L65
+ 022A           L67:
+ 022A                   .dbline 128
+ 022A           ;       
+ 022A           ;                       case  1:           PORTB |= (0x01);  break;
+ 022A C09A              sbi 0x18,0
+ 022C                   .dbline 128
+ 022C 03C0              xjmp L65
+ 022E           L68:
+ 022E                   .dbline 129
+ 022E           ;                       case  2:           PORTB |= (0x04);  break;
+ 022E C29A              sbi 0x18,2
+ 0230                   .dbline 129
+ 0230 01C0              xjmp L65
+ 0232           L69:
+ 0232                   .dbline 130
+ 0232           ;                       case  3:           PORTB |= (0x10);  break;
+ 0232 C49A              sbi 0x18,4
+ 0234                   .dbline 130
+ 0234                   .dbline 131
+ 0234           ;                       default:           break;
+ 0234           L65:
+ 0234                   .dbline 133
+ 0234           ;               }
+ 0234           ;       }       
+ 0234           L61:
+ 0234                   .dbline -2
+ 0234           L50:
+ 0234                   .dbline 0 ; func end
+ 0234 0C940000          xjmp pop_xgsetF00C
+ 0238                   .dbsym r a 20 c
+ 0238                   .dbsym r obj 22 c
+ 0238                   .dbend
+ 0238                   .dbfunc e weibolu_IO _weibolu_IO fV
+ 0238           ;              a -> R20
+ 0238           ;            obj -> R22
+                        .even
+ 0238           _weibolu_IO::
+ 0238 0E940000          xcall push_xgsetF00C
+ 023C 422F              mov R20,R18
+ 023E 602F              mov R22,R16
+ 0240                   .dbline -1
+ 0240                   .dbline 136
+ 0240           ; }
+ 0240           ; 
+ 0240           ; void weibolu_IO(uchar obj,uchar a){                      //8-9号微波炉
+ 0240                   .dbline 138
+ 0240           ; 
+ 0240           ;       if(obj == 'T'){                                                    //教师端设故信息更新
+ 0240 6435              cpi R22,84
+ 0242 C9F4              brne L71
+ 0244           X24:
+ 0244                   .dbline 138
+ 0244                   .dbline 140
+ 0244           ;       
+ 0244           ;               infoMal_teacher.weibolu |= (1 << (a-1));
+ 0244 142F              mov R17,R20
+ 0246 1150              subi R17,1
+ 0248 01E0              ldi R16,1
+ 024A 0E940000          xcall lsl8
+ 024E 20900200          lds R2,_infoMal_teacher+2
+ 0252 202A              or R2,R16
+ 0254 20920200          sts _infoMal_teacher+2,R2
+ 0258                   .dbline 142
+ 0258           ;               //IO Opreation here
+ 0258           ;               switch(a){
+ 0258 A42E              mov R10,R20
+ 025A BB24              clr R11
+ 025C C501              movw R24,R10
+ 025E 8130              cpi R24,1
+ 0260 E0E0              ldi R30,0
+ 0262 9E07              cpc R25,R30
+ 0264 29F0              breq L77
+ 0266           X25:
+ 0266 8230              cpi R24,2
+ 0268 E0E0              ldi R30,0
+ 026A 9E07              cpc R25,R30
+ 026C 19F0              breq L78
+ 026E           X26:
+ 026E 03C0              xjmp L75
+ 0270           L77:
+ 0270                   .dbline 144
+ 0270           ;       
+ 0270           ;                       case  1:           PORTB &= (~0x40);  break;
+ 0270 C698              cbi 0x18,6
+ 0272                   .dbline 144
+ 0272 01C0              xjmp L75
+ 0274           L78:
+ 0274                   .dbline 145
+ 0274           ;                       case  2:           PORTC &= (~0x01);  break;
+ 0274 A898              cbi 0x15,0
+ 0276                   .dbline 145
+ 0276                   .dbline 146
+ 0276           ;                       default:           break;
+ 0276           L75:
+ 0276                   .dbline 148
+ 0276           ;               }
+ 0276           ;       }       
+ 0276           L71:
+ 0276                   .dbline 149
+ 0276           ;       if(obj == 'S'){                                                    //学生端设故信息更新
+ 0276 6335              cpi R22,83
+ 0278 B9F4              brne L79
+ 027A           X27:
+ 027A                   .dbline 149
+ 027A                   .dbline 151
+ 027A           ;       
+ 027A           ;               infoMal_student.weibolu |= (1 << (a-1));
+ 027A 142F              mov R17,R20
+ 027C 1150              subi R17,1
+ 027E 01E0              ldi R16,1
+ 0280 0E940000          xcall lsl8
+ 0284 20900700          lds R2,_infoMal_student+2
+ 0288 202A              or R2,R16
+ 028A 20920700          sts _infoMal_student+2,R2
+ 028E                   .dbline 153
+ 028E           ;               //IO Opreation here
+ 028E           ;               switch(a){
+ 028E 5527              clr R21
+ 0290 4130              cpi R20,1
+ 0292 E0E0              ldi R30,0
+ 0294 5E07              cpc R21,R30
+ 0296 29F0              breq L85
+ 0298           X28:
+ 0298 4230              cpi R20,2
+ 029A E0E0              ldi R30,0
+ 029C 5E07              cpc R21,R30
+ 029E 19F0              breq L86
+ 02A0           X29:
+ 02A0 03C0              xjmp L83
+ 02A2           L85:
+ 02A2                   .dbline 155
+ 02A2           ;       
+ 02A2           ;                       case  1:           PORTB |= (0x40);  break;
+ 02A2 C69A              sbi 0x18,6
+ 02A4                   .dbline 155
+ 02A4 01C0              xjmp L83
+ 02A6           L86:
+ 02A6                   .dbline 156
+ 02A6           ;                       case  2:           PORTC |= (0x01);  break;
+ 02A6 A89A              sbi 0x15,0
+ 02A8                   .dbline 156
+ 02A8                   .dbline 157
+ 02A8           ;                       default:           break;
+ 02A8           L83:
+ 02A8                   .dbline 159
+ 02A8           ;               }
+ 02A8           ;       }       
+ 02A8           L79:
+ 02A8                   .dbline -2
+ 02A8           L70:
+ 02A8                   .dbline 0 ; func end
+ 02A8 0C940000          xjmp pop_xgsetF00C
+ 02AC                   .dbsym r a 20 c
+ 02AC                   .dbsym r obj 22 c
+ 02AC                   .dbend
+ 02AC                   .dbfunc e xiaodugui_IO _xiaodugui_IO fV
+ 02AC           ;              a -> R20
+ 02AC           ;            obj -> R22
+                        .even
+ 02AC           _xiaodugui_IO::
+ 02AC 0E940000          xcall push_xgsetF00C
+ 02B0 422F              mov R20,R18
+ 02B2 602F              mov R22,R16
+ 02B4                   .dbline -1
+ 02B4                   .dbline 162
+ 02B4           ; }
+ 02B4           ; 
+ 02B4           ; void xiaodugui_IO(uchar obj,uchar a){            //10-11号消毒柜
+ 02B4                   .dbline 164
+ 02B4           ; 
+ 02B4           ;       if(obj == 'T'){                                                    //教师端设故信息更新
+ 02B4 6435              cpi R22,84
+ 02B6 C9F4              brne L88
+ 02B8           X30:
+ 02B8                   .dbline 164
+ 02B8                   .dbline 166
+ 02B8           ;       
+ 02B8           ;               infoMal_teacher.xiaodugui |= (1 << (a-1));
+ 02B8 142F              mov R17,R20
+ 02BA 1150              subi R17,1
+ 02BC 01E0              ldi R16,1
+ 02BE 0E940000          xcall lsl8
+ 02C2 20900300          lds R2,_infoMal_teacher+3
+ 02C6 202A              or R2,R16
+ 02C8 20920300          sts _infoMal_teacher+3,R2
+ 02CC                   .dbline 168
+ 02CC           ;               //IO Opreation here
+ 02CC           ;               switch(a){
+ 02CC A42E              mov R10,R20
+ 02CE BB24              clr R11
+ 02D0 C501              movw R24,R10
+ 02D2 8130              cpi R24,1
+ 02D4 E0E0              ldi R30,0
+ 02D6 9E07              cpc R25,R30
+ 02D8 29F0              breq L94
+ 02DA           X31:
+ 02DA 8230              cpi R24,2
+ 02DC E0E0              ldi R30,0
+ 02DE 9E07              cpc R25,R30
+ 02E0 19F0              breq L95
+ 02E2           X32:
+ 02E2 03C0              xjmp L92
+ 02E4           L94:
+ 02E4                   .dbline 170
+ 02E4           ;       
+ 02E4           ;                       case  1:           PORTC &= (~0x04);  break;
+ 02E4 AA98              cbi 0x15,2
+ 02E6                   .dbline 170
+ 02E6 01C0              xjmp L92
+ 02E8           L95:
+ 02E8                   .dbline 171
+ 02E8           ;                       case  2:           PORTC &= (~0x10);  break;
+ 02E8 AC98              cbi 0x15,4
+ 02EA                   .dbline 171
+ 02EA                   .dbline 172
+ 02EA           ;                       default:           break;
+ 02EA           L92:
+ 02EA                   .dbline 174
+ 02EA           ;               }
+ 02EA           ;       } 
+ 02EA           L88:
+ 02EA                   .dbline 175
+ 02EA           ;       if(obj == 'S'){                                                    //学生端设故信息更新
+ 02EA 6335              cpi R22,83
+ 02EC B9F4              brne L96
+ 02EE           X33:
+ 02EE                   .dbline 175
+ 02EE                   .dbline 177
+ 02EE           ;       
+ 02EE           ;               infoMal_student.xiaodugui |= (1 << (a-1));
+ 02EE 142F              mov R17,R20
+ 02F0 1150              subi R17,1
+ 02F2 01E0              ldi R16,1
+ 02F4 0E940000          xcall lsl8
+ 02F8 20900800          lds R2,_infoMal_student+3
+ 02FC 202A              or R2,R16
+ 02FE 20920800          sts _infoMal_student+3,R2
+ 0302                   .dbline 179
+ 0302           ;               //IO Opreation here
+ 0302           ;               switch(a){
+ 0302 5527              clr R21
+ 0304 4130              cpi R20,1
+ 0306 E0E0              ldi R30,0
+ 0308 5E07              cpc R21,R30
+ 030A 29F0              breq L102
+ 030C           X34:
+ 030C 4230              cpi R20,2
+ 030E E0E0              ldi R30,0
+ 0310 5E07              cpc R21,R30
+ 0312 19F0              breq L103
+ 0314           X35:
+ 0314 03C0              xjmp L100
+ 0316           L102:
+ 0316                   .dbline 181
+ 0316           ;       
+ 0316           ;                       case  1:           PORTC |= (0x04);  break;
+ 0316 AA9A              sbi 0x15,2
+ 0318                   .dbline 181
+ 0318 01C0              xjmp L100
+ 031A           L103:
+ 031A                   .dbline 182
+ 031A           ;                       case  2:           PORTC |= (0x10);  break;
+ 031A AC9A              sbi 0x15,4
+ 031C                   .dbline 182
+ 031C                   .dbline 183
+ 031C           ;                       default:           break;
+ 031C           L100:
+ 031C                   .dbline 185
+ 031C           ;               }
+ 031C           ;       }       
+ 031C           L96:
+ 031C                   .dbline -2
+ 031C           L87:
+ 031C                   .dbline 0 ; func end
+ 031C 0C940000          xjmp pop_xgsetF00C
+ 0320                   .dbsym r a 20 c
+ 0320                   .dbsym r obj 22 c
+ 0320                   .dbend
+ 0320                   .dbfunc e xiyiji_IO _xiyiji_IO fV
+ 0320           ;              a -> R20
+ 0320           ;            obj -> R22
+                        .even
+ 0320           _xiyiji_IO::
+ 0320 0E940000          xcall push_xgsetF00C
+ 0324 422F              mov R20,R18
+ 0326 602F              mov R22,R16
+ 0328                   .dbline -1
+ 0328                   .dbline 188
+ 0328           ; }
+ 0328           ; 
+ 0328           ; void xiyiji_IO(uchar obj,uchar a){                       //12-14号洗衣机
+ 0328                   .dbline 190
+ 0328           ; 
+ 0328           ;       if(obj == 'T'){                                                    //教师端设故信息更新
+ 0328 6435              cpi R22,84
+ 032A 59F5              brne L105
+ 032C           X36:
+ 032C                   .dbline 190
+ 032C                   .dbline 192
+ 032C           ;       
+ 032C           ;               infoMal_teacher.xiyiji |= (1 << (a-1));
+ 032C 142F              mov R17,R20
+ 032E 1150              subi R17,1
+ 0330 01E0              ldi R16,1
+ 0332 0E940000          xcall lsl8
+ 0336 20900400          lds R2,_infoMal_teacher+4
+ 033A 202A              or R2,R16
+ 033C 20920400          sts _infoMal_teacher+4,R2
+ 0340                   .dbline 194
+ 0340           ;               //IO Opreation here
+ 0340           ;               switch(a){
+ 0340 A42E              mov R10,R20
+ 0342 BB24              clr R11
+ 0344 C501              movw R24,R10
+ 0346 8130              cpi R24,1
+ 0348 E0E0              ldi R30,0
+ 034A 9E07              cpc R25,R30
+ 034C 69F0              breq L111
+ 034E           X37:
+ 034E 8230              cpi R24,2
+ 0350 E0E0              ldi R30,0
+ 0352 9E07              cpc R25,R30
+ 0354 59F0              breq L112
+ 0356           X38:
+ 0356 8330              cpi R24,3
+ 0358 E0E0              ldi R30,0
+ 035A 9E07              cpc R25,R30
+ 035C 69F0              breq L113
+ 035E           X39:
+ 035E 8430              cpi R24,4
+ 0360 E0E0              ldi R30,0
+ 0362 9E07              cpc R25,R30
+ 0364 71F0              breq L109
+ 0366           X40:
+ 0366 0DC0              xjmp L109
+ 0368           L111:
+ 0368                   .dbline 196
+ 0368           ;       
+ 0368           ;                       case  1:           PORTC &= (~0x40);  break;
+ 0368 AE98              cbi 0x15,6
+ 036A                   .dbline 196
+ 036A 0BC0              xjmp L109
+ 036C           L112:
+ 036C                   .dbline 197
+ 036C           ;                       case  2:           PORTF &= (~0x01);  break;
+ 036C 80916200          lds R24,98
+ 0370 8E7F              andi R24,254
+ 0372 80936200          sts 98,R24
+ 0376                   .dbline 197
+ 0376 05C0              xjmp L109
+ 0378           L113:
+ 0378                   .dbline 198
+ 0378           ;                       case  3:           PORTF &= (~0x04);  break;
+ 0378 80916200          lds R24,98
+ 037C 8B7F              andi R24,251
+ 037E 80936200          sts 98,R24
+ 0382                   .dbline 198
+ 0382                   .dbline 199
+ 0382           ;                       case  4:           break;
+ 0382                   .dbline 200
+ 0382           ;                       default:           break;
+ 0382           L109:
+ 0382                   .dbline 202
+ 0382           ;               }
+ 0382           ;       }       
+ 0382           L105:
+ 0382                   .dbline 203
+ 0382           ;       if(obj == 'S'){                                                    //学生端设故信息更新
+ 0382 6335              cpi R22,83
+ 0384 49F5              brne L115
+ 0386           X41:
+ 0386                   .dbline 203
+ 0386                   .dbline 205
+ 0386           ;       
+ 0386           ;               infoMal_student.xiyiji |= (1 << (a-1));
+ 0386 142F              mov R17,R20
+ 0388 1150              subi R17,1
+ 038A 01E0              ldi R16,1
+ 038C 0E940000          xcall lsl8
+ 0390 20900900          lds R2,_infoMal_student+4
+ 0394 202A              or R2,R16
+ 0396 20920900          sts _infoMal_student+4,R2
+ 039A                   .dbline 207
+ 039A           ;               //IO Opreation here
+ 039A           ;               switch(a){
+ 039A 5527              clr R21
+ 039C 4130              cpi R20,1
+ 039E E0E0              ldi R30,0
+ 03A0 5E07              cpc R21,R30
+ 03A2 69F0              breq L121
+ 03A4           X42:
+ 03A4 4230              cpi R20,2
+ 03A6 E0E0              ldi R30,0
+ 03A8 5E07              cpc R21,R30
+ 03AA 59F0              breq L122
+ 03AC           X43:
+ 03AC 4330              cpi R20,3
+ 03AE E0E0              ldi R30,0
+ 03B0 5E07              cpc R21,R30
+ 03B2 69F0              breq L123
+ 03B4           X44:
+ 03B4 4430              cpi R20,4
+ 03B6 E0E0              ldi R30,0
+ 03B8 5E07              cpc R21,R30
+ 03BA 71F0              breq L119
+ 03BC           X45:
+ 03BC 0DC0              xjmp L119
+ 03BE           L121:
+ 03BE                   .dbline 209
+ 03BE           ;       
+ 03BE           ;                       case  1:           PORTC |= (0x40);  break;
+ 03BE AE9A              sbi 0x15,6
+ 03C0                   .dbline 209
+ 03C0 0BC0              xjmp L119
+ 03C2           L122:
+ 03C2                   .dbline 210
+ 03C2           ;                       case  2:           PORTF |= (0x01);  break;
+ 03C2 80916200          lds R24,98
+ 03C6 8160              ori R24,1
+ 03C8 80936200          sts 98,R24
+ 03CC                   .dbline 210
+ 03CC 05C0              xjmp L119
+ 03CE           L123:
+ 03CE                   .dbline 211
+ 03CE           ;                       case  3:           PORTF |= (0x04);  break;
+ 03CE 80916200          lds R24,98
+ 03D2 8460              ori R24,4
+ 03D4 80936200          sts 98,R24
+ 03D8                   .dbline 211
+ 03D8                   .dbline 212
+ 03D8           ;                       case  4:           break;
+ 03D8                   .dbline 213
+ 03D8           ;                       default:           break;
+ 03D8           L119:
+ 03D8                   .dbline 215
+ 03D8           ;               }
+ 03D8           ;       }       
+ 03D8           L115:
+ 03D8                   .dbline -2
+ 03D8           L104:
+ 03D8                   .dbline 0 ; func end
+ 03D8 0C940000          xjmp pop_xgsetF00C
+ 03DC                   .dbsym r a 20 c
+ 03DC                   .dbsym r obj 22 c
+ 03DC                   .dbend
+ 03DC           ; }

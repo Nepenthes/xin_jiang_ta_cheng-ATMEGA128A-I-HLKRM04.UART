@@ -1,0 +1,29 @@
+#include "IO_control.h"
+
+uchar IOSetTeacher[];
+uchar IOSetstudent[];
+
+void dianfengshan_IO(uchar a[]){
+
+	 
+}
+
+void weibolu_IO(uchar a[]){
+
+	 
+}
+
+void dianfanbao_IO(uchar a[]){
+
+	 
+}
+
+void xiyiji_IO(uchar a[]){
+
+	 
+}
+
+void xiaodugui_IO(uchar a[]){
+
+	 
+}

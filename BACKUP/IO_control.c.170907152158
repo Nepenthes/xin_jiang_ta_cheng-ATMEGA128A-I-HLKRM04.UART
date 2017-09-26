@@ -1,0 +1,48 @@
+#include "IO_control.h"
+
+infoMal infoMal_teacher = {0,0,0,0,0};
+infoMal infoMal_student = {0,0,0,0,0};
+
+void IOInit(void){
+
+ 	DDRA  = DDRB  = DDRC  = DDRD  = DDRE  = DDRF  = 0xff;
+	PORTA = PORTB = PORTC = PORTD = PORTE = PORTF = 0;
+}
+
+
+//单字节从右到左分别表示设故编号
+//1-4号电风扇、5-6号微波炉、7-9号电饭煲、10-12号洗衣机、13-14号消毒柜
+void dianfengshan_IO(uchar obj,uchar a){
+
+	if(obj == 'T')infoMal_teacher.dianfengshan |= (1 << (a-1)); //教师端设故信息更新
+	if(obj == 'S')infoMal_student.dianfengshan |= (1 << (a-1));	//学生端设故信息更新
+	//IO Opreation here
+}
+
+void weibolu_IO(uchar obj,uchar a){
+
+	if(obj == 'T')infoMal_teacher.weibolu |= (1 << (a-1)); 	//教师端设故信息更新
+	if(obj == 'S')infoMal_student.weibolu |= (1 << (a-1));	//学生端设故信息更新
+	//IO Opreation here
+}
+
+void dianfanbao_IO(uchar obj,uchar a){
+
+	if(obj == 'T')infoMal_teacher.dianfanbao |= (1 << (a-1)); 	//教师端设故信息更新
+	if(obj == 'S')infoMal_student.dianfanbao |= (1 << (a-1));	//学生端设故信息更新
+	//IO Opreation here
+}
+
+void xiyiji_IO(uchar obj,uchar a){
+
+	if(obj == 'T')infoMal_teacher.xiyiji |= (1 << (a-1)); 	//教师端设故信息更新
+	if(obj == 'S')infoMal_student.xiyiji |= (1 << (a-1));	//学生端设故信息更新
+	//IO Opreation here
+}
+
+void xiaodugui_IO(uchar obj,uchar a){
+
+	if(obj == 'T')infoMal_teacher.xiaodugui |= (1 << (a-1)); 	//教师端设故信息更新
+	if(obj == 'S')infoMal_student.xiaodugui |= (1 << (a-1));	//学生端设故信息更新
+	//IO Opreation here
+}

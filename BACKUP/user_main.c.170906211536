@@ -1,0 +1,168 @@
+#include "usart.h"
+#include "IO_control.h"
+#include "__info_dats.h"
+
+extern uchar WIFI_BUF_QUE[BUFFER0_QLENTH][UART0_RX_BUFFER_SIZE];	
+extern uchar ITFR_BUF_QUE[BUFFER1_QLENTH][UART1_RX_BUFFER_SIZE];	
+
+infoUser UserMe = {"00000000","00000000"};
+
+uchar userID[9],password[9];
+uchar userID_temp[9] = "00000000";
+uchar password_temp[9] = "00000000";
+
+void delay_3us(void)  //3us延时函数,,可重复调用不影响精度 
+{
+   asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+   asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+   asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+}
+
+void delay_10us(void)  //10us延时函数,可重复调用不影响精度
+{
+ 	delay_3us();
+ 	delay_3us();
+ 	delay_3us();
+}
+
+void delay_50us(void)  //48us延时函数,可重复调用不影响精度
+{      
+  	delay_10us();    
+  	delay_10us();    
+  	delay_10us();   
+  	delay_10us();    
+  	delay_10us();
+}
+ 
+void delay_100us(void)//exactly 98us延时函数,可重复调用不影响精度
+{
+  delay_50us();
+  delay_50us();
+  delay_3us();
+}
+ 
+void delay_1ms(void)            
+{
+  delay_100us(); delay_100us(); delay_100us(); delay_100us(); delay_100us();
+  delay_100us(); delay_100us(); delay_100us(); delay_100us(); delay_100us();
+}
+  
+ void delay_ms(uint ms )
+{
+    while(ms--)  
+		delay_1ms();//8MHZ主频时，25分钟误差小于1秒
+}
+
+void EEPROM_write(uchar addr,uchar data){
+
+	while(EECR & BIT(EEWE));
+	EEAR=addr;
+	EEDR=data;
+	EECR|=BIT(EEMWE);
+	EECR|=BIT(EEWE);
+}
+
+uchar EEPROM_read(uchar addr){
+
+ 	while(EECR & BIT(EEWE));
+	EEAR=addr;
+	EECR|=BIT(EERE);
+	return EEDR;
+}
+
+void userID_read(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		Dats[loop] = EEPROM_read(loop+0x10);
+}
+
+void userID_write(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		EEPROM_write(loop+0x10,Dats[loop]);
+}
+
+
+void password_read(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		Dats[loop] = EEPROM_read(loop+0x20);
+}
+
+void password_write(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		EEPROM_write(loop+0x20,Dats[loop]);
+}
+
+void bspInit(void)
+{
+ 	usart_init();
+	
+	userID_read(userID);
+	password_read(password);
+}
+
+void thread_test(void){
+
+	 while(1){
+	 
+	 	 if(!strcmp(userID_temp,userID) && !strcmp(password_temp,password))WIFI_PUTS("page device_select");
+		 putchar0(0x30+strcmp(userID_temp,userID));
+		 putchar0(0x30+strcmp(password_temp,password));
+		 if(WIFI_BUF[0] == 0x5a){
+		 
+		 	 if(WIFI_BUF[1] == 0x01){
+			 
+			 	 switch(WIFI_BUF[2]){
+				  
+				  	 case 0x01:		 strcpy(userID,&(WIFI_BUF[3]));userID_write(userID);
+					 	  			 //WIFI_PUTS("userID set");WIFI_PUTS(userID);		//测试用户名
+						  			 break;
+					 case 0x02:		 strcpy(password,&(WIFI_BUF[3]));password_write(password);
+					 	  			 //WIFI_PUTS("password set");WIFI_PUTS(password);	//测试密码
+									 break;
+					 case 0x10:		 switch(WIFI_BUF[3]){
+					 	  			 					 
+					 	  			 	 case  1:	dianfengshan_IO(1);	break;
+										 case  2:	dianfengshan_IO(2); break;
+										 case  3:	dianfengshan_IO(3);	break;
+										 case  4:	dianfengshan_IO(4);	break;
+										 case  5:	weibolu_IO(1);		break;
+				 	  			 	 	 case  6:	weibolu_IO(2);		break;
+										 case  7:	dianfanbao_IO(1);	break;
+										 case  8:	dianfanbao_IO(2);	break;
+										 case  9:	dianfanbao_IO(3);	break;
+										 case 10:	xiyiji_IO(1);		break;
+										 case 11:	xiyiji_IO(2);		break;
+										 case 12:	xiyiji_IO(3);		break;
+										 case 13:	xiaodugui_IO(1);	break;
+										 case 14:	xiaodugui_IO(2);	break;
+					 	  			 }
+									 break;
+				 }
+			 	 memset(WIFI_BUF,0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);
+			 }
+		 }
+		 delay_ms(1000);
+		 //WIFI_PUTS(WIFI_BUF);		//测试WIFI缓存
+	 }
+}
+
+void main(void){
+
+	
+	
+	bspInit();
+		
+	WIFI_PUTS("test start!!!");
+	thread_test();
+}

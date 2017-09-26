@@ -1,0 +1,132 @@
+XL
+H 3 areas 7 global symbols
+M _123.c
+A text size B8 flags 0
+dbfile 123.c
+dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\123.c
+dbfunc e usart0Init 0 fV
+dbline FFFFFFFF 0
+dbline B 0
+dbline D 0
+dbline E 4
+dbline F 6
+dbline 10 C
+dbline 11 10
+dbline 12 14
+dbline FFFFFFFE 18
+dbline 0 18
+dbfunc e usart1Init 1A fV
+dbline FFFFFFFF 1A
+dbline 15 1A
+dbline 17 1A
+dbline 18 20
+dbline 19 24
+dbline 1A 2A
+dbline 1B 30
+dbline 1C 34
+dbline FFFFFFFE 3A
+dbline 0 3A
+dbfunc e putchar0 3C fV
+dbsym r c 10 c
+dbline FFFFFFFF 3C
+dbline 1F 3C
+dbline 21 3C
+dbline 21 3C
+dbline 22 40
+dbline FFFFFFFE 42
+dbline 0 42
+dbfunc e putchar1 44 fV
+dbsym r c 10 c
+dbline FFFFFFFF 44
+dbline 25 44
+dbline 27 44
+dbline 27 44
+dbline 28 4C
+dbline FFFFFFFE 50
+dbline 0 50
+dbfunc e puts0 52 fV
+dbsym r s 14 pc
+dbline FFFFFFFF 58
+dbline 2B 58
+dbline 2D 5A
+dbline 2F 5A
+dbline 30 60
+dbline 31 64
+dbline 2D 64
+dbline 32 6C
+dbline 33 70
+dbline FFFFFFFE 74
+dbline 0 74
+dbfunc e puts1 7A fV
+dbsym r s 14 pc
+dbline FFFFFFFF 80
+dbline 36 80
+dbline 38 82
+dbline 3A 82
+dbline 3B 88
+dbline 3C 8C
+dbline 38 8C
+dbline 3D 94
+dbline 3E 98
+dbline FFFFFFFE 9C
+dbline 0 9C
+dbfunc e main A2 fV
+dbline FFFFFFFF A2
+dbline 42 A2
+dbline 44 A2
+dbline 45 A4
+dbline 47 A8
+dbline 49 A8
+dbline 4A AE
+dbline 4B B4
+dbline 47 B4
+dbline FFFFFFFE B6
+dbline 0 B6
+S _main Def00A2
+S _usart0Init Def0000
+S _usart1Init Def001A
+S _puts0 Def0052
+S _puts1 Def007A
+S _putchar0 Def003C
+S _putchar1 Def0044
+A data size 2F flags 20
+dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\123.c
+A idata size 2F flags 0
+T 00 00 22 24 2A B8 2B B8 86 E0 80 93 95 00 8A E1
+R 00 00 00 00
+T 0E 00 89 B9 20 92 90 00 88 E1 8A B9 08 95
+R 00 00 00 00
+T 1A 00 22 24 20 92 9A 00 20 92 9B 00 86 E0 80 93
+R 00 00 00 00
+T 28 00 9D 00 8A E1 80 93 99 00 20 92 98 00 88 E1
+R 00 00 00 00
+T 36 00 80 93 9A 00 08 95
+R 00 00 00 00
+T 3C 00 5D 9B FE CF 0C B9 08 95
+R 00 00 00 00
+T 44 00 20 90 9B 00 25 FE FC CF 00 93 9C 00 08 95
+R 00 00 00 00
+T 52 00 4A 93 5A 93 A8 01 05 C0 FA 01 00 81 EE DF
+R 00 00 00 00
+T 60 00 4F 5F 5F 4F FA 01 20 80 22 20 B9 F7 0A E0
+R 00 00 00 00
+T 6E 00 E6 DF 0D E0 E4 DF 59 91 49 91 08 95
+R 00 00 00 00
+T 7A 00 4A 93 5A 93 A8 01 05 C0 FA 01 00 81 DE DF
+R 00 00 00 00
+T 88 00 4F 5F 5F 4F FA 01 20 80 22 20 B9 F7 0A E0
+R 00 00 00 00
+T 96 00 D6 DF 0D E0 D4 DF 59 91 49 91 08 95
+R 00 00 00 00
+T A2 00 AE DF BA DF 06 C0 00 E0 10 E0 D2 DF
+R 00 00 00 00 20 08 01 00 18 00 40 0A 01 00 18 00
+T AE 00 00 E0 10 E0 E3 DF F9 CF 08 95
+R 00 00 00 00 20 02 01 00 00 00 40 04 01 00 00 00
+T 00 00 53 48 41 4F 49 46 48 4F 53 49 41 48 46 4F
+R 00 00 02 00
+T 0E 00 49 48 41 4F 49 48 4F 46 53 00
+R 00 00 02 00
+T 18 00 73 6F 61 68 66 6F 61 68 73 6F 66 69 71 77
+R 00 00 02 00
+T 26 00 6F 69 66 62 68 6F 69 71 00
+R 00 00 02 00

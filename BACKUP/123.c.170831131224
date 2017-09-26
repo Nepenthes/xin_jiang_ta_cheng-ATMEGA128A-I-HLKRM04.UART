@@ -1,0 +1,73 @@
+//包含所需头文件
+#include <ioM16v.h>
+#include <macros.h>
+
+
+
+
+/*------宏定义------*/
+#define uchar	unsigned char
+#define uint	unsigned int
+
+
+
+//端口初始化
+void port_init(void)
+{
+ PORTA = 0x00;
+ DDRA  = 0x00;
+ PORTB = 0x00;
+ DDRB  = 0x00;
+ PORTC = 0x00;
+ DDRC  = 0x00;
+ PORTD = 0x00;
+ DDRD  = 0x00;
+}
+
+
+//串口通信初始化
+void usart_init(void)
+{
+ UCSRB = 0x00;//禁止中断
+ UCSRA = 0x02;
+ UCSRC = BIT(URSEL) | 0x06;
+ UBRRL = 0x19;
+ UBRRH = 0x00;
+ UCSRB = 0xA0;
+}
+
+
+//串行接收结束中断服务程序
+#pragma interrupt_handler usart_rx_isr:12
+void usart_rx_isr(void)
+{
+}
+
+
+//数据寄存器为空中断服务程序
+#pragma interrupt_handler usart_udre_isr:13
+void usart_udre_isr(void)
+{
+}
+
+
+void init_devices(void)
+{
+ CLI(); //禁止所有中断
+ MCUCR  = 0x00;
+ MCUCSR = 0x80;//禁止JTAG
+ GICR   = 0x00;
+ port_init();
+ usart_init();
+ SEI();//开全局中断
+}
+//主函数
+void main(void)
+{
+ init_devices();
+ //在这继续添加你的代码
+ while(1)
+ {
+  NOP();
+ }
+}

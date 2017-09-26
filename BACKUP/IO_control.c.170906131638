@@ -1,0 +1,3 @@
+#include "IO_control.h"
+
+void dianfengshan_IO(uchar a);

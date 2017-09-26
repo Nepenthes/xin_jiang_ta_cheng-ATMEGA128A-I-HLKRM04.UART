@@ -1,0 +1,33 @@
+#ifndef	_IMFO_DATS_H__
+#define _IMFO_DATS_H__
+
+#define device_ID	  0x01
+
+#include "type.h"
+
+typedef struct{
+
+	uchar dianfengshan;
+	uchar weibolu;
+	uchar dianfanbao;
+	uchar xiyiji;
+	uchar xiaodugui;
+}infoMal;
+
+typedef struct{
+
+	uchar userID[9];
+	uchar password[9];
+}infoUser;
+
+const uchar *WIFICmd[] = {
+
+	0  
+};
+
+const uchar *ITFRCmd[] = {
+
+	0  
+};
+
+#endif

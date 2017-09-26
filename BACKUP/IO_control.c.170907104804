@@ -1,0 +1,37 @@
+#include "IO_control.h"
+
+infoMal infoMal_teacher = {0,0,0,0,0};
+infoMal infoMal_student = {0,0,0,0,0};
+
+void IOInit(void)
+{
+ 	DDRA = DDRB = DDRC = DDRD = DDRE = DDRF = 0xff;
+	
+}
+
+//单字节从右到左分别表示设故编号
+//1-4号电风扇、5-6号微波炉、7-9号电饭煲、10-12号洗衣机、13-14号消毒柜
+void dianfengshan_IO(uchar a){
+
+	infoMal_teacher.dianfengshan |= (1 << (a-1));
+}
+
+void weibolu_IO(uchar a){
+
+	infoMal_teacher.weibolu |= (1 << (a-4));
+}
+
+void dianfanbao_IO(uchar a){
+
+	infoMal_teacher.dianfanbao |= (1 << (a-6));
+}
+
+void xiyiji_IO(uchar a){
+
+	infoMal_teacher.xiyiji |= (1 << (a-9));
+}
+
+void xiaodugui_IO(uchar a){
+
+	infoMal_teacher.xiaodugui |= (1 << (a-12));
+}

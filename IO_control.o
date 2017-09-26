@@ -1,0 +1,433 @@
+XL
+H 3 areas 12 global symbols
+M IO_control.c
+S push_xgsetF00C Ref0000
+S push_xgsetF0FC Ref0000
+S lsl8 Ref0000
+S lsr8 Ref0000
+S pop_xgsetF00C Ref0000
+S pop_xgsetF0FC Ref0000
+A text size 3DC flags 0
+dbfile IO_control.c
+dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+dbfunc e IOInit 0 fV
+dbline FFFFFFFF 0
+dbline 8 0
+dbline A 0
+dbline A 6
+dbline A C
+dbline A 12
+dbline B 1C
+dbline B 22
+dbline B 28
+dbline B 2E
+dbline FFFFFFFE 38
+dbline 0 38
+dbfunc e IO_test 3A fV
+dbsym r a 10 i
+dbline FFFFFFFF 3A
+dbline E 3A
+dbline 10 3A
+dbline 12 40
+dbline 14 40
+dbline 15 44
+dbline 17 46
+dbline 18 4C
+dbline 1A 52
+dbline 1A 54
+dbline 1B 60
+dbline 1D 64
+dbline 1E 68
+dbline 20 6A
+dbline 21 70
+dbline 23 76
+dbline 23 78
+dbline 24 84
+dbline 25 88
+dbline 12 88
+dbline FFFFFFFE 8A
+dbline 0 8A
+dbfunc e IOReinstate 8C fV
+dbline FFFFFFFF 8C
+dbline 28 8C
+dbline 2A 8C
+dbline 31 A2
+dbline 38 B6
+dbline FFFFFFFE B6
+dbline 0 B6
+dbfunc e OPJudje B8 fV
+dbsym r pt 16 c
+dbsym r temp A c
+dbsym r loop 14 c
+dbsym r Base C c
+dbsym r S A c
+dbsym r T E c
+dbline FFFFFFFF C2
+dbline 3B C2
+dbline 3E C2
+dbline 40 C4
+dbline 41 CA
+dbline 41 CE
+dbline 43 CE
+dbline 43 DC
+dbline 44 F6
+dbline 41 F6
+dbline 41 F8
+dbline FFFFFFFE FC
+dbline 0 FC
+dbfunc e dianfengshan_IO 100 fV
+dbsym r a 14 c
+dbsym r obj 16 c
+dbline FFFFFFFF 108
+dbline 4D 108
+dbline 4F 108
+dbline 4F 10C
+dbline 51 10C
+dbline 53 120
+dbline 55 148
+dbline 55 14A
+dbline 56 14C
+dbline 56 14E
+dbline 57 150
+dbline 57 152
+dbline 58 154
+dbline 58 156
+dbline 59 156
+dbline 5B 156
+dbline 5C 156
+dbline 5C 15A
+dbline 5E 15A
+dbline 60 16E
+dbline 62 192
+dbline 62 194
+dbline 63 196
+dbline 63 198
+dbline 64 19A
+dbline 64 19C
+dbline 65 19E
+dbline 65 1A0
+dbline 66 1A0
+dbline 68 1A0
+dbline FFFFFFFE 1A0
+dbline 0 1A0
+dbfunc e dianfanbao_IO 1A4 fV
+dbsym r a 14 c
+dbsym r obj 16 c
+dbline FFFFFFFF 1AC
+dbline 6B 1AC
+dbline 6D 1AC
+dbline 6D 1B0
+dbline 6F 1B0
+dbline 71 1C4
+dbline 73 1EC
+dbline 73 1EE
+dbline 74 1F0
+dbline 74 1F2
+dbline 75 1F4
+dbline 75 1F6
+dbline 76 1F6
+dbline 77 1F6
+dbline 79 1F6
+dbline 7A 1F6
+dbline 7A 1FA
+dbline 7C 1FA
+dbline 7E 20E
+dbline 80 22A
+dbline 80 22C
+dbline 81 22E
+dbline 81 230
+dbline 82 232
+dbline 82 234
+dbline 83 234
+dbline 85 234
+dbline FFFFFFFE 234
+dbline 0 234
+dbfunc e weibolu_IO 238 fV
+dbsym r a 14 c
+dbsym r obj 16 c
+dbline FFFFFFFF 240
+dbline 88 240
+dbline 8A 240
+dbline 8A 244
+dbline 8C 244
+dbline 8E 258
+dbline 90 270
+dbline 90 272
+dbline 91 274
+dbline 91 276
+dbline 92 276
+dbline 94 276
+dbline 95 276
+dbline 95 27A
+dbline 97 27A
+dbline 99 28E
+dbline 9B 2A2
+dbline 9B 2A4
+dbline 9C 2A6
+dbline 9C 2A8
+dbline 9D 2A8
+dbline 9F 2A8
+dbline FFFFFFFE 2A8
+dbline 0 2A8
+dbfunc e xiaodugui_IO 2AC fV
+dbsym r a 14 c
+dbsym r obj 16 c
+dbline FFFFFFFF 2B4
+dbline A2 2B4
+dbline A4 2B4
+dbline A4 2B8
+dbline A6 2B8
+dbline A8 2CC
+dbline AA 2E4
+dbline AA 2E6
+dbline AB 2E8
+dbline AB 2EA
+dbline AC 2EA
+dbline AE 2EA
+dbline AF 2EA
+dbline AF 2EE
+dbline B1 2EE
+dbline B3 302
+dbline B5 316
+dbline B5 318
+dbline B6 31A
+dbline B6 31C
+dbline B7 31C
+dbline B9 31C
+dbline FFFFFFFE 31C
+dbline 0 31C
+dbfunc e xiyiji_IO 320 fV
+dbsym r a 14 c
+dbsym r obj 16 c
+dbline FFFFFFFF 328
+dbline BC 328
+dbline BE 328
+dbline BE 32C
+dbline C0 32C
+dbline C2 340
+dbline C4 368
+dbline C4 36A
+dbline C5 36C
+dbline C5 376
+dbline C6 378
+dbline C6 382
+dbline C7 382
+dbline C8 382
+dbline CA 382
+dbline CB 382
+dbline CB 386
+dbline CD 386
+dbline CF 39A
+dbline D1 3BE
+dbline D1 3C0
+dbline D2 3C2
+dbline D2 3CC
+dbline D3 3CE
+dbline D3 3D8
+dbline D4 3D8
+dbline D5 3D8
+dbline D7 3D8
+dbline FFFFFFFE 3D8
+dbline 0 3D8
+S _IO_test Def003A
+S _xiaodugui_IO Def02AC
+S _dianfengshan_IO Def0100
+S _weibolu_IO Def0238
+S _dianfanbao_IO Def01A4
+S _IOInit Def0000
+S _IOReinstate Def008C
+S _xiyiji_IO Def0320
+S _OPJudje Def00B8
+A data size 13 flags 20
+dbfile IO_control.c
+dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\IO_control.c
+dbstruct 5 .1
+dbfield 0 dianfengshan c
+dbfield 1 dianfanbao c
+dbfield 2 weibolu c
+dbfield 3 xiaodugui c
+dbfield 4 xiyiji c
+dbend
+dbsym e infoMal_teacher 0 S[.1]
+dbsym e infoMal_student 5 S[.1]
+dbsym e resIOJudge A A[9:9]c
+S _resIOJudge Def000A
+S _infoMal_teacher Def0000
+S _infoMal_student Def0005
+A idata size 13 flags 0
+T 00 00 00
+R 00 00 02 00
+T 01 00 00
+R 00 00 02 00
+T 02 00 00
+R 00 00 02 00
+T 03 00 00
+R 00 00 02 00
+T 04 00 00
+R 00 00 02 00
+T 05 00 00
+R 00 00 02 00
+T 06 00 00
+R 00 00 02 00
+T 07 00 00
+R 00 00 02 00
+T 08 00 00
+R 00 00 02 00
+T 09 00 00
+R 00 00 02 00
+T 0A 00 00
+R 00 00 02 00
+T 0B 00 00 00 00 00 00 00 00 00
+R 00 00 02 00
+T 00 00 8A B3 85 65 8A BB 87 B3 85 65 87 BB 84 B3
+R 00 00 00 00
+T 0E 00 85 65 84 BB 80 91 61 00 85 60 80 93 61 00
+R 00 00 00 00
+T 1C 00 8B B3 85 65 8B BB 88 B3 85 65 88 BB 85 B3
+R 00 00 00 00
+T 2A 00 85 65 85 BB 80 91 62 00 85 60 80 93 62 00
+R 00 00 00 00
+T 38 00 08 95
+R 00 00 00 00
+T 3A 00 0F EF 1F EF 24 C0 81 E0 8A BB 8B BB 22 24
+R 00 00 00 00
+T 48 00 20 92 61 00 20 92 62 00 01 C0 00 00 C8 01
+R 00 00 00 00
+T 56 00 01 97 8C 01 00 30 01 07 C9 F7 0F EF 1F EF
+R 00 00 00 00
+T 64 00 22 24 2A BA 2B BA 84 E0 80 93 61 00 80 93
+R 00 00 00 00
+T 72 00 62 00 01 C0 00 00 C8 01 01 97 8C 01 00 30
+R 00 00 00 00
+T 80 00 01 07 C9 F7 0F EF 1F EF DB CF 08 95
+R 00 00 00 00
+T 8C 00 22 24 20 92 03 00 20 92 04 00 20 92 01 00
+R 00 00 00 00 00 06 01 00 00 0A 01 00 00 0E 01 00
+T 9A 00 20 92 02 00 20 92 00 00 20 92 08 00 20 92
+R 00 00 00 00 00 04 01 00 00 08 01 00 00 0C 01 00
+T A8 00 09 00 20 92 06 00 20 92 07 00 20 92
+R 00 00 00 00 00 02 01 00 00 06 01 00 00 0A 01 00
+T B4 00 05 00 A4 CF
+R 00 00 00 00 00 02 01 00
+T B8 00 0E 94 00 00 A2 2E E0 2E CA 84 66 27 2E 2C
+R 00 00 00 00 12 04 01 00
+T C6 00 2A 24 A2 2C 44 27 15 C0 0A 2D 14 2F
+R 00 00 00 00
+T D2 00 0E 94 00 00 80 2F 81 70 69 F0 26 2E 33 24
+R 00 00 00 00 12 04 03 00
+T E0 00 21 01 6F 5F 2C 2C 24 0E 80 E0 90 E0 E4 2D
+R 00 00 00 00 20 0A 01 00 0A 00 40 0C 01 00 0A 00
+T EE 00 FF 27 E8 0F F9 1F 20 82 43 95 48 30 48 F3
+R 00 00 00 00
+T FC 00 0C 94 00 00
+R 00 00 00 00 12 04 05 00
+T 00 01 0E 94 00 00 42 2F 60 2F 64 35 29 F5 14 2F
+R 00 00 00 00 12 04 00 00
+T 0E 01 11 50 01 E0 0E 94 00 00 20 90 00 00 20 2A
+R 00 00 00 00 12 08 02 00 00 0C 01 00
+T 1C 01 20 92 00 00 A4 2E BB 24 C5 01 81 30 E0 E0
+R 00 00 00 00 00 04 01 00
+T 2A 01 9E 07 69 F0 82 30 E0 E0 9E 07 59 F0 83 30
+R 00 00 00 00
+T 38 01 E0 E0 9E 07 49 F0 84 30 E0 E0 9E 07 39 F0
+R 00 00 00 00
+T 46 01 07 C0 D8 98 05 C0 DA 98 03 C0 DC 98 01 C0
+R 00 00 00 00
+T 54 01 DE 98 63 35 19 F5 14 2F 11 50 01 E0
+R 00 00 00 00
+T 60 01 0E 94 00 00 20 90 05 00 20 2A 20 92 05 00
+R 00 00 00 00 12 04 02 00 00 08 01 00 00 0E 01 00
+T 6E 01 55 27 41 30 E0 E0 5E 07 69 F0 42 30 E0 E0
+R 00 00 00 00
+T 7C 01 5E 07 59 F0 43 30 E0 E0 5E 07 49 F0 44 30
+R 00 00 00 00
+T 8A 01 E0 E0 5E 07 39 F0 07 C0 D8 9A 05 C0 DA 9A
+R 00 00 00 00
+T 98 01 03 C0 DC 9A 01 C0 DE 9A 0C 94 00 00
+R 00 00 00 00 12 0C 04 00
+T A4 01 0E 94 00 00 42 2F 60 2F 64 35 19 F5 14 2F
+R 00 00 00 00 12 04 00 00
+T B2 01 11 50 01 E0 0E 94 00 00 20 90 01 00 20 2A
+R 00 00 00 00 12 08 02 00 00 0C 01 00
+T C0 01 20 92 01 00 A4 2E BB 24 C5 01 81 30 E0 E0
+R 00 00 00 00 00 04 01 00
+T CE 01 9E 07 69 F0 82 30 E0 E0 9E 07 59 F0 83 30
+R 00 00 00 00
+T DC 01 E0 E0 9E 07 49 F0 84 30 E0 E0 9E 07 31 F0
+R 00 00 00 00
+T EA 01 05 C0 C0 98 03 C0 C2 98 01 C0 C4 98 63 35
+R 00 00 00 00
+T F8 01 E9 F4 14 2F 11 50 01 E0 0E 94 00 00 20 90
+R 00 00 00 00 12 0C 02 00
+T 06 02 06 00 20 2A 20 92 06 00 55 27 41 30 E0 E0
+R 00 00 00 00 00 02 01 00 00 08 01 00
+T 14 02 5E 07 49 F0 42 30 E0 E0 5E 07 39 F0 43 30
+R 00 00 00 00
+T 22 02 E0 E0 5E 07 29 F0 05 C0 C0 9A 03 C0 C2 9A
+R 00 00 00 00
+T 30 02 01 C0 C4 9A 0C 94 00 00
+R 00 00 00 00 12 08 04 00
+T 38 02 0E 94 00 00 42 2F 60 2F 64 35 C9 F4 14 2F
+R 00 00 00 00 12 04 00 00
+T 46 02 11 50 01 E0 0E 94 00 00 20 90 02 00 20 2A
+R 00 00 00 00 12 08 02 00 00 0C 01 00
+T 54 02 20 92 02 00 A4 2E BB 24 C5 01 81 30 E0 E0
+R 00 00 00 00 00 04 01 00
+T 62 02 9E 07 29 F0 82 30 E0 E0 9E 07 19 F0 03 C0
+R 00 00 00 00
+T 70 02 C6 98 01 C0 A8 98 63 35 B9 F4 14 2F 11 50
+R 00 00 00 00
+T 7E 02 01 E0 0E 94 00 00 20 90 07 00 20 2A 20 92
+R 00 00 00 00 12 06 02 00 00 0A 01 00
+T 8C 02 07 00 55 27 41 30 E0 E0 5E 07 29 F0 42 30
+R 00 00 00 00 00 02 01 00
+T 9A 02 E0 E0 5E 07 19 F0 03 C0 C6 9A 01 C0 A8 9A
+R 00 00 00 00
+T A8 02 0C 94 00 00
+R 00 00 00 00 12 04 04 00
+T AC 02 0E 94 00 00 42 2F 60 2F 64 35 C9 F4 14 2F
+R 00 00 00 00 12 04 00 00
+T BA 02 11 50 01 E0 0E 94 00 00 20 90 03 00 20 2A
+R 00 00 00 00 12 08 02 00 00 0C 01 00
+T C8 02 20 92 03 00 A4 2E BB 24 C5 01 81 30 E0 E0
+R 00 00 00 00 00 04 01 00
+T D6 02 9E 07 29 F0 82 30 E0 E0 9E 07 19 F0 03 C0
+R 00 00 00 00
+T E4 02 AA 98 01 C0 AC 98 63 35 B9 F4 14 2F 11 50
+R 00 00 00 00
+T F2 02 01 E0 0E 94 00 00 20 90 08 00 20 2A 20 92
+R 00 00 00 00 12 06 02 00 00 0A 01 00
+T 00 03 08 00 55 27 41 30 E0 E0 5E 07 29 F0 42 30
+R 00 00 00 00 00 02 01 00
+T 0E 03 E0 E0 5E 07 19 F0 03 C0 AA 9A 01 C0 AC 9A
+R 00 00 00 00
+T 1C 03 0C 94 00 00
+R 00 00 00 00 12 04 04 00
+T 20 03 0E 94 00 00 42 2F 60 2F 64 35 59 F5 14 2F
+R 00 00 00 00 12 04 00 00
+T 2E 03 11 50 01 E0 0E 94 00 00 20 90 04 00 20 2A
+R 00 00 00 00 12 08 02 00 00 0C 01 00
+T 3C 03 20 92 04 00 A4 2E BB 24 C5 01 81 30 E0 E0
+R 00 00 00 00 00 04 01 00
+T 4A 03 9E 07 69 F0 82 30 E0 E0 9E 07 59 F0 83 30
+R 00 00 00 00
+T 58 03 E0 E0 9E 07 69 F0 84 30 E0 E0 9E 07 71 F0
+R 00 00 00 00
+T 66 03 0D C0 AE 98 0B C0 80 91 62 00 8E 7F 80 93
+R 00 00 00 00
+T 74 03 62 00 05 C0 80 91 62 00 8B 7F 80 93 62 00
+R 00 00 00 00
+T 82 03 63 35 49 F5 14 2F 11 50 01 E0 0E 94 00 00
+R 00 00 00 00 12 0E 02 00
+T 90 03 20 90 09 00 20 2A 20 92 09 00 55 27 41 30
+R 00 00 00 00 00 04 01 00 00 0A 01 00
+T 9E 03 E0 E0 5E 07 69 F0 42 30 E0 E0 5E 07 59 F0
+R 00 00 00 00
+T AC 03 43 30 E0 E0 5E 07 69 F0 44 30 E0 E0 5E 07
+R 00 00 00 00
+T BA 03 71 F0 0D C0 AE 9A 0B C0 80 91 62 00 81 60
+R 00 00 00 00
+T C8 03 80 93 62 00 05 C0 80 91 62 00 84 60 80 93
+R 00 00 00 00
+T D6 03 62 00 0C 94 00 00
+R 00 00 00 00 12 06 04 00

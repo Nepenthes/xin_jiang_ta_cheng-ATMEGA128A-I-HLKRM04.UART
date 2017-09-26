@@ -1,0 +1,26 @@
+#ifndef	_IMFO_DATS_H__
+#define _IMFO_DATS_H__
+
+#define device_ID	  0x01
+
+#include "type.h"
+
+typedef struct{
+
+	uchar dianfengshan;
+	uchar weibolu;
+	uchar dianfanbao;
+	uchar xiyiji;
+	uchar xiaodugui;
+}infoMal;
+
+typedef struct{
+
+	uchar userID[9];
+	uchar password[9];
+}infoUser;
+
+infoMal infoMal_teacher = {0,0,0,0,0};
+infoMal infoMal_student = {0,0,0,0,0};
+
+#endif

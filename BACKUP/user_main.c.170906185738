@@ -1,0 +1,95 @@
+#include "usart.h"
+#include "IO_control.h"
+
+extern uchar WIFI_BUF_QUE[BUFFER0_QLENTH][UART0_RX_BUFFER_SIZE];	
+extern uchar ITFR_BUF_QUE[BUFFER1_QLENTH][UART1_RX_BUFFER_SIZE];	
+
+uchar userID[8],password[8];
+uchar userID_temp[8],password_temp[8];
+
+void EEPROM_write(uchar addr,uchar data){
+
+	while(EECR & BIT(EEWE));
+	EEAR=addr;
+	EEDR=data;
+	EECR|=BIT(EEMWE);
+	EECR|=BIT(EEWE);
+}
+
+uchar EEPROM_read(uchar addr){
+
+ 	while(EECR & BIT(EEWE));
+	EEAR=addr;
+	EECR|=BIT(EERE);
+	return EEDR;
+}
+
+void userID_read(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		Dats[loop] = EEPROM_read(loop+0x10);
+}
+
+void userID_write(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		EEPROM_write(loop+0x10,Dats[loop]);
+}
+
+
+void password_read(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		Dats[loop] = EEPROM_read(loop+0x20);
+}
+
+void password_write(uchar Dats[8]){
+	 
+	uchar loop;
+	
+	for(loop = 0;loop < 8;loop ++)
+		EEPROM_write(loop+0x20,Dats[loop]);
+}
+
+void bspInit(void)
+{
+ 	usart_init();
+	
+	userID_read(userID);
+	password_read(password);
+}
+
+void thread_test(void){
+
+	 while(1){
+	 
+	 	 if(!strcmp(userID_temp,userID) && !strcmp(password_temp,password))WIFI_PUTS("page device_select");
+		 if(WIFI_BUF[0] == 0x5a){
+		 
+		 	 if(WIFI_BUF[1] == 0x01){
+			 
+			 	 switch(WIFI_BUF[2]){
+				  
+				  	 case 0x01:strcpy(userID,&(WIFI_BUF[3]));userID_write(userID);WIFI_PUTS("ssfasfa");break;
+					 case 0x02:strcpy(password,&(WIFI_BUF[3]));userID_write(password);WIFI_PUTS("ssfasfa");break;
+				 }
+			 }
+		 }
+	 }
+}
+
+void main(void){
+
+	//usart_test();
+	
+	bspInit();
+	WIFI_PUTS("ssfasfa");
+	
+	thread_test();
+}

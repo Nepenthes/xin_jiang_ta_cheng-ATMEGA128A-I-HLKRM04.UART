@@ -1,0 +1,19 @@
+#ifndef	_IMFO_DATS_H__
+#define _IMFO_DATS_H__
+
+typedef struct{
+
+	uchar dianfengshan;
+	uchar weibolu;
+	uchar dianfanbao;
+	uchar xiyiji;
+	uchar xiaodugui;
+}infoMal;
+
+typedef struct{
+
+	uchar userID[9] = "00000000";
+	uchar password[9] = "00000000";
+}infoUser;
+
+#endif
