@@ -16,7 +16,7 @@ const uchar *ITFR_CMD[4+2+3+3+2] = {
 	"res_weibolu.wbl_res2.txt=\"0\"",
 	
 	"res_xiaodugui.xdg_res1.txt=\"0\"",			//10
-	"res_xiaodugui.xdg_res2.txt=\"0\""
+	"res_xiaodugui.xdg_res2.txt=\"0\"",
 	
 	"res_xiyiji.xyj_res1.txt=\"0\"",			//12
 	"res_xiyiji.xyj_res2.txt=\"0\"",
@@ -27,13 +27,16 @@ const uchar *WIFI_CMD[17] = {
 
 	"at+netmode=2",
 	"at+dhcpd=0",
-	"at+wifi_conf=GTA2017,wpawpa2_aes,gta114605",
+	"at+wifi_conf="WIFI_INFORMATION,
 	"at+dhcpc=0",
-	"at+net_ip="device_IP",255.255.255.0,10.2.8.254",
-	"at+net_dns=202.96.128.86,202.96.134.33",
+//	"at+net_ip="device_IP",255.255.255.0,10.2.8.254",
+	"at+net_ip="device_IP",255.255.255.0,192.168.0.1",
+//	"at+net_dns=202.96.128.86,202.96.134.33",
+	"at+net_dns=192.168.0.1,0.0.0.0",
 	"at+remotepro=tcp",
 	"at+mode=client",
-	"at+remoteip=10.2.8.139",
+//	"at+remoteip=10.2.8.139",
+	"at+remoteip=192.168.0.103",
 	"at+remoteport=8088",
 	"at+CLport=1234",
 	"at+timeout=0",
@@ -171,9 +174,9 @@ void bspInit(void)		   				   //初始化
 {	
  	usart_init();						   //串口初始化
 	
-	IOReinstate();						   //端口复位及信息清空
-	
 	ITFR_PUTS("page connecting");		   //首页
+	
+	IOReinstate();						   //端口复位及信息清空
 	
 	wifiConnecting();
 	
@@ -307,6 +310,9 @@ void thread_main(void){
 					 	  			 }
 									 WIFI_BUF[1] = device_ID; 					//修改ID，原包返回响应请求
 				 					 WIFI_PUTS(WIFI_BUF);
+									 
+									 heartBeat_B = 0;	 						//心跳
+									 
 									 break;
 									 
 					 case 0x30:		 IOReinstate(); 	 						//设备复位
@@ -447,13 +453,13 @@ void thread_main(void){
 		}
 		
 	  /*********************************************PROCESSING_HEARTBEAT*******************************************/
-	  	if(heartBeat_A > 300000){
+	  	if(heartBeat_A > 300000){					//周期发送心跳包
 		
 			heartBeat_A = 0;	   
 			WIFI_PUTS((char*)cntConfirm);
 		}else heartBeat_A ++;
 		
-		if(heartBeat_B > 1000000){
+		if(heartBeat_B > 1000000){		 			//周期接收心跳回复   发三次有一次收到就行
 			
 			heartBeat_B = 0;
 			wifiReconnect();

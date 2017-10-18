@@ -13,7 +13,7 @@ S _memset Ref0000
 S _strcmp Ref0000
 A text size 59A flags 0
 dbfile usart.c
-dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\usart.c
+dbfile E:\My_GTAProject\塔城设故板\Software\usart.c
 dbfunc e delay 0 fV
 dbsym r i 14 i
 dbsym r j 16 i
@@ -279,7 +279,7 @@ S _usart_init Def0538
 S _usart_test Def053E
 A data size C flags 20
 dbfile usart.c
-dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\usart.c
+dbfile E:\My_GTAProject\塔城设故板\Software\usart.c
 dbsym e WIFICmd 0 A[2:1]pc
 dbsym e ITFRCmd 2 A[2:1]pc
 S _WIFICmd Def0000
@@ -287,7 +287,7 @@ S _ITFRCmd Def0002
 A idata size C flags 0
 A vector size 7C flags C
 A bss size 16A flags 20
-dbfile C:\Users\Administrator\Desktop\塔城设故板\Software\usart.c
+dbfile E:\My_GTAProject\塔城设故板\Software\usart.c
 dbsym e UART1_RxBuff_Queue 0 A[150:5:30]c
 dbsym e UART0_RxBuff_Queue 96 A[150:5:30]c
 dbsym e UART1_RxBuff 12C A[30:30]c

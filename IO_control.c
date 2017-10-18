@@ -11,29 +11,54 @@ void IOInit(void){
 	PORTA |= 0x55; 	PORTB |= 0x55;	PORTC |= 0x55;	PORTF |= 0x05;
 }
 
+void delayTest(void){
+
+	 uint a = 65535;
+	 while(--a){
+	 	asm("nop");asm("nop");asm("nop");
+		asm("nop");asm("nop");asm("nop");	
+		asm("nop");asm("nop");asm("nop");	
+	 }
+}
+
 void IO_test(void){
 
-	uint a = 65535;
+	const uint count  = 5;
+	uint a = count;
+	uchar	 loop;
+	
+	DDRA = DDRB = DDRC = DDRF = 0xff;
 
 	while(1){
  
- 	 	DDRA  = 0x01;
-	 	PORTA = 0x01;
+ 		PORTA = 0x01;
+ 		for(loop = 0;loop < 5;loop++){
 		
-		DDRF  = 0x00;
-	 	PORTF = 0x00;
-
-		while(--a)asm("nop");
-		a = 65535;
-
-	 	DDRA  = 0x00;
-	 	PORTA = 0x00;
+			PORTA = PORTA << 2;
+			while(--a)delayTest();
+			a = count;
+		}
+ 		PORTB = 0x01;
+ 		for(loop = 0;loop < 5;loop++){
 		
-		DDRF  = 0x04;
-	 	PORTF = 0x04;
-	
-		while(--a)asm("nop");
-		a = 65535;
+			PORTB = PORTB << 2;
+			while(--a)delayTest();
+			a = count;
+		}	
+ 		PORTC = 0x01;
+ 		for(loop = 0;loop < 5;loop++){
+		
+			PORTC = PORTC << 2;
+			while(--a)delayTest();
+			a = count;
+		}	
+ 		PORTF = 0x01;
+ 		for(loop = 0;loop < 5;loop++){
+		
+			PORTF = PORTF << 2;
+			while(--a)delayTest();
+			a = count;
+		}	
  	}
 }
 
@@ -196,7 +221,6 @@ void xiyiji_IO(uchar obj,uchar a){			   //12-14ºÅÏ´ÒÂ»ú
 			case  1:	   PORTC &= (~0x40);  break;
 			case  2:   	   PORTF &= (~0x01);  break;
 			case  3:   	   PORTF &= (~0x04);  break;
-			case  4:   	   break;
 			default:   	   break;
 		}
 	} 	
@@ -209,7 +233,6 @@ void xiyiji_IO(uchar obj,uchar a){			   //12-14ºÅÏ´ÒÂ»ú
 			case  1:	   PORTC |= (0x40);  break;
 			case  2:   	   PORTF |= (0x01);  break;
 			case  3:   	   PORTF |= (0x04);  break;
-			case  4:   	   break;
 			default:   	   break;
 		}
 	}	
