@@ -1,0 +1,47 @@
+#ifndef	_IMFO_DATS_H__
+#define _IMFO_DATS_H__
+
+#define device_ID	  0x01
+
+#if(	device_ID == 0x01 )
+   #define device_IP	  "10.2.8.212"
+#else if(device_ID == 0x02 )
+   #define device_IP	  "10.2.8.213"			  
+#else if(device_ID == 0x03 )
+   #define device_IP	  "10.2.8.214"
+#else if(device_ID == 0x04 )
+   #define device_IP	  "10.2.8.215"
+#else if(device_ID == 0x05 )
+   #define device_IP	  "10.2.8.216"
+#endif
+
+//"10.2.8.212"
+//"10.2.8.213"
+//"10.2.8.214"
+//"10.2.8.215"
+//"10.2.8.216"
+
+#include "type.h"
+
+typedef struct{
+
+	uchar dianfengshan;
+	uchar dianfanbao;
+	uchar weibolu;
+	uchar xiaodugui;
+	uchar xiyiji;
+}infoMal;
+
+typedef struct{ 
+
+	uchar userID[9];
+	uchar password[9];
+}infoUser;
+
+typedef struct{
+
+	uchar TRD_VALI:4;
+	uchar TRD_PARE:4;
+}FLG_TRD;
+
+#endif
