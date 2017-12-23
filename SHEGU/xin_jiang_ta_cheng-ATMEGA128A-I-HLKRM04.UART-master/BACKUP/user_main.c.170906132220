@@ -1,9 +1,0 @@
-#include "IO_control.h"
-
-#include "usart.h"
-
-
-void main(void){
-
-	usart_test();
-}

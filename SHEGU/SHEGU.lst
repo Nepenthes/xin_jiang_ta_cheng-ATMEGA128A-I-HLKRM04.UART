@@ -1,0 +1,3586 @@
+Interrupt Vectors
+    00000 940C 02B5 JMP	__start|__text_start
+    00024 940C 057C JMP	_uart0_rx_isr
+    0003C 940C 0606 JMP	_uart1_rx_isr
+
+Program Code (text area)
+__start|__text_start:
+    002B5 EFCF      LDI	R28,0xFF
+    002B6 E1D0      LDI	R29,0x10
+    002B7 BFCD      OUT	0x3D,R28
+    002B8 BFDE      OUT	0x3E,R29
+    002B9 51CE      SUBI	R28,0x1E
+    002BA 40D0      SBCI	R29,0
+    002BB EA0A      LDI	R16,0xAA
+    002BC 8308      ST	Y,R16
+    002BD 2400      CLR	R0
+    002BE ECE2      LDI	R30,0xC2
+    002BF E0F5      LDI	R31,5
+    002C0 E017      LDI	R17,7
+    002C1 32EC      CPI	R30,0x2C
+    002C2 07F1      CPC	R31,R17
+    002C3 F011      BEQ	0x02C6
+    002C4 9201      ST	Z+,R0
+    002C5 CFFB      RJMP	0x02C1
+    002C6 8300      ST	Z,R16
+    002C7 EAE8      LDI	R30,0xA8
+    002C8 E0F0      LDI	R31,0
+    002C9 E0A0      LDI	R26,0
+    002CA E0B1      LDI	R27,1
+    002CB E015      LDI	R17,5
+    002CC E000      LDI	R16,0
+    002CD BF0B      OUT	0x3B,R16
+    002CE 36EA      CPI	R30,0x6A
+    002CF 07F1      CPC	R31,R17
+    002D0 F021      BEQ	0x02D5
+    002D1 95C8      LPM
+    002D2 9631      ADIW	R30,1
+    002D3 920D      ST	X+,R0
+    002D4 CFF9      RJMP	0x02CE
+    002D5 940E 0CC4 CALL	_main
+_exit:
+    002D7 CFFF      RJMP	_exit
+FILE: E:\My_GTAProject\塔城设故板\Software\SHEGU\IO_control.c
+(0001) #include "IO_control.h"
+(0002) 
+(0003) infoMal infoMal_teacher = {0,0,0,0,0};
+(0004) infoMal infoMal_student = {0,0,0,0,0};
+(0005) 
+(0006) uchar resIOJudge[9] = {0};
+(0007) 
+(0008) void IOInit(void){
+(0009) 
+(0010) 	DDRA  |= 0x55; 	DDRB  |= 0x55;	DDRC  |= 0x55;	DDRF  |= 0x05;
+_IOInit:
+    002D8 B38A      IN	R24,0x1A
+    002D9 6585      ORI	R24,0x55
+    002DA BB8A      OUT	0x1A,R24
+    002DB B387      IN	R24,0x17
+    002DC 6585      ORI	R24,0x55
+    002DD BB87      OUT	0x17,R24
+    002DE B384      IN	R24,0x14
+    002DF 6585      ORI	R24,0x55
+    002E0 BB84      OUT	0x14,R24
+    002E1 9180 0061 LDS	R24,0x61
+    002E3 6085      ORI	R24,5
+    002E4 9380 0061 STS	0x61,R24
+(0011) 	PORTA |= 0x55; 	PORTB |= 0x55;	PORTC |= 0x55;	PORTF |= 0x05;
+    002E6 B38B      IN	R24,0x1B
+    002E7 6585      ORI	R24,0x55
+    002E8 BB8B      OUT	0x1B,R24
+    002E9 B388      IN	R24,0x18
+    002EA 6585      ORI	R24,0x55
+    002EB BB88      OUT	0x18,R24
+    002EC B385      IN	R24,0x15
+    002ED 6585      ORI	R24,0x55
+    002EE BB85      OUT	0x15,R24
+    002EF 9180 0062 LDS	R24,0x62
+    002F1 6085      ORI	R24,5
+    002F2 9380 0062 STS	0x62,R24
+    002F4 9508      RET
+(0012) }
+(0013) 
+(0014) void delayTest(void){
+(0015) 
+(0016) 	 uint a = 65535;
+_delayTest:
+  a                    --> R16
+    002F5 EF0F      LDI	R16,0xFF
+    002F6 EF1F      LDI	R17,0xFF
+    002F7 C009      RJMP	0x0301
+(0017) 	 while(--a){
+(0018) 	 	asm("nop");asm("nop");asm("nop");
+    002F8 0000      NOP
+    002F9 0000      NOP
+    002FA 0000      NOP
+(0019) 		asm("nop");asm("nop");asm("nop");	
+    002FB 0000      NOP
+    002FC 0000      NOP
+    002FD 0000      NOP
+(0020) 		asm("nop");asm("nop");asm("nop");	
+    002FE 0000      NOP
+    002FF 0000      NOP
+    00300 0000      NOP
+    00301 01C8      MOVW	R24,R16
+    00302 9701      SBIW	R24,1
+    00303 018C      MOVW	R16,R24
+    00304 3000      CPI	R16,0
+    00305 0701      CPC	R16,R17
+    00306 F789      BNE	0x02F8
+    00307 9508      RET
+_IO_test:
+  count                --> R22
+  loop                 --> R10
+  a                    --> R20
+    00308 940E 0D3B CALL	push_xgsetF03C
+(0021) 	 }
+(0022) }
+(0023) 
+(0024) void IO_test(void){
+(0025) 
+(0026) 	const uint count  = 5;
+    0030A E065      LDI	R22,5
+    0030B E070      LDI	R23,0
+(0027) 	uint a = count;
+    0030C 01AB      MOVW	R20,R22
+(0028) 	uchar	 loop;
+(0029) 	
+(0030) 	DDRA = DDRB = DDRC = DDRF = 0xff;
+    0030D EF8F      LDI	R24,0xFF
+    0030E 9380 0061 STS	0x61,R24
+    00310 BB84      OUT	0x14,R24
+    00311 BB87      OUT	0x17,R24
+    00312 BB8A      OUT	0x1A,R24
+    00313 C059      RJMP	0x036D
+(0031) 
+(0032) 	while(1){
+(0033)  
+(0034)  		PORTA = 0x01;
+    00314 E081      LDI	R24,1
+    00315 BB8B      OUT	0x1B,R24
+(0035)  		for(loop = 0;loop < 5;loop++){
+    00316 24AA      CLR	R10
+    00317 C00E      RJMP	0x0326
+(0036) 		
+(0037) 			PORTA = PORTA << 2;
+    00318 B22B      IN	R2,0x1B
+    00319 0C22      LSL	R2
+    0031A 0C22      LSL	R2
+    0031B BA2B      OUT	0x1B,R2
+    0031C C001      RJMP	0x031E
+(0038) 			while(--a)delayTest();
+    0031D DFD7      RCALL	_delayTest
+    0031E 01CA      MOVW	R24,R20
+    0031F 9701      SBIW	R24,1
+    00320 01AC      MOVW	R20,R24
+    00321 3080      CPI	R24,0
+    00322 0789      CPC	R24,R25
+    00323 F7C9      BNE	0x031D
+(0039) 			a = count;
+    00324 01AB      MOVW	R20,R22
+    00325 94A3      INC	R10
+    00326 2D8A      MOV	R24,R10
+    00327 3085      CPI	R24,5
+    00328 F378      BCS	0x0318
+(0040) 		}
+(0041)  		PORTB = 0x01;
+    00329 E081      LDI	R24,1
+    0032A BB88      OUT	0x18,R24
+(0042)  		for(loop = 0;loop < 5;loop++){
+    0032B 24AA      CLR	R10
+    0032C C00E      RJMP	0x033B
+(0043) 		
+(0044) 			PORTB = PORTB << 2;
+    0032D B228      IN	R2,0x18
+    0032E 0C22      LSL	R2
+    0032F 0C22      LSL	R2
+    00330 BA28      OUT	0x18,R2
+    00331 C001      RJMP	0x0333
+(0045) 			while(--a)delayTest();
+    00332 DFC2      RCALL	_delayTest
+    00333 01CA      MOVW	R24,R20
+    00334 9701      SBIW	R24,1
+    00335 01AC      MOVW	R20,R24
+    00336 3080      CPI	R24,0
+    00337 0789      CPC	R24,R25
+    00338 F7C9      BNE	0x0332
+(0046) 			a = count;
+    00339 01AB      MOVW	R20,R22
+    0033A 94A3      INC	R10
+    0033B 2D8A      MOV	R24,R10
+    0033C 3085      CPI	R24,5
+    0033D F378      BCS	0x032D
+(0047) 		}	
+(0048)  		PORTC = 0x01;
+    0033E E081      LDI	R24,1
+    0033F BB85      OUT	0x15,R24
+(0049)  		for(loop = 0;loop < 5;loop++){
+    00340 24AA      CLR	R10
+    00341 C00F      RJMP	0x0351
+(0050) 		
+(0051) 			PORTC = PORTC << 2;
+    00342 B225      IN	R2,0x15
+    00343 0C22      LSL	R2
+    00344 0C22      LSL	R2
+    00345 BA25      OUT	0x15,R2
+    00346 C001      RJMP	0x0348
+(0052) 			while(--a)delayTest();
+    00347 DFAD      RCALL	_delayTest
+    00348 01CA      MOVW	R24,R20
+    00349 9701      SBIW	R24,1
+    0034A 016C      MOVW	R12,R24
+    0034B 01AC      MOVW	R20,R24
+    0034C 3080      CPI	R24,0
+    0034D 0789      CPC	R24,R25
+    0034E F7C1      BNE	0x0347
+(0053) 			a = count;
+    0034F 01AB      MOVW	R20,R22
+    00350 94A3      INC	R10
+    00351 2D8A      MOV	R24,R10
+    00352 3085      CPI	R24,5
+    00353 F370      BCS	0x0342
+(0054) 		}	
+(0055)  		PORTF = 0x01;
+    00354 E081      LDI	R24,1
+    00355 9380 0062 STS	0x62,R24
+(0056)  		for(loop = 0;loop < 5;loop++){
+    00357 24AA      CLR	R10
+    00358 C011      RJMP	0x036A
+(0057) 		
+(0058) 			PORTF = PORTF << 2;
+    00359 9020 0062 LDS	R2,0x62
+    0035B 0C22      LSL	R2
+    0035C 0C22      LSL	R2
+    0035D 9220 0062 STS	0x62,R2
+    0035F C001      RJMP	0x0361
+(0059) 			while(--a)delayTest();
+    00360 DF94      RCALL	_delayTest
+    00361 01CA      MOVW	R24,R20
+    00362 9701      SBIW	R24,1
+    00363 016C      MOVW	R12,R24
+    00364 01AC      MOVW	R20,R24
+    00365 3080      CPI	R24,0
+    00366 0789      CPC	R24,R25
+    00367 F7C1      BNE	0x0360
+(0060) 			a = count;
+    00368 01AB      MOVW	R20,R22
+    00369 94A3      INC	R10
+    0036A 2D8A      MOV	R24,R10
+    0036B 3085      CPI	R24,5
+    0036C F360      BCS	0x0359
+    0036D CFA6      RJMP	0x0314
+    0036E 940C 0D44 JMP	pop_xgsetF03C
+(0061) 		}	
+(0062)  	}
+(0063) }
+(0064) 
+(0065) void IOReinstate(void){
+(0066) 
+(0067) 	infoMal_teacher.dianfengshan =\
+_IOReinstate:
+    00370 2422      CLR	R2
+    00371 9220 0103 STS	infoMal_teacher+3,R2
+    00373 9220 0104 STS	infoMal_teacher+4,R2
+    00375 9220 0101 STS	infoMal_teacher+1,R2
+    00377 9220 0102 STS	infoMal_teacher+2,R2
+    00379 9220 0100 STS	infoMal_teacher,R2
+(0068) 	infoMal_teacher.weibolu =\
+(0069) 	infoMal_teacher.dianfanbao =\
+(0070) 	infoMal_teacher.xiyiji =\
+(0071) 	infoMal_teacher.xiaodugui \
+(0072) 	= 0;
+(0073) 	
+(0074) 	infoMal_student.dianfengshan =\
+    0037B 9220 0108 STS	infoMal_student+3,R2
+    0037D 9220 0109 STS	infoMal_student+4,R2
+    0037F 9220 0106 STS	infoMal_student+1,R2
+    00381 9220 0107 STS	infoMal_student+2,R2
+    00383 9220 0105 STS	infoMal_student,R2
+(0075) 	infoMal_student.weibolu =\
+(0076) 	infoMal_student.dianfanbao =\
+(0077) 	infoMal_student.xiyiji =\
+(0078) 	infoMal_student.xiaodugui \
+(0079) 	= 0;
+(0080) 	
+(0081) 	IOInit();
+    00385 CF52      RJMP	_IOInit
+_OPJudje:
+  pt                   --> R22
+  temp                 --> R10
+  loop                 --> R20
+  Base                 --> R12
+  S                    --> R10
+  T                    --> R14
+    00386 940E 0D0E CALL	push_xgsetF0FC
+    00388 2EA2      MOV	R10,R18
+    00389 2EE0      MOV	R14,R16
+    0038A 84CA      LDD	R12,Y+10
+(0082) }
+(0083) 
+(0084) void OPJudje(uchar T,uchar S,uchar Base){ 		  //直接异或比较输出结果
+(0085) 
+(0086) 	uchar temp,loop,pt;
+(0087) 	pt = 0;
+    0038B 2766      CLR	R22
+(0088) 	
+(0089) 	temp = T ^ S;
+    0038C 2C2E      MOV	R2,R14
+    0038D 242A      EOR	R2,R10
+    0038E 2CA2      MOV	R10,R2
+(0090) 	for(loop = 0;loop < 8;loop ++){
+    0038F 2744      CLR	R20
+    00390 C015      RJMP	0x03A6
+(0091) 			 
+(0092) 		if((temp >> loop) & 0x01)resIOJudge[pt++] = Base + loop;
+    00391 2D0A      MOV	R16,R10
+    00392 2F14      MOV	R17,R20
+    00393 940E 0D53 CALL	lsr8
+    00395 2F80      MOV	R24,R16
+    00396 7081      ANDI	R24,1
+    00397 F069      BEQ	0x03A5
+    00398 2E26      MOV	R2,R22
+    00399 2433      CLR	R3
+    0039A 0121      MOVW	R4,R2
+    0039B 5F6F      SUBI	R22,0xFF
+    0039C 2C2C      MOV	R2,R12
+    0039D 0E24      ADD	R2,R20
+    0039E E08A      LDI	R24,0xA
+    0039F E091      LDI	R25,1
+    003A0 2DE4      MOV	R30,R4
+    003A1 27FF      CLR	R31
+    003A2 0FE8      ADD	R30,R24
+    003A3 1FF9      ADC	R31,R25
+    003A4 8220      ST	Z,R2
+    003A5 9543      INC	R20
+    003A6 3048      CPI	R20,0x8
+    003A7 F348      BCS	0x0391
+    003A8 940C 0D03 JMP	pop_xgsetF0FC
+_dianfengshan_IO:
+  a                    --> R20
+  obj                  --> R22
+    003AA 940E 0D2D CALL	push_xgsetF00C
+    003AC 2F42      MOV	R20,R18
+    003AD 2F60      MOV	R22,R16
+(0093) 	}
+(0094) 	
+(0095) 	//resIOJudge[6] = temp;						  		 //测试比较结果输出
+(0096) 	//resIOJudge[7] = infoMal_teacher.xiaodugui;
+(0097) 	//resIOJudge[8] = infoMal_student.xiaodugui;
+(0098) }
+(0099) 
+(0100) //单字节从右到左分别表示设故编号
+(0101) //1-4号电风扇、5-6号电饭煲、7-9号微波炉、10-12号消毒柜、13-14号洗衣机
+(0102) void dianfengshan_IO(uchar obj,uchar a){	   //1-4号电风扇
+(0103) 
+(0104) 	if(obj == 'T'){		   			 		   //教师端设故信息更新
+    003AE 3564      CPI	R22,0x54
+    003AF F529      BNE	0x03D5
+(0105) 	
+(0106) 		infoMal_teacher.dianfengshan |= (1 << (a-1));
+    003B0 2F14      MOV	R17,R20
+    003B1 5011      SUBI	R17,1
+    003B2 E001      LDI	R16,1
+    003B3 940E 0D4D CALL	lsl8
+    003B5 9020 0100 LDS	R2,infoMal_teacher
+    003B7 2A20      OR	R2,R16
+    003B8 9220 0100 STS	infoMal_teacher,R2
+(0107) 		//IO Opreation here
+(0108) 		switch(a){
+    003BA 2EA4      MOV	R10,R20
+    003BB 24BB      CLR	R11
+    003BC 01C5      MOVW	R24,R10
+    003BD 3081      CPI	R24,1
+    003BE E0E0      LDI	R30,0
+    003BF 079E      CPC	R25,R30
+    003C0 F069      BEQ	0x03CE
+    003C1 3082      CPI	R24,2
+    003C2 E0E0      LDI	R30,0
+    003C3 079E      CPC	R25,R30
+    003C4 F059      BEQ	0x03D0
+    003C5 3083      CPI	R24,3
+    003C6 E0E0      LDI	R30,0
+    003C7 079E      CPC	R25,R30
+    003C8 F049      BEQ	0x03D2
+    003C9 3084      CPI	R24,4
+    003CA E0E0      LDI	R30,0
+    003CB 079E      CPC	R25,R30
+    003CC F039      BEQ	0x03D4
+    003CD C007      RJMP	0x03D5
+(0109) 	
+(0110) 			case  1:	   PORTA &= (~0x01);  break;
+    003CE 98D8      CBI	0x1B,0
+    003CF C005      RJMP	0x03D5
+(0111) 			case  2:   	   PORTA &= (~0x04);  break;
+    003D0 98DA      CBI	0x1B,2
+    003D1 C003      RJMP	0x03D5
+(0112) 			case  3:   	   PORTA &= (~0x10);  break;
+    003D2 98DC      CBI	0x1B,4
+    003D3 C001      RJMP	0x03D5
+(0113) 			case  4:   	   PORTA &= (~0x40);  break;
+    003D4 98DE      CBI	0x1B,6
+(0114) 			default:   	   break;
+(0115) 		}
+(0116) 	} 
+(0117) 	if(obj == 'S'){		   		 			  //学生端设故信息更新
+    003D5 3563      CPI	R22,0x53
+    003D6 F519      BNE	0x03FA
+(0118) 	
+(0119) 		infoMal_student.dianfengshan |= (1 << (a-1));
+    003D7 2F14      MOV	R17,R20
+    003D8 5011      SUBI	R17,1
+    003D9 E001      LDI	R16,1
+    003DA 940E 0D4D CALL	lsl8
+    003DC 9020 0105 LDS	R2,infoMal_student
+    003DE 2A20      OR	R2,R16
+    003DF 9220 0105 STS	infoMal_student,R2
+(0120) 		//IO Opreation here
+(0121) 		switch(a){
+    003E1 2755      CLR	R21
+    003E2 3041      CPI	R20,1
+    003E3 E0E0      LDI	R30,0
+    003E4 075E      CPC	R21,R30
+    003E5 F069      BEQ	0x03F3
+    003E6 3042      CPI	R20,2
+    003E7 E0E0      LDI	R30,0
+    003E8 075E      CPC	R21,R30
+    003E9 F059      BEQ	0x03F5
+    003EA 3043      CPI	R20,3
+    003EB E0E0      LDI	R30,0
+    003EC 075E      CPC	R21,R30
+    003ED F049      BEQ	0x03F7
+    003EE 3044      CPI	R20,4
+    003EF E0E0      LDI	R30,0
+    003F0 075E      CPC	R21,R30
+    003F1 F039      BEQ	0x03F9
+    003F2 C007      RJMP	0x03FA
+(0122) 	
+(0123) 			case  1:	   PORTA |= (0x01);  break;
+    003F3 9AD8      SBI	0x1B,0
+    003F4 C005      RJMP	0x03FA
+(0124) 			case  2:   	   PORTA |= (0x04);  break;
+    003F5 9ADA      SBI	0x1B,2
+    003F6 C003      RJMP	0x03FA
+(0125) 			case  3:   	   PORTA |= (0x10);  break;
+    003F7 9ADC      SBI	0x1B,4
+    003F8 C001      RJMP	0x03FA
+(0126) 			case  4:   	   PORTA |= (0x40);  break;
+    003F9 9ADE      SBI	0x1B,6
+(0127) 			default:   	   break;
+(0128) 		}	
+(0129) 	}
+    003FA 940C 0D34 JMP	pop_xgsetF00C
+_dianfanbao_IO:
+  a                    --> R20
+  obj                  --> R22
+    003FC 940E 0D2D CALL	push_xgsetF00C
+    003FE 2F42      MOV	R20,R18
+    003FF 2F60      MOV	R22,R16
+(0130) }
+(0131) 
+(0132) void dianfanbao_IO(uchar obj,uchar a){	  	   //5-7号电饭煲
+(0133) 
+(0134) 	if(obj == 'T'){		 		   			   //教师端设故信息更新
+    00400 3564      CPI	R22,0x54
+    00401 F519      BNE	0x0425
+(0135) 	
+(0136) 		infoMal_teacher.dianfanbao |= (1 << (a-1));
+    00402 2F14      MOV	R17,R20
+    00403 5011      SUBI	R17,1
+    00404 E001      LDI	R16,1
+    00405 940E 0D4D CALL	lsl8
+    00407 9020 0101 LDS	R2,infoMal_teacher+1
+    00409 2A20      OR	R2,R16
+    0040A 9220 0101 STS	infoMal_teacher+1,R2
+(0137) 		//IO Opreation here
+(0138) 		switch(a){
+    0040C 2EA4      MOV	R10,R20
+    0040D 24BB      CLR	R11
+    0040E 01C5      MOVW	R24,R10
+    0040F 3081      CPI	R24,1
+    00410 E0E0      LDI	R30,0
+    00411 079E      CPC	R25,R30
+    00412 F069      BEQ	0x0420
+    00413 3082      CPI	R24,2
+    00414 E0E0      LDI	R30,0
+    00415 079E      CPC	R25,R30
+    00416 F059      BEQ	0x0422
+    00417 3083      CPI	R24,3
+    00418 E0E0      LDI	R30,0
+    00419 079E      CPC	R25,R30
+    0041A F049      BEQ	0x0424
+    0041B 3084      CPI	R24,4
+    0041C E0E0      LDI	R30,0
+    0041D 079E      CPC	R25,R30
+    0041E F031      BEQ	0x0425
+    0041F C005      RJMP	0x0425
+(0139) 	
+(0140) 			case  1:	   PORTB &= (~0x01);  break;
+    00420 98C0      CBI	0x18,0
+    00421 C003      RJMP	0x0425
+(0141) 			case  2:   	   PORTB &= (~0x04);  break;
+    00422 98C2      CBI	0x18,2
+    00423 C001      RJMP	0x0425
+(0142) 			case  3:   	   PORTB &= (~0x10);  break;
+    00424 98C4      CBI	0x18,4
+(0143) 			case  4:   	   break;
+(0144) 			default:   	   break;
+(0145) 		}
+(0146) 	} 	
+(0147) 	if(obj == 'S'){				   	  	 	   //学生端设故信息更新
+    00425 3563      CPI	R22,0x53
+    00426 F4E9      BNE	0x0444
+(0148) 	
+(0149) 		infoMal_student.dianfanbao |= (1 << (a-1));
+    00427 2F14      MOV	R17,R20
+    00428 5011      SUBI	R17,1
+    00429 E001      LDI	R16,1
+    0042A 940E 0D4D CALL	lsl8
+    0042C 9020 0106 LDS	R2,infoMal_student+1
+    0042E 2A20      OR	R2,R16
+    0042F 9220 0106 STS	infoMal_student+1,R2
+(0150) 		//IO Opreation here
+(0151) 		switch(a){
+    00431 2755      CLR	R21
+    00432 3041      CPI	R20,1
+    00433 E0E0      LDI	R30,0
+    00434 075E      CPC	R21,R30
+    00435 F049      BEQ	0x043F
+    00436 3042      CPI	R20,2
+    00437 E0E0      LDI	R30,0
+    00438 075E      CPC	R21,R30
+    00439 F039      BEQ	0x0441
+    0043A 3043      CPI	R20,3
+    0043B E0E0      LDI	R30,0
+    0043C 075E      CPC	R21,R30
+    0043D F029      BEQ	0x0443
+    0043E C005      RJMP	0x0444
+(0152) 	
+(0153) 			case  1:	   PORTB |= (0x01);  break;
+    0043F 9AC0      SBI	0x18,0
+    00440 C003      RJMP	0x0444
+(0154) 			case  2:   	   PORTB |= (0x04);  break;
+    00441 9AC2      SBI	0x18,2
+    00442 C001      RJMP	0x0444
+(0155) 			case  3:   	   PORTB |= (0x10);  break;
+    00443 9AC4      SBI	0x18,4
+(0156) 			default:   	   break;
+(0157) 		}
+(0158) 	}	
+    00444 940C 0D34 JMP	pop_xgsetF00C
+_weibolu_IO:
+  a                    --> R20
+  obj                  --> R22
+    00446 940E 0D2D CALL	push_xgsetF00C
+    00448 2F42      MOV	R20,R18
+    00449 2F60      MOV	R22,R16
+(0159) }
+(0160) 
+(0161) void weibolu_IO(uchar obj,uchar a){			   //8-9号微波炉
+(0162) 
+(0163) 	if(obj == 'T'){	  						   //教师端设故信息更新
+    0044A 3564      CPI	R22,0x54
+    0044B F4C9      BNE	0x0465
+(0164) 	
+(0165) 		infoMal_teacher.weibolu |= (1 << (a-1));
+    0044C 2F14      MOV	R17,R20
+    0044D 5011      SUBI	R17,1
+    0044E E001      LDI	R16,1
+    0044F 940E 0D4D CALL	lsl8
+    00451 9020 0102 LDS	R2,infoMal_teacher+2
+    00453 2A20      OR	R2,R16
+    00454 9220 0102 STS	infoMal_teacher+2,R2
+(0166) 		//IO Opreation here
+(0167) 		switch(a){
+    00456 2EA4      MOV	R10,R20
+    00457 24BB      CLR	R11
+    00458 01C5      MOVW	R24,R10
+    00459 3081      CPI	R24,1
+    0045A E0E0      LDI	R30,0
+    0045B 079E      CPC	R25,R30
+    0045C F029      BEQ	0x0462
+    0045D 3082      CPI	R24,2
+    0045E E0E0      LDI	R30,0
+    0045F 079E      CPC	R25,R30
+    00460 F019      BEQ	0x0464
+    00461 C003      RJMP	0x0465
+(0168) 	
+(0169) 			case  1:	   PORTB &= (~0x40);  break;
+    00462 98C6      CBI	0x18,6
+    00463 C001      RJMP	0x0465
+(0170) 			case  2:   	   PORTC &= (~0x01);  break;
+    00464 98A8      CBI	0x15,0
+(0171) 			default:   	   break;
+(0172) 		}
+(0173) 	} 	
+(0174) 	if(obj == 'S'){				   	  	 	   //学生端设故信息更新
+    00465 3563      CPI	R22,0x53
+    00466 F4B9      BNE	0x047E
+(0175) 	
+(0176) 		infoMal_student.weibolu |= (1 << (a-1));
+    00467 2F14      MOV	R17,R20
+    00468 5011      SUBI	R17,1
+    00469 E001      LDI	R16,1
+    0046A 940E 0D4D CALL	lsl8
+    0046C 9020 0107 LDS	R2,infoMal_student+2
+    0046E 2A20      OR	R2,R16
+    0046F 9220 0107 STS	infoMal_student+2,R2
+(0177) 		//IO Opreation here
+(0178) 		switch(a){
+    00471 2755      CLR	R21
+    00472 3041      CPI	R20,1
+    00473 E0E0      LDI	R30,0
+    00474 075E      CPC	R21,R30
+    00475 F029      BEQ	0x047B
+    00476 3042      CPI	R20,2
+    00477 E0E0      LDI	R30,0
+    00478 075E      CPC	R21,R30
+    00479 F019      BEQ	0x047D
+    0047A C003      RJMP	0x047E
+(0179) 	
+(0180) 			case  1:	   PORTB |= (0x40);  break;
+    0047B 9AC6      SBI	0x18,6
+    0047C C001      RJMP	0x047E
+(0181) 			case  2:   	   PORTC |= (0x01);  break;
+    0047D 9AA8      SBI	0x15,0
+(0182) 			default:   	   break;
+(0183) 		}
+(0184) 	}	
+    0047E 940C 0D34 JMP	pop_xgsetF00C
+_xiaodugui_IO:
+  a                    --> R20
+  obj                  --> R22
+    00480 940E 0D2D CALL	push_xgsetF00C
+    00482 2F42      MOV	R20,R18
+    00483 2F60      MOV	R22,R16
+(0185) }
+(0186) 
+(0187) void xiaodugui_IO(uchar obj,uchar a){	 	   //10-11号消毒柜
+(0188) 
+(0189) 	if(obj == 'T'){				  			   //教师端设故信息更新
+    00484 3564      CPI	R22,0x54
+    00485 F4C9      BNE	0x049F
+(0190) 	
+(0191) 		infoMal_teacher.xiaodugui |= (1 << (a-1));
+    00486 2F14      MOV	R17,R20
+    00487 5011      SUBI	R17,1
+    00488 E001      LDI	R16,1
+    00489 940E 0D4D CALL	lsl8
+    0048B 9020 0103 LDS	R2,infoMal_teacher+3
+    0048D 2A20      OR	R2,R16
+    0048E 9220 0103 STS	infoMal_teacher+3,R2
+(0192) 		//IO Opreation here
+(0193) 		switch(a){
+    00490 2EA4      MOV	R10,R20
+    00491 24BB      CLR	R11
+    00492 01C5      MOVW	R24,R10
+    00493 3081      CPI	R24,1
+    00494 E0E0      LDI	R30,0
+    00495 079E      CPC	R25,R30
+    00496 F029      BEQ	0x049C
+    00497 3082      CPI	R24,2
+    00498 E0E0      LDI	R30,0
+    00499 079E      CPC	R25,R30
+    0049A F019      BEQ	0x049E
+    0049B C003      RJMP	0x049F
+(0194) 	
+(0195) 			case  1:	   PORTC &= (~0x04);  break;
+    0049C 98AA      CBI	0x15,2
+    0049D C001      RJMP	0x049F
+(0196) 			case  2:   	   PORTC &= (~0x10);  break;
+    0049E 98AC      CBI	0x15,4
+(0197) 			default:   	   break;
+(0198) 		}
+(0199) 	} 
+(0200) 	if(obj == 'S'){				  	 	   	   //学生端设故信息更新
+    0049F 3563      CPI	R22,0x53
+    004A0 F4B9      BNE	0x04B8
+(0201) 	
+(0202) 		infoMal_student.xiaodugui |= (1 << (a-1));
+    004A1 2F14      MOV	R17,R20
+    004A2 5011      SUBI	R17,1
+    004A3 E001      LDI	R16,1
+    004A4 940E 0D4D CALL	lsl8
+    004A6 9020 0108 LDS	R2,infoMal_student+3
+    004A8 2A20      OR	R2,R16
+    004A9 9220 0108 STS	infoMal_student+3,R2
+(0203) 		//IO Opreation here
+(0204) 		switch(a){
+    004AB 2755      CLR	R21
+    004AC 3041      CPI	R20,1
+    004AD E0E0      LDI	R30,0
+    004AE 075E      CPC	R21,R30
+    004AF F029      BEQ	0x04B5
+    004B0 3042      CPI	R20,2
+    004B1 E0E0      LDI	R30,0
+    004B2 075E      CPC	R21,R30
+    004B3 F019      BEQ	0x04B7
+    004B4 C003      RJMP	0x04B8
+(0205) 	
+(0206) 			case  1:	   PORTC |= (0x04);  break;
+    004B5 9AAA      SBI	0x15,2
+    004B6 C001      RJMP	0x04B8
+(0207) 			case  2:   	   PORTC |= (0x10);  break;
+    004B7 9AAC      SBI	0x15,4
+(0208) 			default:   	   break;
+(0209) 		}
+(0210) 	}	
+    004B8 940C 0D34 JMP	pop_xgsetF00C
+_xiyiji_IO:
+  a                    --> R20
+  obj                  --> R22
+    004BA 940E 0D2D CALL	push_xgsetF00C
+    004BC 2F42      MOV	R20,R18
+    004BD 2F60      MOV	R22,R16
+(0211) }
+(0212) 
+(0213) void xiyiji_IO(uchar obj,uchar a){			   //12-14号洗衣机
+(0214) 
+(0215) 	if(obj == 'T'){	 		   				   //教师端设故信息更新
+    004BE 3564      CPI	R22,0x54
+    004BF F539      BNE	0x04E7
+(0216) 	
+(0217) 		infoMal_teacher.xiyiji |= (1 << (a-1));
+    004C0 2F14      MOV	R17,R20
+    004C1 5011      SUBI	R17,1
+    004C2 E001      LDI	R16,1
+    004C3 940E 0D4D CALL	lsl8
+    004C5 9020 0104 LDS	R2,infoMal_teacher+4
+    004C7 2A20      OR	R2,R16
+    004C8 9220 0104 STS	infoMal_teacher+4,R2
+(0218) 		//IO Opreation here
+(0219) 		switch(a){
+    004CA 2EA4      MOV	R10,R20
+    004CB 24BB      CLR	R11
+    004CC 01C5      MOVW	R24,R10
+    004CD 3081      CPI	R24,1
+    004CE E0E0      LDI	R30,0
+    004CF 079E      CPC	R25,R30
+    004D0 F049      BEQ	0x04DA
+    004D1 3082      CPI	R24,2
+    004D2 E0E0      LDI	R30,0
+    004D3 079E      CPC	R25,R30
+    004D4 F039      BEQ	0x04DC
+    004D5 3083      CPI	R24,3
+    004D6 E0E0      LDI	R30,0
+    004D7 079E      CPC	R25,R30
+    004D8 F049      BEQ	0x04E2
+    004D9 C00D      RJMP	0x04E7
+(0220) 	
+(0221) 			case  1:	   PORTC &= (~0x40);  break;
+    004DA 98AE      CBI	0x15,6
+    004DB C00B      RJMP	0x04E7
+(0222) 			case  2:   	   PORTF &= (~0x01);  break;
+    004DC 9180 0062 LDS	R24,0x62
+    004DE 7F8E      ANDI	R24,0xFE
+    004DF 9380 0062 STS	0x62,R24
+    004E1 C005      RJMP	0x04E7
+(0223) 			case  3:   	   PORTF &= (~0x04);  break;
+    004E2 9180 0062 LDS	R24,0x62
+    004E4 7F8B      ANDI	R24,0xFB
+    004E5 9380 0062 STS	0x62,R24
+(0224) 			default:   	   break;
+(0225) 		}
+(0226) 	} 	
+(0227) 	if(obj == 'S'){			   	  	 		   //学生端设故信息更新
+    004E7 3563      CPI	R22,0x53
+    004E8 F529      BNE	0x050E
+(0228) 	
+(0229) 		infoMal_student.xiyiji |= (1 << (a-1));
+    004E9 2F14      MOV	R17,R20
+    004EA 5011      SUBI	R17,1
+    004EB E001      LDI	R16,1
+    004EC 940E 0D4D CALL	lsl8
+    004EE 9020 0109 LDS	R2,infoMal_student+4
+    004F0 2A20      OR	R2,R16
+    004F1 9220 0109 STS	infoMal_student+4,R2
+(0230) 		//IO Opreation here
+(0231) 		switch(a){
+    004F3 2755      CLR	R21
+    004F4 3041      CPI	R20,1
+    004F5 E0E0      LDI	R30,0
+    004F6 075E      CPC	R21,R30
+    004F7 F049      BEQ	0x0501
+    004F8 3042      CPI	R20,2
+    004F9 E0E0      LDI	R30,0
+    004FA 075E      CPC	R21,R30
+    004FB F039      BEQ	0x0503
+    004FC 3043      CPI	R20,3
+    004FD E0E0      LDI	R30,0
+    004FE 075E      CPC	R21,R30
+    004FF F049      BEQ	0x0509
+    00500 C00D      RJMP	0x050E
+(0232) 	
+(0233) 			case  1:	   PORTC |= (0x40);  break;
+    00501 9AAE      SBI	0x15,6
+    00502 C00B      RJMP	0x050E
+(0234) 			case  2:   	   PORTF |= (0x01);  break;
+    00503 9180 0062 LDS	R24,0x62
+    00505 6081      ORI	R24,1
+    00506 9380 0062 STS	0x62,R24
+    00508 C005      RJMP	0x050E
+(0235) 			case  3:   	   PORTF |= (0x04);  break;
+    00509 9180 0062 LDS	R24,0x62
+    0050B 6084      ORI	R24,4
+    0050C 9380 0062 STS	0x62,R24
+(0236) 			default:   	   break;
+(0237) 		}
+(0238) 	}	
+    0050E 940C 0D34 JMP	pop_xgsetF00C
+_delay:
+  i                    --> R20
+  j                    --> R22
+  ms                   --> R16
+    00510 940E 0D23 CALL	push_xgsetF000
+FILE: E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+(0001) #include "usart.h"
+(0002) 
+(0003) 
+(0004) const uchar *WIFICmd[] = {
+(0005) 
+(0006) 	0  
+(0007) };
+(0008) 
+(0009) const uchar *ITFRCmd[] = {
+(0010) 
+(0011) 	0  
+(0012) };
+(0013) 
+(0014) static volatile uchar UART0_RxHead,UART1_RxHead;		//串口数据缓存游标
+(0015) 
+(0016) uchar UART0_RxBuff[UART0_RX_BUFFER_SIZE];				//串口0缓存
+(0017) uchar UART1_RxBuff[UART1_RX_BUFFER_SIZE];				//串口1缓存
+(0018) 
+(0019) uchar UART0_RxBuff_Queue[BUFFER0_QLENTH][UART0_RX_BUFFER_SIZE];	  //串口0缓存队列
+(0020) uchar UART1_RxBuff_Queue[BUFFER1_QLENTH][UART1_RX_BUFFER_SIZE];	  //串口1缓存队列
+(0021) 
+(0022) void delay(unsigned int ms){
+(0023) 
+(0024)  	 unsigned int i,j;
+(0025) 	 for( i=0;i<ms;i++)
+    00512 2744      CLR	R20
+    00513 2755      CLR	R21
+    00514 C00B      RJMP	0x0520
+(0026) 	 for(j=0;j<1141;j++); //1141是在8MHz晶振下，通过软件仿真反复实验得到的数值
+    00515 2766      CLR	R22
+    00516 2777      CLR	R23
+    00517 C002      RJMP	0x051A
+    00518 5F6F      SUBI	R22,0xFF
+    00519 4F7F      SBCI	R23,0xFF
+    0051A 3765      CPI	R22,0x75
+    0051B E0E4      LDI	R30,4
+    0051C 077E      CPC	R23,R30
+    0051D F3D0      BCS	0x0518
+    0051E 5F4F      SUBI	R20,0xFF
+    0051F 4F5F      SBCI	R21,0xFF
+    00520 1740      CP	R20,R16
+    00521 0751      CPC	R21,R17
+    00522 F390      BCS	0x0515
+    00523 940C 0D28 JMP	pop_xgsetF000
+(0027) }
+(0028) 
+(0029) void usart0Init(void){
+(0030) 
+(0031) 	 UART0_RxHead = 0;
+_usart0Init:
+    00525 2422      CLR	R2
+    00526 9220 072B STS	usart.c:UART0_RxHead,R2
+(0032) 
+(0033) 	 UCSR0B = 0x00;                   	//关闭UART00
+    00528 B82A      OUT	0x0A,R2
+(0034) 	 UCSR0A =0x00;                     	//不使用倍速发送（异步）
+    00529 B82B      OUT	0x0B,R2
+(0035) 	 UCSR0C =(1<<UCSZ01)|(1<<UCSZ00);   //数据位为8位
+    0052A E086      LDI	R24,6
+    0052B 9380 0095 STS	0x95,R24
+(0036) 	 UBRR0L=(FOSC/16/(BAUD0+1))%256;    //异步正常情况下的计算公式
+    0052D E384      LDI	R24,0x34
+    0052E B989      OUT	0x09,R24
+(0037) 	 UBRR0H=(FOSC/16/(BAUD0+1))/256;
+    0052F 9220 0090 STS	0x90,R2
+(0038) 	 UCSR0B =(1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);     //接收使能和发送使能以及中断
+    00531 E988      LDI	R24,0x98
+    00532 B98A      OUT	0x0A,R24
+    00533 9508      RET
+(0039) }
+(0040) 
+(0041) void usart1Init(void){
+(0042) 
+(0043) 	 UART1_RxHead = 0;
+_usart1Init:
+    00534 2422      CLR	R2
+    00535 9220 072A STS	usart.c:UART1_RxHead,R2
+(0044) 
+(0045)  	 UCSR1B = 0x00;   					//关闭USART1
+    00537 9220 009A STS	0x9A,R2
+(0046)  	 UCSR1A = 0x00;   					//不适使用倍速发送
+    00539 9220 009B STS	0x9B,R2
+(0047)  	 UCSR1C = (1<<UCSZ11)|(1<<UCSZ10);	//数据位为八位
+    0053B E086      LDI	R24,6
+    0053C 9380 009D STS	0x9D,R24
+(0048)  	 UBRR1L=(FOSC/16/(BAUD1+1))%256;	//异步正常模式下，UBRR的计算公式
+    0053E E384      LDI	R24,0x34
+    0053F 9380 0099 STS	0x99,R24
+(0049)  	 UBRR1H=(FOSC/16/(BAUD1+1))/256;
+    00541 9220 0098 STS	0x98,R2
+(0050)  	 UCSR1B =(1<<RXEN1)|(1<<TXEN1)|(1<<RXCIE1); 	//接收使能，传送使能以及中断
+    00543 E988      LDI	R24,0x98
+    00544 9380 009A STS	0x9A,R24
+    00546 9508      RET
+(0051) }
+(0052) 
+(0053) void putchar0(unsigned char c){  
+(0054) 
+(0055)      while (!(UCSR0A&(1<<UDRE0)));		//表明发送器已经准备就绪
+_putchar0:
+  c                    --> R16
+    00547 9B5D      SBIS	0x0B,5
+    00548 CFFE      RJMP	_putchar0
+(0056)      UDR0=c;    						//将要发送的数据装入UDR0寄存器
+    00549 B90C      OUT	0x0C,R16
+    0054A 9508      RET
+(0057) }
+(0058) 
+(0059) void putchar1(unsigned char c){  
+(0060) 
+(0061)      while (!(UCSR1A&(1<<UDRE1)));
+_putchar1:
+  c                    --> R16
+    0054B 9020 009B LDS	R2,0x9B
+    0054D FE25      SBRS	R2,5
+    0054E CFFC      RJMP	_putchar1
+(0062)   	 UDR1=c;    
+    0054F 9300 009C STS	0x9C,R16
+    00551 9508      RET
+_puts0:
+  s                    --> R20
+    00552 934A      ST	-Y,R20
+    00553 935A      ST	-Y,R21
+    00554 01A8      MOVW	R20,R16
+(0063) }
+(0064) 
+(0065) void puts0(char *s){
+    00555 C005      RJMP	0x055B
+(0066) 	 
+(0067) 	 while (*s){
+(0068) 	 
+(0069)   	 	 putchar0(*s);
+    00556 01FA      MOVW	R30,R20
+    00557 8100      LD	R16,Z
+    00558 DFEE      RCALL	_putchar0
+(0070) 		 s++;
+    00559 5F4F      SUBI	R20,0xFF
+    0055A 4F5F      SBCI	R21,0xFF
+    0055B 01FA      MOVW	R30,R20
+    0055C 8020      LD	R2,Z
+    0055D 2022      TST	R2
+    0055E F7B9      BNE	0x0556
+(0071)     } 
+(0072) 	
+(0073) 	putchar0(0xff);	  //包尾标识
+    0055F EF0F      LDI	R16,0xFF
+    00560 DFE6      RCALL	_putchar0
+(0074)  	putchar0(0xff);
+    00561 EF0F      LDI	R16,0xFF
+    00562 DFE4      RCALL	_putchar0
+(0075) 	putchar0(0xff);
+    00563 EF0F      LDI	R16,0xFF
+    00564 DFE2      RCALL	_putchar0
+    00565 9159      LD	R21,Y+
+    00566 9149      LD	R20,Y+
+    00567 9508      RET
+_puts1:
+  s                    --> R20
+    00568 934A      ST	-Y,R20
+    00569 935A      ST	-Y,R21
+    0056A 01A8      MOVW	R20,R16
+(0076) }
+(0077)  
+(0078) void puts1(char *s){
+    0056B C005      RJMP	0x0571
+(0079) 
+(0080) 	 while (*s){
+(0081) 	 
+(0082)   	 	 putchar1(*s);
+    0056C 01FA      MOVW	R30,R20
+    0056D 8100      LD	R16,Z
+    0056E DFDC      RCALL	_putchar1
+(0083) 		 s++;
+    0056F 5F4F      SUBI	R20,0xFF
+    00570 4F5F      SBCI	R21,0xFF
+    00571 01FA      MOVW	R30,R20
+    00572 8020      LD	R2,Z
+    00573 2022      TST	R2
+    00574 F7B9      BNE	0x056C
+(0084) 	}
+(0085) 	
+(0086) 	putchar1('\r');   //包尾标识
+    00575 E00D      LDI	R16,0xD
+    00576 DFD4      RCALL	_putchar1
+(0087)  	putchar1('\n');
+    00577 E00A      LDI	R16,0xA
+    00578 DFD2      RCALL	_putchar1
+    00579 9159      LD	R21,Y+
+    0057A 9149      LD	R20,Y+
+    0057B 9508      RET
+_uart0_rx_isr:
+  crp                  --> R10
+  data                 --> R20
+  status               --> R22
+  loop                 --> R22
+    0057C 920A      ST	-Y,R0
+    0057D 921A      ST	-Y,R1
+    0057E 922A      ST	-Y,R2
+    0057F 923A      ST	-Y,R3
+    00580 924A      ST	-Y,R4
+    00581 925A      ST	-Y,R5
+    00582 926A      ST	-Y,R6
+    00583 927A      ST	-Y,R7
+    00584 928A      ST	-Y,R8
+    00585 929A      ST	-Y,R9
+    00586 930A      ST	-Y,R16
+    00587 931A      ST	-Y,R17
+    00588 932A      ST	-Y,R18
+    00589 933A      ST	-Y,R19
+    0058A 938A      ST	-Y,R24
+    0058B 939A      ST	-Y,R25
+    0058C 93AA      ST	-Y,R26
+    0058D 93BA      ST	-Y,R27
+    0058E 93EA      ST	-Y,R30
+    0058F 93FA      ST	-Y,R31
+    00590 B60F      IN	R0,0x3F
+    00591 920A      ST	-Y,R0
+    00592 940E 0D2D CALL	push_xgsetF00C
+    00594 9722      SBIW	R28,2
+(0088) } 
+(0089) 
+(0090) #pragma interrupt_handler uart0_rx_isr:iv_USART0_RXC
+(0091) void uart0_rx_isr(void){
+(0092) 	 
+(0093) 	uchar data,status,loop;
+(0094) 	uchar crp = UART0_RxHead;
+    00595 90A0 072B LDS	R10,usart.c:UART0_RxHead
+(0095) 	
+(0096) 	data   = UDR0;
+    00597 B14C      IN	R20,0x0C
+(0097) 	status = UCSR0A;
+    00598 B16B      IN	R22,0x0B
+(0098) 
+(0099) 	if(!(status & 0x18)){		
+    00599 2F86      MOV	R24,R22
+    0059A 7188      ANDI	R24,0x18
+    0059B F009      BEQ	0x059D
+    0059C C04F      RJMP	0x05EC
+(0100) 	
+(0101) 		if((UART0_RxHead > (UART0_RX_BUFFER_SIZE-2)) || ((data == '\n') && (UART0_RxBuff[crp-1] == '\r'))){
+    0059D E18C      LDI	R24,0x1C
+    0059E 9020 072B LDS	R2,usart.c:UART0_RxHead
+    005A0 1582      CP	R24,R2
+    005A1 F060      BCS	0x05AE
+    005A2 304A      CPI	R20,0xA
+    005A3 F009      BEQ	0x05A5
+    005A4 C039      RJMP	0x05DE
+    005A5 E08B      LDI	R24,0xB
+    005A6 E097      LDI	R25,7
+    005A7 2DEA      MOV	R30,R10
+    005A8 27FF      CLR	R31
+    005A9 0FE8      ADD	R30,R24
+    005AA 1FF9      ADC	R31,R25
+    005AB 8180      LD	R24,Z
+    005AC 308D      CPI	R24,0xD
+    005AD F581      BNE	0x05DE
+(0102) 			
+(0103) 			UART0_RxHead = 0;
+    005AE 2422      CLR	R2
+    005AF 9220 072B STS	usart.c:UART0_RxHead,R2
+(0104) 			
+(0105) 			UART0_RxBuff[crp-1] = 0;
+    005B1 E08B      LDI	R24,0xB
+    005B2 E097      LDI	R25,7
+    005B3 2DEA      MOV	R30,R10
+    005B4 27FF      CLR	R31
+    005B5 0FE8      ADD	R30,R24
+    005B6 1FF9      ADC	R31,R25
+    005B7 8220      ST	Z,R2
+(0106) 				
+(0107) 			for(loop = BUFFER0_QLENTH;loop > 1;loop --)			
+    005B8 E065      LDI	R22,5
+    005B9 C010      RJMP	0x05CA
+(0108) 				strcpy(UART0_RxBuff_Queue[loop - 1],UART0_RxBuff_Queue[loop - 2]);
+    005BA E10E      LDI	R16,0x1E
+    005BB 2F16      MOV	R17,R22
+    005BC 0301      MULSU	R16,R17
+    005BD E18C      LDI	R24,0x1C
+    005BE E096      LDI	R25,6
+    005BF 0190      MOVW	R18,R0
+    005C0 0F28      ADD	R18,R24
+    005C1 1F39      ADC	R19,R25
+    005C2 E38A      LDI	R24,0x3A
+    005C3 E096      LDI	R25,6
+    005C4 0180      MOVW	R16,R0
+    005C5 0F08      ADD	R16,R24
+    005C6 1F19      ADC	R17,R25
+    005C7 940E 0CDE CALL	_strcpy
+    005C9 956A      DEC	R22
+    005CA E081      LDI	R24,1
+    005CB 1786      CP	R24,R22
+    005CC F368      BCS	0x05BA
+(0109) 				
+(0110) 			strcpy(UART0_RxBuff_Queue[0],UART0_RxBuff);
+    005CD E02C      LDI	R18,0xC
+    005CE E037      LDI	R19,7
+    005CF E508      LDI	R16,0x58
+    005D0 E016      LDI	R17,6
+    005D1 940E 0CDE CALL	_strcpy
+(0111) 			memset(UART0_RxBuff,0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);	//缓存清空
+    005D3 E18E      LDI	R24,0x1E
+    005D4 E090      LDI	R25,0
+    005D5 8399      STD	Y+1,R25
+    005D6 8388      ST	Y,R24
+    005D7 2722      CLR	R18
+    005D8 2733      CLR	R19
+    005D9 E00C      LDI	R16,0xC
+    005DA E017      LDI	R17,7
+    005DB 940E 0CC6 CALL	_memset
+(0112) 	
+(0113) 		}else UART0_RxBuff[UART0_RxHead++] = data;
+    005DD C00E      RJMP	0x05EC
+    005DE 9020 072B LDS	R2,usart.c:UART0_RxHead
+    005E0 2433      CLR	R3
+    005E1 2D82      MOV	R24,R2
+    005E2 5F8F      SUBI	R24,0xFF
+    005E3 9380 072B STS	usart.c:UART0_RxHead,R24
+    005E5 E08C      LDI	R24,0xC
+    005E6 E097      LDI	R25,7
+    005E7 2DE2      MOV	R30,R2
+    005E8 27FF      CLR	R31
+    005E9 0FE8      ADD	R30,R24
+    005EA 1FF9      ADC	R31,R25
+    005EB 8340      ST	Z,R20
+(0114) 	}
+    005EC 9622      ADIW	R28,2
+    005ED 940E 0D34 CALL	pop_xgsetF00C
+    005EF 9009      LD	R0,Y+
+    005F0 BE0F      OUT	0x3F,R0
+    005F1 91F9      LD	R31,Y+
+    005F2 91E9      LD	R30,Y+
+    005F3 91B9      LD	R27,Y+
+    005F4 91A9      LD	R26,Y+
+    005F5 9199      LD	R25,Y+
+    005F6 9189      LD	R24,Y+
+    005F7 9139      LD	R19,Y+
+    005F8 9129      LD	R18,Y+
+    005F9 9119      LD	R17,Y+
+    005FA 9109      LD	R16,Y+
+    005FB 9099      LD	R9,Y+
+    005FC 9089      LD	R8,Y+
+    005FD 9079      LD	R7,Y+
+    005FE 9069      LD	R6,Y+
+    005FF 9059      LD	R5,Y+
+    00600 9049      LD	R4,Y+
+    00601 9039      LD	R3,Y+
+    00602 9029      LD	R2,Y+
+    00603 9019      LD	R1,Y+
+    00604 9009      LD	R0,Y+
+    00605 9518      RETI
+_uart1_rx_isr:
+  crp                  --> R10
+  data                 --> R20
+  status               --> R22
+  loop                 --> R22
+    00606 920A      ST	-Y,R0
+    00607 921A      ST	-Y,R1
+    00608 922A      ST	-Y,R2
+    00609 923A      ST	-Y,R3
+    0060A 924A      ST	-Y,R4
+    0060B 925A      ST	-Y,R5
+    0060C 926A      ST	-Y,R6
+    0060D 927A      ST	-Y,R7
+    0060E 928A      ST	-Y,R8
+    0060F 929A      ST	-Y,R9
+    00610 930A      ST	-Y,R16
+    00611 931A      ST	-Y,R17
+    00612 932A      ST	-Y,R18
+    00613 933A      ST	-Y,R19
+    00614 938A      ST	-Y,R24
+    00615 939A      ST	-Y,R25
+    00616 93AA      ST	-Y,R26
+    00617 93BA      ST	-Y,R27
+    00618 93EA      ST	-Y,R30
+    00619 93FA      ST	-Y,R31
+    0061A B60F      IN	R0,0x3F
+    0061B 920A      ST	-Y,R0
+    0061C 940E 0D2D CALL	push_xgsetF00C
+    0061E 9722      SBIW	R28,2
+(0115) }
+(0116) 
+(0117) #pragma interrupt_handler uart1_rx_isr:iv_USART1_RXC
+(0118) void uart1_rx_isr(void){
+(0119) 	 
+(0120) 	uchar data,status,loop;
+(0121) 	uchar crp = UART1_RxHead;
+    0061F 90A0 072A LDS	R10,usart.c:UART1_RxHead
+(0122) 	
+(0123) 	data   = UDR1;
+    00621 9140 009C LDS	R20,0x9C
+(0124) 	status = UCSR1A;
+    00623 9160 009B LDS	R22,0x9B
+(0125) 
+(0126) 	if(!(status & 0x18)){		
+    00625 2F86      MOV	R24,R22
+    00626 7188      ANDI	R24,0x18
+    00627 F009      BEQ	0x0629
+    00628 C04F      RJMP	0x0678
+(0127) 	
+(0128) 		if((UART1_RxHead > (UART1_RX_BUFFER_SIZE-2)) || ((data == '\n') && (UART1_RxBuff[crp-1] == '\r'))){
+    00629 E18C      LDI	R24,0x1C
+    0062A 9020 072A LDS	R2,usart.c:UART1_RxHead
+    0062C 1582      CP	R24,R2
+    0062D F060      BCS	0x063A
+    0062E 304A      CPI	R20,0xA
+    0062F F009      BEQ	0x0631
+    00630 C039      RJMP	0x066A
+    00631 EE8D      LDI	R24,0xED
+    00632 E096      LDI	R25,6
+    00633 2DEA      MOV	R30,R10
+    00634 27FF      CLR	R31
+    00635 0FE8      ADD	R30,R24
+    00636 1FF9      ADC	R31,R25
+    00637 8180      LD	R24,Z
+    00638 308D      CPI	R24,0xD
+    00639 F581      BNE	0x066A
+(0129) 		
+(0130) 			UART1_RxHead = 0;
+    0063A 2422      CLR	R2
+    0063B 9220 072A STS	usart.c:UART1_RxHead,R2
+(0131) 			
+(0132) 			UART1_RxBuff[crp-1] = 0;
+    0063D EE8D      LDI	R24,0xED
+    0063E E096      LDI	R25,6
+    0063F 2DEA      MOV	R30,R10
+    00640 27FF      CLR	R31
+    00641 0FE8      ADD	R30,R24
+    00642 1FF9      ADC	R31,R25
+    00643 8220      ST	Z,R2
+(0133) 				
+(0134) 			for(loop = BUFFER1_QLENTH;loop > 1;loop --)			
+    00644 E065      LDI	R22,5
+    00645 C010      RJMP	0x0656
+(0135) 				strcpy(UART1_RxBuff_Queue[loop - 1],UART1_RxBuff_Queue[loop - 2]);
+    00646 E10E      LDI	R16,0x1E
+    00647 2F16      MOV	R17,R22
+    00648 0301      MULSU	R16,R17
+    00649 E886      LDI	R24,0x86
+    0064A E095      LDI	R25,5
+    0064B 0190      MOVW	R18,R0
+    0064C 0F28      ADD	R18,R24
+    0064D 1F39      ADC	R19,R25
+    0064E EA84      LDI	R24,0xA4
+    0064F E095      LDI	R25,5
+    00650 0180      MOVW	R16,R0
+    00651 0F08      ADD	R16,R24
+    00652 1F19      ADC	R17,R25
+    00653 940E 0CDE CALL	_strcpy
+    00655 956A      DEC	R22
+    00656 E081      LDI	R24,1
+    00657 1786      CP	R24,R22
+    00658 F368      BCS	0x0646
+(0136) 				
+(0137) 			strcpy(UART1_RxBuff_Queue[0],UART1_RxBuff);
+    00659 EE2E      LDI	R18,0xEE
+    0065A E036      LDI	R19,6
+    0065B EC02      LDI	R16,0xC2
+    0065C E015      LDI	R17,5
+    0065D 940E 0CDE CALL	_strcpy
+(0138) 			memset(UART1_RxBuff,0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);	//缓存清空
+    0065F E18E      LDI	R24,0x1E
+    00660 E090      LDI	R25,0
+    00661 8399      STD	Y+1,R25
+    00662 8388      ST	Y,R24
+    00663 2722      CLR	R18
+    00664 2733      CLR	R19
+    00665 EE0E      LDI	R16,0xEE
+    00666 E016      LDI	R17,6
+    00667 940E 0CC6 CALL	_memset
+(0139) 			
+(0140) 		}else UART1_RxBuff[UART1_RxHead++] = data;		
+    00669 C00E      RJMP	0x0678
+    0066A 9020 072A LDS	R2,usart.c:UART1_RxHead
+    0066C 2433      CLR	R3
+    0066D 2D82      MOV	R24,R2
+    0066E 5F8F      SUBI	R24,0xFF
+    0066F 9380 072A STS	usart.c:UART1_RxHead,R24
+    00671 EE8E      LDI	R24,0xEE
+    00672 E096      LDI	R25,6
+    00673 2DE2      MOV	R30,R2
+    00674 27FF      CLR	R31
+    00675 0FE8      ADD	R30,R24
+    00676 1FF9      ADC	R31,R25
+    00677 8340      ST	Z,R20
+(0141) 	}
+    00678 9622      ADIW	R28,2
+    00679 940E 0D34 CALL	pop_xgsetF00C
+    0067B 9009      LD	R0,Y+
+    0067C BE0F      OUT	0x3F,R0
+    0067D 91F9      LD	R31,Y+
+    0067E 91E9      LD	R30,Y+
+    0067F 91B9      LD	R27,Y+
+    00680 91A9      LD	R26,Y+
+    00681 9199      LD	R25,Y+
+    00682 9189      LD	R24,Y+
+    00683 9139      LD	R19,Y+
+    00684 9129      LD	R18,Y+
+    00685 9119      LD	R17,Y+
+    00686 9109      LD	R16,Y+
+    00687 9099      LD	R9,Y+
+    00688 9089      LD	R8,Y+
+    00689 9079      LD	R7,Y+
+    0068A 9069      LD	R6,Y+
+    0068B 9059      LD	R5,Y+
+    0068C 9049      LD	R4,Y+
+    0068D 9039      LD	R3,Y+
+    0068E 9029      LD	R2,Y+
+    0068F 9019      LD	R1,Y+
+    00690 9009      LD	R0,Y+
+    00691 9518      RETI
+_ATTX_M1:
+  time_point           --> R20
+  rep                  --> R12
+  wait_time            --> R14
+  crp                  --> R10
+  rec                  --> Y,+14
+  command              --> Y,+12
+  interface            --> R22
+    00692 933A      ST	-Y,R19
+    00693 932A      ST	-Y,R18
+    00694 940E 0D0E CALL	push_xgsetF0FC
+    00696 2F60      MOV	R22,R16
+    00697 9722      SBIW	R28,2
+    00698 88A8      LDD	R10,Y+16
+    00699 88EA      LDD	R14,Y+18
+    0069A 88FB      LDD	R15,Y+19
+    0069B 88CC      LDD	R12,Y+20
+(0142) }
+(0143) 
+(0144) 
+(0145) //输入：
+(0146) //		interface：接口类型，'A'表示串口0，'B'表示串口1
+(0147) //		command  ：命令
+(0148) //		rec		 ：反馈
+(0149) //		crp		 : 缓存游标
+(0150) //		wait_time：单次等待时间
+(0151) //		rep		 ：等待次数
+(0152) //输出返回：
+(0153) //		0：成功，1：失败
+(0154) uchar ATTX_M1(uchar interface,uchar *command,uchar *rec,uchar crp,uint wait_time,uchar rep)
+(0155) {
+(0156) 	uchar time_point = 1;
+    0069C E041      LDI	R20,1
+(0157) 	
+(0158) 	delay(100);
+    0069D E604      LDI	R16,0x64
+    0069E E010      LDI	R17,0
+    0069F DE70      RCALL	_delay
+(0159) 
+(0160) 	if(interface == 'A'){
+    006A0 3461      CPI	R22,0x41
+    006A1 F009      BEQ	0x06A3
+    006A2 C03F      RJMP	0x06E2
+    006A3 C01F      RJMP	0x06C3
+(0161) 		
+(0162) 		while(strcmp(rec,UART0_RxBuff_Queue[crp])){
+(0163) 		
+(0164) 			memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);
+    006A4 E18E      LDI	R24,0x1E
+    006A5 E090      LDI	R25,0
+    006A6 8399      STD	Y+1,R25
+    006A7 8388      ST	Y,R24
+    006A8 2722      CLR	R18
+    006A9 2733      CLR	R19
+    006AA E10E      LDI	R16,0x1E
+    006AB 2D1A      MOV	R17,R10
+    006AC 0301      MULSU	R16,R17
+    006AD 0180      MOVW	R16,R0
+    006AE E588      LDI	R24,0x58
+    006AF E096      LDI	R25,6
+    006B0 0F08      ADD	R16,R24
+    006B1 1F19      ADC	R17,R25
+    006B2 940E 0CC6 CALL	_memset
+(0165) 			puts0(command);
+    006B4 850C      LDD	R16,Y+12
+    006B5 851D      LDD	R17,Y+13
+    006B6 DE9B      RCALL	_puts0
+(0166) 			delay(wait_time);
+    006B7 0187      MOVW	R16,R14
+    006B8 DE57      RCALL	_delay
+(0167) 			time_point++;
+    006B9 9543      INC	R20
+(0168) 			if(time_point > rep)return 1;
+    006BA 2C2C      MOV	R2,R12
+    006BB 2433      CLR	R3
+    006BC 2E44      MOV	R4,R20
+    006BD 2455      CLR	R5
+    006BE 1424      CP	R2,R4
+    006BF 0435      CPC	R3,R5
+    006C0 F414      BGE	0x06C3
+    006C1 E001      LDI	R16,1
+    006C2 C065      RJMP	0x0728
+    006C3 E10E      LDI	R16,0x1E
+    006C4 2D1A      MOV	R17,R10
+    006C5 0301      MULSU	R16,R17
+    006C6 0190      MOVW	R18,R0
+    006C7 E588      LDI	R24,0x58
+    006C8 E096      LDI	R25,6
+    006C9 0F28      ADD	R18,R24
+    006CA 1F39      ADC	R19,R25
+    006CB 850E      LDD	R16,Y+14
+    006CC 851F      LDD	R17,Y+15
+    006CD 940E 0CD1 CALL	_strcmp
+    006CF 3000      CPI	R16,0
+    006D0 0701      CPC	R16,R17
+    006D1 F691      BNE	0x06A4
+(0169) 		}
+(0170) 		memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);	//缓存清空
+    006D2 E18E      LDI	R24,0x1E
+    006D3 E090      LDI	R25,0
+    006D4 8399      STD	Y+1,R25
+    006D5 8388      ST	Y,R24
+    006D6 2722      CLR	R18
+    006D7 2733      CLR	R19
+    006D8 E10E      LDI	R16,0x1E
+    006D9 2D1A      MOV	R17,R10
+    006DA 0301      MULSU	R16,R17
+    006DB 0180      MOVW	R16,R0
+    006DC E588      LDI	R24,0x58
+    006DD E096      LDI	R25,6
+    006DE 0F08      ADD	R16,R24
+    006DF 1F19      ADC	R17,R25
+    006E0 940E 0CC6 CALL	_memset
+(0171) 	}
+(0172) 		
+(0173) 	if(interface == 'B'){
+    006E2 3462      CPI	R22,0x42
+    006E3 F009      BEQ	0x06E5
+    006E4 C03F      RJMP	0x0724
+    006E5 C01F      RJMP	0x0705
+(0174) 		
+(0175) 		while(strcmp(rec,UART1_RxBuff_Queue[crp])){
+(0176) 		
+(0177) 			memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);
+    006E6 E18E      LDI	R24,0x1E
+    006E7 E090      LDI	R25,0
+    006E8 8399      STD	Y+1,R25
+    006E9 8388      ST	Y,R24
+    006EA 2722      CLR	R18
+    006EB 2733      CLR	R19
+    006EC E10E      LDI	R16,0x1E
+    006ED 2D1A      MOV	R17,R10
+    006EE 0301      MULSU	R16,R17
+    006EF 0180      MOVW	R16,R0
+    006F0 EC82      LDI	R24,0xC2
+    006F1 E095      LDI	R25,5
+    006F2 0F08      ADD	R16,R24
+    006F3 1F19      ADC	R17,R25
+    006F4 940E 0CC6 CALL	_memset
+(0178) 			puts1(command);
+    006F6 850C      LDD	R16,Y+12
+    006F7 851D      LDD	R17,Y+13
+    006F8 DE6F      RCALL	_puts1
+(0179) 			delay(wait_time);
+    006F9 0187      MOVW	R16,R14
+    006FA DE15      RCALL	_delay
+(0180) 			time_point++;
+    006FB 9543      INC	R20
+(0181) 			if(time_point > rep)return 1;
+    006FC 2C2C      MOV	R2,R12
+    006FD 2433      CLR	R3
+    006FE 2E44      MOV	R4,R20
+    006FF 2455      CLR	R5
+    00700 1424      CP	R2,R4
+    00701 0435      CPC	R3,R5
+    00702 F414      BGE	0x0705
+    00703 E001      LDI	R16,1
+    00704 C023      RJMP	0x0728
+    00705 E10E      LDI	R16,0x1E
+    00706 2D1A      MOV	R17,R10
+    00707 0301      MULSU	R16,R17
+    00708 0190      MOVW	R18,R0
+    00709 EC82      LDI	R24,0xC2
+    0070A E095      LDI	R25,5
+    0070B 0F28      ADD	R18,R24
+    0070C 1F39      ADC	R19,R25
+    0070D 850E      LDD	R16,Y+14
+    0070E 851F      LDD	R17,Y+15
+    0070F 940E 0CD1 CALL	_strcmp
+    00711 3000      CPI	R16,0
+    00712 0701      CPC	R16,R17
+    00713 F691      BNE	0x06E6
+(0182) 		}
+(0183) 		memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);	//缓存清空
+    00714 E18E      LDI	R24,0x1E
+    00715 E090      LDI	R25,0
+    00716 8399      STD	Y+1,R25
+    00717 8388      ST	Y,R24
+    00718 2722      CLR	R18
+    00719 2733      CLR	R19
+    0071A E10E      LDI	R16,0x1E
+    0071B 2D1A      MOV	R17,R10
+    0071C 0301      MULSU	R16,R17
+    0071D 0180      MOVW	R16,R0
+    0071E EC82      LDI	R24,0xC2
+    0071F E095      LDI	R25,5
+    00720 0F08      ADD	R16,R24
+    00721 1F19      ADC	R17,R25
+    00722 940E 0CC6 CALL	_memset
+(0184) 	}
+(0185) 		
+(0186) 	delay(100);
+    00724 E604      LDI	R16,0x64
+    00725 E010      LDI	R17,0
+    00726 DDE9      RCALL	_delay
+(0187) 	return 0;
+    00727 2700      CLR	R16
+    00728 9622      ADIW	R28,2
+    00729 940E 0D03 CALL	pop_xgsetF0FC
+    0072B 9622      ADIW	R28,2
+    0072C 9508      RET
+_ATTX_M2:
+  freq                 --> R22
+  time_point           --> R20
+  over_time            --> R12
+  crp                  --> R10
+  rec                  --> Y,+14
+  command              --> Y,+12
+  interface            --> R14
+    0072D 933A      ST	-Y,R19
+    0072E 932A      ST	-Y,R18
+    0072F 940E 0D0E CALL	push_xgsetF0FC
+    00731 2EE0      MOV	R14,R16
+    00732 9722      SBIW	R28,2
+    00733 88A8      LDD	R10,Y+16
+    00734 88CA      LDD	R12,Y+18
+    00735 88DB      LDD	R13,Y+19
+(0188) }
+(0189) 
+(0190) //输入：
+(0191) //		interface：接口类型，'A'表示串口0，'B'表示串口1
+(0192) //		command  ：命令
+(0193) //		rec		 ：反馈
+(0194) //		crp		 : 缓存游标
+(0195) //		over_time：等待时间
+(0196) //输出返回：
+(0197) //		0：成功，1：失败
+(0198) uchar ATTX_M2(uchar interface,uchar *command,uchar *rec,uchar crp,uint over_time)
+(0199) {
+(0200) 		
+(0201) 	uint time_point = 1;
+    00736 E041      LDI	R20,1
+    00737 E050      LDI	R21,0
+(0202) 	const uint freq = 200;			//轮询频次设定，200ms轮询一次
+    00738 EC68      LDI	R22,0xC8
+    00739 E070      LDI	R23,0
+(0203) 	
+(0204) 	delay(100);
+    0073A E604      LDI	R16,0x64
+    0073B E010      LDI	R17,0
+    0073C DDD3      RCALL	_delay
+(0205) 		
+(0206) 	if(interface == 'A'){
+    0073D 2D8E      MOV	R24,R14
+    0073E 3481      CPI	R24,0x41
+    0073F F581      BNE	0x0770
+(0207) 	
+(0208) 		puts0(command);
+    00740 850C      LDD	R16,Y+12
+    00741 851D      LDD	R17,Y+13
+    00742 DE0F      RCALL	_puts0
+    00743 C00D      RJMP	0x0751
+(0209) 		while(strcmp(rec,UART0_RxBuff_Queue[crp])){
+(0210) 			
+(0211) 				delay(freq);
+    00744 018B      MOVW	R16,R22
+    00745 DDCA      RCALL	_delay
+(0212) 				if(time_point > over_time/freq)return 1;
+    00746 019B      MOVW	R18,R22
+    00747 0186      MOVW	R16,R12
+    00748 940E 0CE9 CALL	div16u
+    0074A 1704      CP	R16,R20
+    0074B 0715      CPC	R17,R21
+    0074C F410      BCC	0x074F
+    0074D E001      LDI	R16,1
+    0074E C058      RJMP	0x07A7
+(0213) 				time_point++;
+    0074F 5F4F      SUBI	R20,0xFF
+    00750 4F5F      SBCI	R21,0xFF
+    00751 E10E      LDI	R16,0x1E
+    00752 2D1A      MOV	R17,R10
+    00753 0301      MULSU	R16,R17
+    00754 0190      MOVW	R18,R0
+    00755 E588      LDI	R24,0x58
+    00756 E096      LDI	R25,6
+    00757 0F28      ADD	R18,R24
+    00758 1F39      ADC	R19,R25
+    00759 850E      LDD	R16,Y+14
+    0075A 851F      LDD	R17,Y+15
+    0075B 940E 0CD1 CALL	_strcmp
+    0075D 3000      CPI	R16,0
+    0075E 0701      CPC	R16,R17
+    0075F F721      BNE	0x0744
+(0214) 		}
+(0215) 		memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);	//缓存清空
+    00760 E18E      LDI	R24,0x1E
+    00761 E090      LDI	R25,0
+    00762 8399      STD	Y+1,R25
+    00763 8388      ST	Y,R24
+    00764 2722      CLR	R18
+    00765 2733      CLR	R19
+    00766 E10E      LDI	R16,0x1E
+    00767 2D1A      MOV	R17,R10
+    00768 0301      MULSU	R16,R17
+    00769 0180      MOVW	R16,R0
+    0076A E588      LDI	R24,0x58
+    0076B E096      LDI	R25,6
+    0076C 0F08      ADD	R16,R24
+    0076D 1F19      ADC	R17,R25
+    0076E 940E 0CC6 CALL	_memset
+(0216) 	}
+(0217) 	
+(0218) 	if(interface == 'B'){
+    00770 2D8E      MOV	R24,R14
+    00771 3482      CPI	R24,0x42
+    00772 F581      BNE	0x07A3
+(0219) 	
+(0220) 		puts1(command);
+    00773 850C      LDD	R16,Y+12
+    00774 851D      LDD	R17,Y+13
+    00775 DDF2      RCALL	_puts1
+    00776 C00D      RJMP	0x0784
+(0221) 		while(strcmp(rec,UART1_RxBuff_Queue[crp])){
+(0222) 			
+(0223) 				delay(freq);
+    00777 018B      MOVW	R16,R22
+    00778 DD97      RCALL	_delay
+(0224) 				if(time_point > over_time/freq)return 1;
+    00779 019B      MOVW	R18,R22
+    0077A 0186      MOVW	R16,R12
+    0077B 940E 0CE9 CALL	div16u
+    0077D 1704      CP	R16,R20
+    0077E 0715      CPC	R17,R21
+    0077F F410      BCC	0x0782
+    00780 E001      LDI	R16,1
+    00781 C025      RJMP	0x07A7
+(0225) 				time_point++;
+    00782 5F4F      SUBI	R20,0xFF
+    00783 4F5F      SBCI	R21,0xFF
+    00784 E10E      LDI	R16,0x1E
+    00785 2D1A      MOV	R17,R10
+    00786 0301      MULSU	R16,R17
+    00787 0190      MOVW	R18,R0
+    00788 EC82      LDI	R24,0xC2
+    00789 E095      LDI	R25,5
+    0078A 0F28      ADD	R18,R24
+    0078B 1F39      ADC	R19,R25
+    0078C 850E      LDD	R16,Y+14
+    0078D 851F      LDD	R17,Y+15
+    0078E 940E 0CD1 CALL	_strcmp
+    00790 3000      CPI	R16,0
+    00791 0701      CPC	R16,R17
+    00792 F721      BNE	0x0777
+(0226) 		}
+(0227) 		memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);	//缓存清空
+    00793 E18E      LDI	R24,0x1E
+    00794 E090      LDI	R25,0
+    00795 8399      STD	Y+1,R25
+    00796 8388      ST	Y,R24
+    00797 2722      CLR	R18
+    00798 2733      CLR	R19
+    00799 E10E      LDI	R16,0x1E
+    0079A 2D1A      MOV	R17,R10
+    0079B 0301      MULSU	R16,R17
+    0079C 0180      MOVW	R16,R0
+    0079D EC82      LDI	R24,0xC2
+    0079E E095      LDI	R25,5
+    0079F 0F08      ADD	R16,R24
+    007A0 1F19      ADC	R17,R25
+    007A1 940E 0CC6 CALL	_memset
+(0228) 	}
+(0229) 
+(0230) 	delay(100);
+    007A3 E604      LDI	R16,0x64
+    007A4 E010      LDI	R17,0
+    007A5 DD6A      RCALL	_delay
+(0231) 	return 0;
+    007A6 2700      CLR	R16
+    007A7 9622      ADIW	R28,2
+    007A8 940E 0D03 CALL	pop_xgsetF0FC
+    007AA 9622      ADIW	R28,2
+    007AB 9508      RET
+(0232) }
+(0233) 
+(0234) void usart_init(void){
+(0235) 
+(0236)   	SEI();
+_usart_init:
+    007AC 9478      BSET	7
+(0237) 	  
+(0238) 	usart0Init();
+    007AD DD77      RCALL	_usart0Init
+(0239) 	usart1Init();	 
+    007AE CD85      RJMP	_usart1Init
+_usart_test:
+  temp                 --> R10
+    007AF 92AA      ST	-Y,R10
+    007B0 9726      SBIW	R28,6
+(0240) }
+(0241) 
+(0242) void usart_test(void)
+(0243) {
+(0244)  	  uchar temp = UART1_RxHead;
+    007B1 90A0 072A LDS	R10,usart.c:UART1_RxHead
+(0245) 
+(0246)   	  SEI();
+    007B3 9478      BSET	7
+(0247) 	  
+(0248) 	  usart0Init();
+    007B4 DD70      RCALL	_usart0Init
+(0249) 	  usart1Init();
+    007B5 DD7E      RCALL	_usart1Init
+(0250) 	  
+(0251) 	  ATTX_M2('B',"abc","bcd",0,9000);  
+    007B6 E288      LDI	R24,0x28
+    007B7 E293      LDI	R25,0x23
+    007B8 839D      STD	Y+5,R25
+    007B9 838C      STD	Y+4,R24
+    007BA 2422      CLR	R2
+    007BB 822A      STD	Y+2,R2
+    007BC E187      LDI	R24,0x17
+    007BD E091      LDI	R25,1
+    007BE 8399      STD	Y+1,R25
+    007BF 8388      ST	Y,R24
+    007C0 E12B      LDI	R18,0x1B
+    007C1 E031      LDI	R19,1
+    007C2 E402      LDI	R16,0x42
+    007C3 DF69      RCALL	_ATTX_M2
+    007C4 C014      RJMP	0x07D9
+(0252) 	  
+(0253) 	  while(1){
+(0254) 	  		   temp = UART0_RxHead;
+    007C5 90A0 072B LDS	R10,usart.c:UART0_RxHead
+(0255) 	  
+(0256) 	  		putchar1(UART1_RxBuff[temp-2]);
+    007C7 EE8C      LDI	R24,0xEC
+    007C8 E096      LDI	R25,6
+    007C9 2DEA      MOV	R30,R10
+    007CA 27FF      CLR	R31
+    007CB 0FE8      ADD	R30,R24
+    007CC 1FF9      ADC	R31,R25
+    007CD 8100      LD	R16,Z
+    007CE DD7C      RCALL	_putchar1
+(0257) 			puts1(UART1_RxBuff_Queue[4]);
+    007CF E30A      LDI	R16,0x3A
+    007D0 E016      LDI	R17,6
+    007D1 DD96      RCALL	_puts1
+(0258) 			delay(500);
+    007D2 EF04      LDI	R16,0xF4
+    007D3 E011      LDI	R17,1
+    007D4 DD3B      RCALL	_delay
+(0259) 			if(UART1_RxBuff[0]){
+    007D5 9020 06EE LDS	R2,UART1_RxBuff
+    007D7 2022      TST	R2
+    007D8 F001      BEQ	0x07D9
+    007D9 CFEB      RJMP	0x07C5
+    007DA 9626      ADIW	R28,6
+    007DB 90A9      LD	R10,Y+
+    007DC 9508      RET
+FILE: E:\My_GTAProject\塔城设故板\Software\SHEGU\user_main.c
+(0001) #include "usart.h"
+(0002) #include "IO_control.h"
+(0003) 
+(0004) const uchar *ITFR_CMD[4+2+3+3+2] = {
+(0005) 
+(0006) 	"res_fengshan.fs_res1.txt=\"0\"",			//1
+(0007) 	"res_fengshan.fs_res2.txt=\"0\"",
+(0008) 	"res_fengshan.fs_res3.txt=\"0\"",
+(0009) 	"res_fengshan.fs_res4.txt=\"0\"",
+(0010) 	
+(0011) 	"res_dianfanbao.dfb_res1.txt=\"0\"",		//5
+(0012) 	"res_dianfanbao.dfb_res2.txt=\"0\"",
+(0013) 	"res_dianfanbao.dfb_res3.txt=\"0\"",
+(0014) 	
+(0015) 	"res_weibolu.wbl_res1.txt=\"0\"",			//8
+(0016) 	"res_weibolu.wbl_res2.txt=\"0\"",
+(0017) 	
+(0018) 	"res_xiaodugui.xdg_res1.txt=\"0\"",			//10
+(0019) 	"res_xiaodugui.xdg_res2.txt=\"0\"",
+(0020) 	
+(0021) 	"res_xiyiji.xyj_res1.txt=\"0\"",			//12
+(0022) 	"res_xiyiji.xyj_res2.txt=\"0\"",
+(0023) 	"res_xiyiji.xyj_res3.txt=\"0\"",	
+(0024) };
+(0025) 
+(0026) const uchar *WIFI_CMD[17] = {
+(0027) 
+(0028) 	"at+netmode=2",
+(0029) 	"at+dhcpd=0",
+(0030) 	"at+wifi_conf="WIFI_INFORMATION,
+(0031) 	"at+dhcpc=0",
+(0032) //	"at+net_ip="device_IP",255.255.255.0,10.2.8.254",
+(0033) 	"at+net_ip="device_IP",255.255.255.0,192.168.0.1",
+(0034) //	"at+net_dns=202.96.128.86,202.96.134.33",
+(0035) 	"at+net_dns=192.168.0.1,0.0.0.0",
+(0036) 	"at+remotepro=tcp",
+(0037) 	"at+mode=client",
+(0038) //	"at+remoteip=10.2.8.139",
+(0039) 	"at+remoteip=192.168.0.103",
+(0040) 	"at+remoteport=8088",
+(0041) 	"at+CLport=1234",
+(0042) 	"at+timeout=0",
+(0043) 	"at+uart=9600,8,n,1",
+(0044) 	"at+uartpacklen=64",
+(0045) 	"at+uartpacktimeout=10",
+(0046) 	"at+net_commit=1",
+(0047) 	"at+reconn=1"
+(0048) };
+(0049) 
+(0050) const char cntConfirm[8] = {0x5a,device_ID,0x03,0x40,0x40,0x40,0x40};
+(0051) 
+(0052) extern uchar WIFI_BUF_QUE[BUFFER0_QLENTH][UART0_RX_BUFFER_SIZE];	
+(0053) extern uchar ITFR_BUF_QUE[BUFFER1_QLENTH][UART1_RX_BUFFER_SIZE];	
+(0054) 
+(0055) extern infoMal infoMal_teacher;
+(0056) extern infoMal infoMal_student;
+(0057) 
+(0058) extern uchar resIOJudge[9];	   		//老师设故与学生解故比较结果存放
+(0059) 
+(0060) infoUser userMe 	 = {"00000000","00000000"};
+(0061) infoUser userMe_temp = {"00000000","00000000"};
+(0062) 
+(0063) uchar UI_pt = 0x00;	   		//UI界面游标，指向当前所显示界面
+(0064) 
+(0065) void delay_3us(void);
+(0066) void wifiConnecting(void);
+(0067) 
+(0068) void delay_3us(void)  //3us延时函数,,可重复调用不影响精度 
+(0069) {
+(0070)    asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+_delay_3us:
+    007DD 0000      NOP
+    007DE 0000      NOP
+    007DF 0000      NOP
+    007E0 0000      NOP
+    007E1 0000      NOP
+    007E2 0000      NOP
+(0071)    asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+    007E3 0000      NOP
+    007E4 0000      NOP
+    007E5 0000      NOP
+    007E6 0000      NOP
+    007E7 0000      NOP
+    007E8 0000      NOP
+(0072)    asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
+    007E9 0000      NOP
+    007EA 0000      NOP
+    007EB 0000      NOP
+    007EC 0000      NOP
+    007ED 0000      NOP
+    007EE 0000      NOP
+    007EF 9508      RET
+(0073) }
+(0074) 
+(0075) void delay_10us(void)  //10us延时函数,可重复调用不影响精度
+(0076) {
+(0077)  	delay_3us();
+_delay_10us:
+    007F0 DFEC      RCALL	_delay_3us
+(0078)  	delay_3us();
+    007F1 DFEB      RCALL	_delay_3us
+(0079)  	delay_3us();
+    007F2 CFEA      RJMP	_delay_3us
+(0080) }
+(0081) 
+(0082) void delay_50us(void)  //48us延时函数,可重复调用不影响精度
+(0083) {      
+(0084)   	delay_10us();    
+_delay_50us:
+    007F3 DFFC      RCALL	_delay_10us
+(0085)   	delay_10us();    
+    007F4 DFFB      RCALL	_delay_10us
+(0086)   	delay_10us();   
+    007F5 DFFA      RCALL	_delay_10us
+(0087)   	delay_10us();    
+    007F6 DFF9      RCALL	_delay_10us
+(0088)   	delay_10us();
+    007F7 CFF8      RJMP	_delay_10us
+(0089) }
+(0090)  
+(0091) void delay_100us(void)//exactly 98us延时函数,可重复调用不影响精度
+(0092) {
+(0093)   delay_50us();
+_delay_100us:
+    007F8 DFFA      RCALL	_delay_50us
+(0094)   delay_50us();
+    007F9 DFF9      RCALL	_delay_50us
+(0095)   delay_3us();
+    007FA CFE2      RJMP	_delay_3us
+(0096) }
+(0097)  
+(0098) void delay_1ms(void)            
+(0099) {
+(0100)   delay_100us(); delay_100us(); delay_100us(); delay_100us(); delay_100us();
+_delay_1ms:
+    007FB DFFC      RCALL	_delay_100us
+    007FC DFFB      RCALL	_delay_100us
+    007FD DFFA      RCALL	_delay_100us
+    007FE DFF9      RCALL	_delay_100us
+    007FF DFF8      RCALL	_delay_100us
+(0101)   delay_100us(); delay_100us(); delay_100us(); delay_100us(); delay_100us();
+    00800 DFF7      RCALL	_delay_100us
+    00801 DFF6      RCALL	_delay_100us
+    00802 DFF5      RCALL	_delay_100us
+    00803 DFF4      RCALL	_delay_100us
+    00804 CFF3      RJMP	_delay_100us
+_delay_ms:
+  ms                   --> R20
+    00805 934A      ST	-Y,R20
+    00806 935A      ST	-Y,R21
+    00807 01A8      MOVW	R20,R16
+(0102) }
+(0103)   
+(0104)  void delay_ms(uint ms )
+(0105) {
+    00808 C001      RJMP	0x080A
+(0106)     while(ms--)  
+(0107) 		delay_1ms();//8MHZ主频时，25分钟误差小于1秒
+    00809 DFF1      RCALL	_delay_1ms
+    0080A 011A      MOVW	R2,R20
+    0080B 5041      SUBI	R20,1
+    0080C 4050      SBCI	R21,0
+    0080D 2022      TST	R2
+    0080E F7D1      BNE	0x0809
+    0080F 2033      TST	R3
+    00810 F7C1      BNE	0x0809
+    00811 9159      LD	R21,Y+
+    00812 9149      LD	R20,Y+
+    00813 9508      RET
+(0108) }
+(0109) 
+(0110) void EEPROM_write(uchar addr,uchar data){
+(0111) 
+(0112) 	while(EECR & BIT(EEWE));
+_EEPROM_write:
+  data                 --> R18
+  addr                 --> R16
+    00814 99E1      SBIC	0x1C,1
+    00815 CFFE      RJMP	_EEPROM_write
+(0113) 	EEAR=addr;
+    00816 2E20      MOV	R2,R16
+    00817 2433      CLR	R3
+    00818 BA3F      OUT	0x1F,R3
+    00819 BA2E      OUT	0x1E,R2
+(0114) 	EEDR=data;
+    0081A BB2D      OUT	0x1D,R18
+(0115) 	EECR|=BIT(EEMWE);
+    0081B 9AE2      SBI	0x1C,2
+(0116) 	EECR|=BIT(EEWE);
+    0081C 9AE1      SBI	0x1C,1
+    0081D 9508      RET
+(0117) }
+(0118) 
+(0119) uchar EEPROM_read(uchar addr){
+(0120) 
+(0121)  	while(EECR & BIT(EEWE));
+_EEPROM_read:
+  addr                 --> R16
+    0081E 99E1      SBIC	0x1C,1
+    0081F CFFE      RJMP	_EEPROM_read
+(0122) 	EEAR=addr;
+    00820 2E20      MOV	R2,R16
+    00821 2433      CLR	R3
+    00822 BA3F      OUT	0x1F,R3
+    00823 BA2E      OUT	0x1E,R2
+(0123) 	EECR|=BIT(EERE);
+    00824 9AE0      SBI	0x1C,0
+(0124) 	return EEDR;
+    00825 B30D      IN	R16,0x1D
+    00826 9508      RET
+_userID_read:
+  loop                 --> R20
+  Dats                 --> R10
+    00827 940E 0D19 CALL	push_xgset300C
+    00829 0158      MOVW	R10,R16
+(0125) }
+(0126) 
+(0127) void userID_read(uchar Dats[8]){
+(0128) 	 
+(0129) 	uchar loop;
+(0130) 	
+(0131) 	for(loop = 0;loop < 8;loop ++)
+    0082A 2744      CLR	R20
+    0082B C009      RJMP	0x0835
+(0132) 		Dats[loop] = EEPROM_read(loop+0x10);
+    0082C 2F04      MOV	R16,R20
+    0082D 5F00      SUBI	R16,0xF0
+    0082E DFEF      RCALL	_EEPROM_read
+    0082F 2FE4      MOV	R30,R20
+    00830 27FF      CLR	R31
+    00831 0DEA      ADD	R30,R10
+    00832 1DFB      ADC	R31,R11
+    00833 8300      ST	Z,R16
+    00834 9543      INC	R20
+    00835 3048      CPI	R20,0x8
+    00836 F3A8      BCS	0x082C
+    00837 940C 0D1E JMP	pop_xgset300C
+_userID_write:
+  loop                 --> R20
+  Dats                 --> R10
+    00839 940E 0D19 CALL	push_xgset300C
+    0083B 0158      MOVW	R10,R16
+(0133) }
+(0134) 
+(0135) void userID_write(uchar Dats[8]){		   //eeprom读用户名
+(0136) 	 
+(0137) 	uchar loop;
+(0138) 	
+(0139) 	for(loop = 0;loop < 8;loop ++)
+    0083C 2744      CLR	R20
+    0083D C009      RJMP	0x0847
+(0140) 		EEPROM_write(loop+0x10,Dats[loop]);
+    0083E 2FE4      MOV	R30,R20
+    0083F 27FF      CLR	R31
+    00840 0DEA      ADD	R30,R10
+    00841 1DFB      ADC	R31,R11
+    00842 8120      LD	R18,Z
+    00843 2F04      MOV	R16,R20
+    00844 5F00      SUBI	R16,0xF0
+    00845 DFCE      RCALL	_EEPROM_write
+    00846 9543      INC	R20
+    00847 3048      CPI	R20,0x8
+    00848 F3A8      BCS	0x083E
+    00849 940C 0D1E JMP	pop_xgset300C
+_password_read:
+  loop                 --> R20
+  Dats                 --> R10
+    0084B 940E 0D19 CALL	push_xgset300C
+    0084D 0158      MOVW	R10,R16
+(0141) }
+(0142) 
+(0143) 
+(0144) void password_read(uchar Dats[8]){		   //eeprom读密码
+(0145) 	 
+(0146) 	uchar loop;
+(0147) 	
+(0148) 	for(loop = 0;loop < 8;loop ++)
+    0084E 2744      CLR	R20
+    0084F C009      RJMP	0x0859
+(0149) 		Dats[loop] = EEPROM_read(loop+0x20);
+    00850 2F04      MOV	R16,R20
+    00851 5E00      SUBI	R16,0xE0
+    00852 DFCB      RCALL	_EEPROM_read
+    00853 2FE4      MOV	R30,R20
+    00854 27FF      CLR	R31
+    00855 0DEA      ADD	R30,R10
+    00856 1DFB      ADC	R31,R11
+    00857 8300      ST	Z,R16
+    00858 9543      INC	R20
+    00859 3048      CPI	R20,0x8
+    0085A F3A8      BCS	0x0850
+    0085B 940C 0D1E JMP	pop_xgset300C
+_password_write:
+  loop                 --> R20
+  Dats                 --> R10
+    0085D 940E 0D19 CALL	push_xgset300C
+    0085F 0158      MOVW	R10,R16
+(0150) }
+(0151) 
+(0152) void password_write(uchar Dats[8]){
+(0153) 	 
+(0154) 	uchar loop;
+(0155) 	
+(0156) 	for(loop = 0;loop < 8;loop ++)
+    00860 2744      CLR	R20
+    00861 C009      RJMP	0x086B
+(0157) 		EEPROM_write(loop+0x20,Dats[loop]);
+    00862 2FE4      MOV	R30,R20
+    00863 27FF      CLR	R31
+    00864 0DEA      ADD	R30,R10
+    00865 1DFB      ADC	R31,R11
+    00866 8120      LD	R18,Z
+    00867 2F04      MOV	R16,R20
+    00868 5E00      SUBI	R16,0xE0
+    00869 DFAA      RCALL	_EEPROM_write
+    0086A 9543      INC	R20
+    0086B 3048      CPI	R20,0x8
+    0086C F3A8      BCS	0x0862
+    0086D 940C 0D1E JMP	pop_xgset300C
+_reaptRes:
+  loop                 --> R20
+    0086F 934A      ST	-Y,R20
+(0158) }
+(0159) 
+(0160) void reaptRes(void){					   //提交结果
+(0161) 
+(0162) 	 uchar loop;
+(0163) 	 
+(0164) 	 for(loop = 0;loop < 4;loop ++)
+    00870 2744      CLR	R20
+    00871 C010      RJMP	0x0882
+(0165) 	 	if(resIOJudge[loop] == 0)resIOJudge[loop] = 0x40;
+    00872 E08A      LDI	R24,0xA
+    00873 E091      LDI	R25,1
+    00874 2FE4      MOV	R30,R20
+    00875 27FF      CLR	R31
+    00876 0FE8      ADD	R30,R24
+    00877 1FF9      ADC	R31,R25
+    00878 8020      LD	R2,Z
+    00879 2022      TST	R2
+    0087A F431      BNE	0x0881
+    0087B 2FE4      MOV	R30,R20
+    0087C 27FF      CLR	R31
+    0087D 0FE8      ADD	R30,R24
+    0087E 1FF9      ADC	R31,R25
+    0087F E480      LDI	R24,0x40
+    00880 8380      ST	Z,R24
+    00881 9543      INC	R20
+    00882 3044      CPI	R20,4
+    00883 F370      BCS	0x0872
+(0166) 
+(0167) 	 WIFI_PUTC(0x5a);
+    00884 E50A      LDI	R16,0x5A
+    00885 940E 054B CALL	_putchar1
+(0168) 	 WIFI_PUTC(device_ID);
+    00887 E003      LDI	R16,3
+    00888 940E 054B CALL	_putchar1
+(0169) 	 WIFI_PUTC(0x20);
+    0088A E200      LDI	R16,0x20
+    0088B 940E 054B CALL	_putchar1
+(0170) 	 WIFI_PUTS(resIOJudge);
+    0088D E00A      LDI	R16,0xA
+    0088E E011      LDI	R17,1
+    0088F 940E 0568 CALL	_puts1
+    00891 9149      LD	R20,Y+
+    00892 9508      RET
+(0171) }
+(0172) 
+(0173) void bspInit(void)		   				   //初始化
+(0174) {	
+(0175)  	usart_init();						   //串口初始化
+_bspInit:
+    00893 940E 07AC CALL	_usart_init
+(0176) 	
+(0177) 	ITFR_PUTS("page connecting");		   //首页
+    00895 EB0A      LDI	R16,0xBA
+    00896 E012      LDI	R17,2
+    00897 940E 0552 CALL	_puts0
+(0178) 	
+(0179) 	IOReinstate();						   //端口复位及信息清空
+    00899 940E 0370 CALL	_IOReinstate
+(0180) 	
+(0181) 	wifiConnecting();
+    0089B D036      RCALL	_wifiConnecting
+(0182) 	
+(0183) 	userID_read(userMe.userID);			   //读用户
+    0089C E605      LDI	R16,0x65
+    0089D E011      LDI	R17,1
+    0089E DF88      RCALL	_userID_read
+(0184) 	password_read(userMe.password);		   //读密码
+    0089F E60E      LDI	R16,0x6E
+    008A0 E011      LDI	R17,1
+    008A1 CFA9      RJMP	_password_read
+_getConnect:
+  loopa                --> R20
+    008A2 934A      ST	-Y,R20
+(0185) }
+(0186) 
+(0187) void getConnect(void){
+(0188) 
+(0189) 	uchar loopa;
+(0190) 	
+(0191) 	for(loopa = 0;loopa < 30;loopa ++){
+    008A3 2744      CLR	R20
+    008A4 C007      RJMP	0x08AC
+(0192) 				  
+(0193) 		WIFI_PUTC('+');
+    008A5 E20B      LDI	R16,0x2B
+    008A6 940E 054B CALL	_putchar1
+(0194) 		delay_ms(100);
+    008A8 E604      LDI	R16,0x64
+    008A9 E010      LDI	R17,0
+    008AA DF5A      RCALL	_delay_ms
+    008AB 9543      INC	R20
+    008AC 314E      CPI	R20,0x1E
+    008AD F3B8      BCS	0x08A5
+(0195) 	}
+(0196) 		
+(0197) 	for(loopa = 0;loopa < 17;loopa ++)
+    008AE 2744      CLR	R20
+    008AF C00D      RJMP	0x08BD
+(0198) 		WIFI_PUTS((uchar*)WIFI_CMD[loopa]);
+    008B0 E38B      LDI	R24,0x3B
+    008B1 E091      LDI	R25,1
+    008B2 2FE4      MOV	R30,R20
+    008B3 27FF      CLR	R31
+    008B4 0FEE      LSL	R30
+    008B5 1FFF      ROL	R31
+    008B6 0FE8      ADD	R30,R24
+    008B7 1FF9      ADC	R31,R25
+    008B8 8100      LD	R16,Z
+    008B9 8111      LDD	R17,Z+1
+    008BA 940E 0568 CALL	_puts1
+    008BC 9543      INC	R20
+    008BD 3141      CPI	R20,0x11
+    008BE F388      BCS	0x08B0
+(0199) 		
+(0200) 	delay_ms(500);
+    008BF EF04      LDI	R16,0xF4
+    008C0 E011      LDI	R17,1
+    008C1 DF43      RCALL	_delay_ms
+(0201) 	WIFI_PUTS("at+reconn=1");
+    008C2 EC0A      LDI	R16,0xCA
+    008C3 E012      LDI	R17,2
+    008C4 940E 0568 CALL	_puts1
+(0202) 	delay_ms(500);
+    008C6 EF04      LDI	R16,0xF4
+    008C7 E011      LDI	R17,1
+    008C8 DF3C      RCALL	_delay_ms
+(0203) 	WIFI_PUTS("at+reconn=1");
+    008C9 EC0A      LDI	R16,0xCA
+    008CA E012      LDI	R17,2
+    008CB 940E 0568 CALL	_puts1
+(0204) 	delay_ms(500);
+    008CD EF04      LDI	R16,0xF4
+    008CE E011      LDI	R17,1
+    008CF DF35      RCALL	_delay_ms
+    008D0 9149      LD	R20,Y+
+    008D1 9508      RET
+_wifiConnecting:
+    008D2 9727      SBIW	R28,7
+(0205) }
+(0206) 
+(0207) void wifiConnecting(void){	 			   //初始化连接
+(0208) 	
+(0209) 	ITFR_PUTS("page connecting");
+    008D3 EB0A      LDI	R16,0xBA
+    008D4 E012      LDI	R17,2
+    008D5 940E 0552 CALL	_puts0
+(0210) 	UI_pt = 0x00;
+    008D7 2422      CLR	R2
+    008D8 9220 0189 STS	UI_pt,R2
+    008DA C020      RJMP	0x08FB
+(0211) 	
+(0212) 	while(1)
+(0213) 	if(!ATTX_M1(WIFI,(char*)cntConfirm,(char*)cntConfirm,0,1500,10))
+    008DB E08A      LDI	R24,0xA
+    008DC 838E      STD	Y+6,R24
+    008DD ED8C      LDI	R24,0xDC
+    008DE E095      LDI	R25,5
+    008DF 839D      STD	Y+5,R25
+    008E0 838C      STD	Y+4,R24
+    008E1 2422      CLR	R2
+    008E2 822A      STD	Y+2,R2
+    008E3 E58D      LDI	R24,0x5D
+    008E4 E091      LDI	R25,1
+    008E5 8399      STD	Y+1,R25
+    008E6 8388      ST	Y,R24
+    008E7 E52D      LDI	R18,0x5D
+    008E8 E031      LDI	R19,1
+    008E9 E402      LDI	R16,0x42
+    008EA 940E 0692 CALL	_ATTX_M1
+    008EC 2300      TST	R16
+    008ED F441      BNE	0x08F6
+(0214) 	{
+(0215) 	
+(0216) 		ITFR_PUTS("page main");
+    008EE EB00      LDI	R16,0xB0
+    008EF E012      LDI	R17,2
+    008F0 940E 0552 CALL	_puts0
+(0217) 		UI_pt = 0x01;
+    008F2 E081      LDI	R24,1
+    008F3 9380 0189 STS	UI_pt,R24
+(0218) 		return;
+    008F5 C006      RJMP	0x08FC
+(0219) 	}
+(0220) 	else 
+(0221) 	{
+(0222) 	 	 
+(0223) 	 	getConnect();
+    008F6 DFAB      RCALL	_getConnect
+(0224) 		ITFR_PUTS("page connecting");
+    008F7 EB0A      LDI	R16,0xBA
+    008F8 E012      LDI	R17,2
+    008F9 940E 0552 CALL	_puts0
+    008FB CFDF      RJMP	0x08DB
+    008FC 9627      ADIW	R28,7
+    008FD 9508      RET
+_wifiReconnect:
+    008FE 934A      ST	-Y,R20
+    008FF 935A      ST	-Y,R21
+    00900 9727      SBIW	R28,7
+(0225) 	}
+(0226) }
+(0227) 
+(0228) void wifiReconnect(void){			 		//中途断开重连
+(0229) 	
+(0230) 	ITFR_PUTS("page reconnect");
+    00901 EA01      LDI	R16,0xA1
+    00902 E012      LDI	R17,2
+    00903 940E 0552 CALL	_puts0
+    00905 C02E      RJMP	0x0934
+(0231) 	
+(0232) 	while(1)
+(0233) 	if(!ATTX_M1(WIFI,(char*)cntConfirm,(char*)cntConfirm,0,1000,6))
+    00906 E086      LDI	R24,6
+    00907 838E      STD	Y+6,R24
+    00908 EE88      LDI	R24,0xE8
+    00909 E093      LDI	R25,3
+    0090A 839D      STD	Y+5,R25
+    0090B 838C      STD	Y+4,R24
+    0090C 2422      CLR	R2
+    0090D 822A      STD	Y+2,R2
+    0090E E58D      LDI	R24,0x5D
+    0090F E091      LDI	R25,1
+    00910 8399      STD	Y+1,R25
+    00911 8388      ST	Y,R24
+    00912 E52D      LDI	R18,0x5D
+    00913 E031      LDI	R19,1
+    00914 E402      LDI	R16,0x42
+    00915 940E 0692 CALL	_ATTX_M1
+    00917 2300      TST	R16
+    00918 F4B1      BNE	0x092F
+(0234) 	{
+(0235) 	
+(0236) 		switch(UI_pt){
+    00919 9140 0189 LDS	R20,UI_pt
+    0091B 2755      CLR	R21
+    0091C 3041      CPI	R20,1
+    0091D E0E0      LDI	R30,0
+    0091E 075E      CPC	R21,R30
+    0091F F029      BEQ	0x0925
+    00920 3042      CPI	R20,2
+    00921 E0E0      LDI	R30,0
+    00922 075E      CPC	R21,R30
+    00923 F031      BEQ	0x092A
+    00924 C010      RJMP	0x0935
+(0237) 		
+(0238) 			case 0x01:	ITFR_PUTS("page main");					   break;
+    00925 EB00      LDI	R16,0xB0
+    00926 E012      LDI	R17,2
+    00927 940E 0552 CALL	_puts0
+    00929 C00B      RJMP	0x0935
+(0239) 			case 0x02:	ITFR_PUTS("page device_select");		   break;
+    0092A E80E      LDI	R16,0x8E
+    0092B E012      LDI	R17,2
+    0092C 940E 0552 CALL	_puts0
+(0240) 			default:	break;
+(0241) 		}
+(0242) 		return;
+    0092E C006      RJMP	0x0935
+(0243) 	}
+(0244) 	else 
+(0245) 	{
+(0246) 	 	 
+(0247) 	 	getConnect();
+    0092F DF72      RCALL	_getConnect
+(0248) 		ITFR_PUTS("page reconnect");
+    00930 EA01      LDI	R16,0xA1
+    00931 E012      LDI	R17,2
+    00932 940E 0552 CALL	_puts0
+    00934 CFD1      RJMP	0x0906
+    00935 9627      ADIW	R28,7
+    00936 9159      LD	R21,Y+
+    00937 9149      LD	R20,Y+
+    00938 9508      RET
+_thread_main:
+  heartBeat_A          --> Y,+6
+  heartBeat_B          --> Y,+2
+  loopa                --> R20
+  loopb                --> R22
+    00939 940E 0D23 CALL	push_xgsetF000
+    0093B 972A      SBIW	R28,0xA
+(0249) 	}
+(0250) }
+(0251) 
+(0252) void thread_main(void){
+(0253) 
+(0254) 	 uchar loopa,loopb;
+(0255) 	 
+(0256) 	 unsigned long  heartBeat_A,heartBeat_B;
+(0257) 	 
+(0258) 	 heartBeat_A = heartBeat_B = 0;
+    0093C E080      LDI	R24,0
+    0093D 838A      STD	Y+2,R24
+    0093E 838B      STD	Y+3,R24
+    0093F 838C      STD	Y+4,R24
+    00940 838D      STD	Y+5,R24
+    00941 E080      LDI	R24,0
+    00942 838E      STD	Y+6,R24
+    00943 838F      STD	Y+7,R24
+    00944 8788      STD	Y+8,R24
+    00945 8789      STD	Y+9,R24
+    00946 C379      RJMP	0x0CC0
+(0259) 
+(0260) 	 while(1){
+(0261) 	 
+(0262) 	 /*********************************************PROCESSING_WIFI*********************************************/
+(0263) 		 
+(0264) 		 //putchar0(0x30+strcmp(userMe_temp.userID,userMe.userID));				//用户名比较结果测试
+(0265) 		 //putchar0(0x30+strcmp(userMe_temp.password,userMe.password));			//密码比较结果测试
+(0266) 		 
+(0267) 		 if(WIFI_BUF[0] == 0x5a){				//包头解析
+    00947 9180 05C2 LDS	R24,UART1_RxBuff_Queue
+    00949 358A      CPI	R24,0x5A
+    0094A F009      BEQ	0x094C
+    0094B C118      RJMP	0x0A64
+(0268) 		 
+(0269) 		 	 if((WIFI_BUF[1] == device_ID) || (WIFI_BUF[1] == 0x06)){
+    0094C 9180 05C3 LDS	R24,UART1_RxBuff_Queue+1
+    0094E 3083      CPI	R24,3
+    0094F F019      BEQ	0x0953
+    00950 3086      CPI	R24,6
+    00951 F009      BEQ	0x0953
+    00952 C111      RJMP	0x0A64
+(0270) 			 
+(0271) 			 	 switch(WIFI_BUF[2]){
+    00953 9140 05C4 LDS	R20,UART1_RxBuff_Queue+2
+    00955 2755      CLR	R21
+    00956 3140      CPI	R20,0x10
+    00957 E0E0      LDI	R30,0
+    00958 075E      CPC	R21,R30
+    00959 F1A9      BEQ	0x098F
+    0095A E180      LDI	R24,0x10
+    0095B E090      LDI	R25,0
+    0095C 1784      CP	R24,R20
+    0095D 0795      CPC	R25,R21
+    0095E F074      BLT	0x096D
+    0095F 3041      CPI	R20,1
+    00960 E0E0      LDI	R30,0
+    00961 075E      CPC	R21,R30
+    00962 F081      BEQ	0x0973
+    00963 3042      CPI	R20,2
+    00964 E0E0      LDI	R30,0
+    00965 075E      CPC	R21,R30
+    00966 F0D1      BEQ	0x0981
+    00967 3043      CPI	R20,3
+    00968 E0E0      LDI	R30,0
+    00969 075E      CPC	R21,R30
+    0096A F409      BNE	0x096C
+    0096B C0C1      RJMP	0x0A2D
+    0096C C0C5      RJMP	0x0A32
+    0096D 3340      CPI	R20,0x30
+    0096E E0E0      LDI	R30,0
+    0096F 075E      CPC	R21,R30
+    00970 F409      BNE	0x0972
+    00971 C0AA      RJMP	0x0A1C
+    00972 C0BF      RJMP	0x0A32
+(0272) 				  
+(0273) 				  	 case 0x01:		 strcpy(userMe.userID,&(WIFI_BUF[3]));userID_write(userMe.userID);	//老师设置用户名
+    00973 EC25      LDI	R18,0xC5
+    00974 E035      LDI	R19,5
+    00975 E605      LDI	R16,0x65
+    00976 E011      LDI	R17,1
+    00977 940E 0CDE CALL	_strcpy
+    00979 E605      LDI	R16,0x65
+    0097A E011      LDI	R17,1
+    0097B DEBD      RCALL	_userID_write
+(0274) 					 	  			 ITFR_PUTS("page main");
+    0097C EB00      LDI	R16,0xB0
+    0097D E012      LDI	R17,2
+    0097E 940E 0552 CALL	_puts0
+(0275) 					 	  			 //WIFI_PUTS("userID set");WIFI_PUTS(userMe.userID);		//测试wifi获取老师设置的用户名
+(0276) 						  			 break;
+    00980 C0B1      RJMP	0x0A32
+(0277) 									 
+(0278) 					 case 0x02:		 strcpy(userMe.password,&(WIFI_BUF[3]));password_write(userMe.password);	//老师设置密码
+    00981 EC25      LDI	R18,0xC5
+    00982 E035      LDI	R19,5
+    00983 E60E      LDI	R16,0x6E
+    00984 E011      LDI	R17,1
+    00985 940E 0CDE CALL	_strcpy
+    00987 E60E      LDI	R16,0x6E
+    00988 E011      LDI	R17,1
+    00989 DED3      RCALL	_password_write
+(0279) 					 	  			 ITFR_PUTS("page main");
+    0098A EB00      LDI	R16,0xB0
+    0098B E012      LDI	R17,2
+    0098C 940E 0552 CALL	_puts0
+(0280) 					 	  			 //WIFI_PUTS("password set");WIFI_PUTS(userMe.password);	//测试测试wifi获取老师设置的密码
+(0281) 									 break;
+    0098E C0A3      RJMP	0x0A32
+(0282) 									 
+(0283) 					 case 0x10:		 IOReinstate();			   									//避免重复设故，以最后一次为准，将上一次复位
+    0098F 940E 0370 CALL	_IOReinstate
+(0284) 					 	  			 ITFR_PUTS("device_select.dfs.txt=\"0\"");
+    00991 E704      LDI	R16,0x74
+    00992 E012      LDI	R17,2
+    00993 940E 0552 CALL	_puts0
+(0285) 									 ITFR_PUTS("device_select.dfb.txt=\"0\"");
+    00995 E50A      LDI	R16,0x5A
+    00996 E012      LDI	R17,2
+    00997 940E 0552 CALL	_puts0
+(0286) 									 ITFR_PUTS("device_select.wbl.txt=\"0\"");
+    00999 E400      LDI	R16,0x40
+    0099A E012      LDI	R17,2
+    0099B 940E 0552 CALL	_puts0
+(0287) 									 ITFR_PUTS("device_select.xdg.txt=\"0\"");
+    0099D E206      LDI	R16,0x26
+    0099E E012      LDI	R17,2
+    0099F 940E 0552 CALL	_puts0
+(0288) 									 ITFR_PUTS("device_select.xyj.txt=\"0\"");
+    009A1 E00C      LDI	R16,0xC
+    009A2 E012      LDI	R17,2
+    009A3 940E 0552 CALL	_puts0
+(0289) 									 
+(0290) 					 	  			 for(loopa = 3;loopa < 17;loopa ++){						//老师设故解析,注意此处字节数有限制
+    009A5 E043      LDI	R20,3
+    009A6 C065      RJMP	0x0A0C
+(0291) 					 
+(0292) 					 	  			 	switch(WIFI_BUF[loopa]){   								//设故板响应，设定成老师设故要求
+    009A7 EC82      LDI	R24,0xC2
+    009A8 E095      LDI	R25,5
+    009A9 2FE4      MOV	R30,R20
+    009AA 27FF      CLR	R31
+    009AB 0FE8      ADD	R30,R24
+    009AC 1FF9      ADC	R31,R25
+    009AD 8160      LD	R22,Z
+    009AE 2777      CLR	R23
+    009AF 3061      CPI	R22,1
+    009B0 E0E0      LDI	R30,0
+    009B1 077E      CPC	R23,R30
+    009B2 F40C      BGE	0x09B4
+    009B3 C057      RJMP	0x0A0B
+    009B4 E08E      LDI	R24,0xE
+    009B5 E090      LDI	R25,0
+    009B6 1786      CP	R24,R22
+    009B7 0797      CPC	R25,R23
+    009B8 F40C      BGE	0x09BA
+    009B9 C051      RJMP	0x0A0B
+    009BA E88C      LDI	R24,0x8C
+    009BB E090      LDI	R25,0
+    009BC 01FB      MOVW	R30,R22
+    009BD 9731      SBIW	R30,1
+    009BE 0FEE      LSL	R30
+    009BF 1FFF      ROL	R31
+    009C0 0FE8      ADD	R30,R24
+    009C1 1FF9      ADC	R31,R25
+    009C2 9027      ELPM	R2,Z+
+    009C3 9036      ELPM	R3,Z
+    009C4 01F1      MOVW	R30,R2
+    009C5 9409      IJMP
+(0293) 					 	  			 					 
+(0294) 					 	  			 	 	case  1:	dianfengshan_IO('T',1);	break;
+    009C6 E021      LDI	R18,1
+    009C7 E504      LDI	R16,0x54
+    009C8 940E 03AA CALL	_dianfengshan_IO
+    009CA C040      RJMP	0x0A0B
+(0295) 										 	case  2:	dianfengshan_IO('T',2); break;
+    009CB E022      LDI	R18,2
+    009CC E504      LDI	R16,0x54
+    009CD 940E 03AA CALL	_dianfengshan_IO
+    009CF C03B      RJMP	0x0A0B
+(0296) 										 	case  3:	dianfengshan_IO('T',3);	break;
+    009D0 E023      LDI	R18,3
+    009D1 E504      LDI	R16,0x54
+    009D2 940E 03AA CALL	_dianfengshan_IO
+    009D4 C036      RJMP	0x0A0B
+(0297) 										 	case  4:	dianfengshan_IO('T',4);	break;
+    009D5 E024      LDI	R18,4
+    009D6 E504      LDI	R16,0x54
+    009D7 940E 03AA CALL	_dianfengshan_IO
+    009D9 C031      RJMP	0x0A0B
+(0298) 										 	case  5:	dianfanbao_IO('T',1);	break;
+    009DA E021      LDI	R18,1
+    009DB E504      LDI	R16,0x54
+    009DC 940E 03FC CALL	_dianfanbao_IO
+    009DE C02C      RJMP	0x0A0B
+(0299) 				 	  			 	 	 	case  6:	dianfanbao_IO('T',2);	break;
+    009DF E022      LDI	R18,2
+    009E0 E504      LDI	R16,0x54
+    009E1 940E 03FC CALL	_dianfanbao_IO
+    009E3 C027      RJMP	0x0A0B
+(0300) 										 	case  7:	dianfanbao_IO('T',3);	break;
+    009E4 E023      LDI	R18,3
+    009E5 E504      LDI	R16,0x54
+    009E6 940E 03FC CALL	_dianfanbao_IO
+    009E8 C022      RJMP	0x0A0B
+(0301) 										 	case  8:	weibolu_IO('T',1);		break;
+    009E9 E021      LDI	R18,1
+    009EA E504      LDI	R16,0x54
+    009EB 940E 0446 CALL	_weibolu_IO
+    009ED C01D      RJMP	0x0A0B
+(0302) 										 	case  9:	weibolu_IO('T',2);		break;
+    009EE E022      LDI	R18,2
+    009EF E504      LDI	R16,0x54
+    009F0 940E 0446 CALL	_weibolu_IO
+    009F2 C018      RJMP	0x0A0B
+(0303) 										 	case 10:	xiaodugui_IO('T',1);	break;
+    009F3 E021      LDI	R18,1
+    009F4 E504      LDI	R16,0x54
+    009F5 940E 0480 CALL	_xiaodugui_IO
+    009F7 C013      RJMP	0x0A0B
+(0304) 										 	case 11:	xiaodugui_IO('T',2);	break;
+    009F8 E022      LDI	R18,2
+    009F9 E504      LDI	R16,0x54
+    009FA 940E 0480 CALL	_xiaodugui_IO
+    009FC C00E      RJMP	0x0A0B
+(0305) 										 	case 12:	xiyiji_IO('T',1);		break;
+    009FD E021      LDI	R18,1
+    009FE E504      LDI	R16,0x54
+    009FF 940E 04BA CALL	_xiyiji_IO
+    00A01 C009      RJMP	0x0A0B
+(0306) 										 	case 13:	xiyiji_IO('T',2);		break;
+    00A02 E022      LDI	R18,2
+    00A03 E504      LDI	R16,0x54
+    00A04 940E 04BA CALL	_xiyiji_IO
+    00A06 C004      RJMP	0x0A0B
+(0307) 										 	case 14:	xiyiji_IO('T',3);		break;
+    00A07 E023      LDI	R18,3
+    00A08 E504      LDI	R16,0x54
+    00A09 940E 04BA CALL	_xiyiji_IO
+    00A0B 9543      INC	R20
+    00A0C 3141      CPI	R20,0x11
+    00A0D F408      BCC	0x0A0F
+    00A0E CF98      RJMP	0x09A7
+(0308) 											default:	break;
+(0309) 					 	  			 	 }
+(0310) 					 	  			 }
+(0311) 									 WIFI_BUF[1] = device_ID; 					//修改ID，原包返回响应请求
+    00A0F E083      LDI	R24,3
+    00A10 9380 05C3 STS	UART1_RxBuff_Queue+1,R24
+(0312) 				 					 WIFI_PUTS(WIFI_BUF);
+    00A12 EC02      LDI	R16,0xC2
+    00A13 E015      LDI	R17,5
+    00A14 940E 0568 CALL	_puts1
+(0313) 									 
+(0314) 									 heartBeat_B = 0;	 						//心跳
+    00A16 E080      LDI	R24,0
+    00A17 838A      STD	Y+2,R24
+    00A18 838B      STD	Y+3,R24
+    00A19 838C      STD	Y+4,R24
+    00A1A 838D      STD	Y+5,R24
+(0315) 									 
+(0316) 									 break;
+    00A1B C016      RJMP	0x0A32
+(0317) 									 
+(0318) 					 case 0x30:		 IOReinstate(); 	 						//设备复位
+    00A1C 940E 0370 CALL	_IOReinstate
+(0319) 					 	  			 ITFR_PUTS("page device_select");			//重新开放选择界面
+    00A1E E80E      LDI	R16,0x8E
+    00A1F E012      LDI	R17,2
+    00A20 940E 0552 CALL	_puts0
+(0320) 									 UI_pt = 0x02;
+    00A22 E082      LDI	R24,2
+    00A23 9380 0189 STS	UI_pt,R24
+(0321) 					 	  			 WIFI_BUF[1] = device_ID; 		 			//修改ID，原包返回响应请求
+    00A25 E083      LDI	R24,3
+    00A26 9380 05C3 STS	UART1_RxBuff_Queue+1,R24
+(0322) 				 					 WIFI_PUTS(WIFI_BUF);
+    00A28 EC02      LDI	R16,0xC2
+    00A29 E015      LDI	R17,5
+    00A2A 940E 0568 CALL	_puts1
+(0323) 					 	  			 break;
+    00A2C C005      RJMP	0x0A32
+(0324) 									 
+(0325) 					 case 0x03:		 heartBeat_B = 0; 		 					//确认连接，心跳标记清零
+    00A2D E080      LDI	R24,0
+    00A2E 838A      STD	Y+2,R24
+    00A2F 838B      STD	Y+3,R24
+    00A30 838C      STD	Y+4,R24
+    00A31 838D      STD	Y+5,R24
+(0326) 					 	  			 break;
+(0327) 									 
+(0328) 					 default:		 break;
+(0329) 				 }
+(0330) 				 
+(0331) 		 		 if(infoMal_teacher.dianfengshan)ITFR_PUTS("device_select.dfs.txt=\"1\"");	//解冻设备选项				 
+    00A32 9020 0100 LDS	R2,infoMal_teacher
+    00A34 2022      TST	R2
+    00A35 F021      BEQ	0x0A3A
+    00A36 EF02      LDI	R16,0xF2
+    00A37 E011      LDI	R17,1
+    00A38 940E 0552 CALL	_puts0
+(0332) 				 if(infoMal_teacher.dianfanbao)ITFR_PUTS("device_select.dfb.txt=\"1\"");
+    00A3A 9020 0101 LDS	R2,infoMal_teacher+1
+    00A3C 2022      TST	R2
+    00A3D F021      BEQ	0x0A42
+    00A3E ED08      LDI	R16,0xD8
+    00A3F E011      LDI	R17,1
+    00A40 940E 0552 CALL	_puts0
+(0333) 				 if(infoMal_teacher.weibolu)ITFR_PUTS("device_select.wbl.txt=\"1\"");
+    00A42 9020 0102 LDS	R2,infoMal_teacher+2
+    00A44 2022      TST	R2
+    00A45 F021      BEQ	0x0A4A
+    00A46 EB0E      LDI	R16,0xBE
+    00A47 E011      LDI	R17,1
+    00A48 940E 0552 CALL	_puts0
+(0334) 				 if(infoMal_teacher.xiaodugui)ITFR_PUTS("device_select.xdg.txt=\"1\"");
+    00A4A 9020 0103 LDS	R2,infoMal_teacher+3
+    00A4C 2022      TST	R2
+    00A4D F021      BEQ	0x0A52
+    00A4E EA04      LDI	R16,0xA4
+    00A4F E011      LDI	R17,1
+    00A50 940E 0552 CALL	_puts0
+(0335) 				 if(infoMal_teacher.xiyiji)ITFR_PUTS("device_select.xyj.txt=\"1\"");
+    00A52 9020 0104 LDS	R2,infoMal_teacher+4
+    00A54 2022      TST	R2
+    00A55 F021      BEQ	0x0A5A
+    00A56 E80A      LDI	R16,0x8A
+    00A57 E011      LDI	R17,1
+    00A58 940E 0552 CALL	_puts0
+(0336) 			 	 memset(WIFI_BUF,0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);
+    00A5A E18E      LDI	R24,0x1E
+    00A5B E090      LDI	R25,0
+    00A5C 8399      STD	Y+1,R25
+    00A5D 8388      ST	Y,R24
+    00A5E 2722      CLR	R18
+    00A5F 2733      CLR	R19
+    00A60 EC02      LDI	R16,0xC2
+    00A61 E015      LDI	R17,5
+    00A62 940E 0CC6 CALL	_memset
+(0337) 			 }
+(0338) 		 }
+(0339) 		 //delay_ms(1500);			//测试延时
+(0340) 		 //WIFI_PUTS(WIFI_BUF);		//测试WIFI缓存
+(0341) 		 
+(0342) 		 
+(0343) 	  /*********************************************PROCESSING_ITFR*********************************************/
+(0344) 
+(0345) 		 if(ITFR_BUF[0] == 0x5a){		//包头解析
+    00A64 9180 0658 LDS	R24,UART0_RxBuff_Queue
+    00A66 358A      CPI	R24,0x5A
+    00A67 F009      BEQ	0x0A69
+    00A68 C20C      RJMP	0x0C75
+(0346) 		 
+(0347) 		 	 switch(ITFR_BUF[1]){
+    00A69 9160 0659 LDS	R22,UART0_RxBuff_Queue+1
+    00A6B 2777      CLR	R23
+    00A6C 3260      CPI	R22,0x20
+    00A6D E0E0      LDI	R30,0
+    00A6E 077E      CPC	R23,R30
+    00A6F F409      BNE	0x0A71
+    00A70 C08F      RJMP	0x0B00
+    00A71 E280      LDI	R24,0x20
+    00A72 E090      LDI	R25,0
+    00A73 1786      CP	R24,R22
+    00A74 0797      CPC	R25,R23
+    00A75 F0BC      BLT	0x0A8D
+    00A76 3061      CPI	R22,1
+    00A77 E0E0      LDI	R30,0
+    00A78 077E      CPC	R23,R30
+    00A79 F149      BEQ	0x0AA3
+    00A7A 3062      CPI	R22,2
+    00A7B E0E0      LDI	R30,0
+    00A7C 077E      CPC	R23,R30
+    00A7D F161      BEQ	0x0AAA
+    00A7E 3061      CPI	R22,1
+    00A7F E0E0      LDI	R30,0
+    00A80 077E      CPC	R23,R30
+    00A81 F40C      BGE	0x0A83
+    00A82 C1BB      RJMP	0x0C3E
+    00A83 306F      CPI	R22,0xF
+    00A84 E0E0      LDI	R30,0
+    00A85 077E      CPC	R23,R30
+    00A86 F409      BNE	0x0A88
+    00A87 C1B4      RJMP	0x0C3C
+    00A88 3160      CPI	R22,0x10
+    00A89 E0E0      LDI	R30,0
+    00A8A 077E      CPC	R23,R30
+    00A8B F129      BEQ	0x0AB1
+    00A8C C1B1      RJMP	0x0C3E
+    00A8D 3460      CPI	R22,0x40
+    00A8E E0E0      LDI	R30,0
+    00A8F 077E      CPC	R23,R30
+    00A90 F409      BNE	0x0A92
+    00A91 C10C      RJMP	0x0B9E
+    00A92 E480      LDI	R24,0x40
+    00A93 E090      LDI	R25,0
+    00A94 1786      CP	R24,R22
+    00A95 0797      CPC	R25,R23
+    00A96 F034      BLT	0x0A9D
+    00A97 3360      CPI	R22,0x30
+    00A98 E0E0      LDI	R30,0
+    00A99 077E      CPC	R23,R30
+    00A9A F409      BNE	0x0A9C
+    00A9B C0B3      RJMP	0x0B4F
+    00A9C C1A1      RJMP	0x0C3E
+    00A9D 3560      CPI	R22,0x50
+    00A9E E0E0      LDI	R30,0
+    00A9F 077E      CPC	R23,R30
+    00AA0 F409      BNE	0x0AA2
+    00AA1 C14B      RJMP	0x0BED
+    00AA2 C19B      RJMP	0x0C3E
+(0348) 			 
+(0349) 			 	  	case 0x01:		strcpy(userMe_temp.userID,&(ITFR_BUF[2]));							//学生输入用户名
+    00AA3 E52A      LDI	R18,0x5A
+    00AA4 E036      LDI	R19,6
+    00AA5 E707      LDI	R16,0x77
+    00AA6 E011      LDI	R17,1
+    00AA7 940E 0CDE CALL	_strcpy
+(0350) 						 			//ITFR_PUTS("GOT userID");ITFR_PUTS(userMe_temp.userID);			//测试学生输入的用户名
+(0351) 						  			break;
+    00AA9 C194      RJMP	0x0C3E
+(0352) 					case 0x02:		strcpy(userMe_temp.password,&(ITFR_BUF[2]));						//学生输入密码
+    00AAA E52A      LDI	R18,0x5A
+    00AAB E036      LDI	R19,6
+    00AAC E800      LDI	R16,0x80
+    00AAD E011      LDI	R17,1
+    00AAE 940E 0CDE CALL	_strcpy
+(0353) 						 			//ITFR_PUTS("GOT password set");ITFR_PUTS(userMe_temp.password);	//测试学生输入的密码
+(0354) 						 			break;
+    00AB0 C18D      RJMP	0x0C3E
+(0355) 									
+(0356) 					case 0x10:		for(loopa = 0;loopa < 4;loopa ++)										   //学生提交解故结果解析，电分扇，4个设故点
+    00AB1 2744      CLR	R20
+    00AB2 C00F      RJMP	0x0AC2
+(0357) 						 				if(ITFR_BUF[loopa+2] == '1')dianfengshan_IO('S',loopa+1);			   //设故板响应，设定成学生提交结果
+    00AB3 E58A      LDI	R24,0x5A
+    00AB4 E096      LDI	R25,6
+    00AB5 2FE4      MOV	R30,R20
+    00AB6 27FF      CLR	R31
+    00AB7 0FE8      ADD	R30,R24
+    00AB8 1FF9      ADC	R31,R25
+    00AB9 8180      LD	R24,Z
+    00ABA 3381      CPI	R24,0x31
+    00ABB F429      BNE	0x0AC1
+    00ABC 2F24      MOV	R18,R20
+    00ABD 5F2F      SUBI	R18,0xFF
+    00ABE E503      LDI	R16,0x53
+    00ABF 940E 03AA CALL	_dianfengshan_IO
+    00AC1 9543      INC	R20
+    00AC2 3044      CPI	R20,4
+    00AC3 F378      BCS	0x0AB3
+(0358) 										
+(0359) 									OPJudje(infoMal_teacher.dianfengshan,infoMal_student.dianfengshan,1); 	   //比较学生提交结果与老是设定，得到仲裁结果		
+    00AC4 E081      LDI	R24,1
+    00AC5 8388      ST	Y,R24
+    00AC6 9120 0105 LDS	R18,infoMal_student
+    00AC8 9100 0100 LDS	R16,infoMal_teacher
+    00ACA 940E 0386 CALL	_OPJudje
+(0360) 									for(loopa = 0;loopa < 4;loopa ++)										   //每一位都比较，避免游标错位
+    00ACC 2744      CLR	R20
+    00ACD C01D      RJMP	0x0AEB
+(0361) 									    for(loopb = 1;loopb <= 4;loopb ++)		  							   //向本地用户提交仲裁结果，只提交错误信息，loopb游标从1-4，表示故障1-4为电风扇故障
+    00ACE E061      LDI	R22,1
+    00ACF C017      RJMP	0x0AE7
+(0362) 										    if(resIOJudge[loopa] == loopb)ITFR_PUTS((char*)ITFR_CMD[loopb-1]); //向本地用户提交结果，只提交错误的设故标号，[loopb-1]为故障标号与数组索引差值
+    00AD0 E08A      LDI	R24,0xA
+    00AD1 E091      LDI	R25,1
+    00AD2 2FE4      MOV	R30,R20
+    00AD3 27FF      CLR	R31
+    00AD4 0FE8      ADD	R30,R24
+    00AD5 1FF9      ADC	R31,R25
+    00AD6 8020      LD	R2,Z
+    00AD7 1626      CP	R2,R22
+    00AD8 F469      BNE	0x0AE6
+    00AD9 E18F      LDI	R24,0x1F
+    00ADA E091      LDI	R25,1
+    00ADB 2FE6      MOV	R30,R22
+    00ADC 27FF      CLR	R31
+    00ADD 9731      SBIW	R30,1
+    00ADE 0FEE      LSL	R30
+    00ADF 1FFF      ROL	R31
+    00AE0 0FE8      ADD	R30,R24
+    00AE1 1FF9      ADC	R31,R25
+    00AE2 8100      LD	R16,Z
+    00AE3 8111      LDD	R17,Z+1
+    00AE4 940E 0552 CALL	_puts0
+    00AE6 9563      INC	R22
+    00AE7 E084      LDI	R24,4
+    00AE8 1786      CP	R24,R22
+    00AE9 F730      BCC	0x0AD0
+    00AEA 9543      INC	R20
+    00AEB 3044      CPI	R20,4
+    00AEC F308      BCS	0x0ACE
+(0363) 									
+(0364) 									memset(resIOJudge,0,sizeof(uchar)*9);		  //清除比较信息结果缓存
+    00AED E089      LDI	R24,0x9
+    00AEE E090      LDI	R25,0
+    00AEF 8399      STD	Y+1,R25
+    00AF0 8388      ST	Y,R24
+    00AF1 2722      CLR	R18
+    00AF2 2733      CLR	R19
+    00AF3 E00A      LDI	R16,0xA
+    00AF4 E011      LDI	R17,1
+    00AF5 940E 0CC6 CALL	_memset
+(0365) 									OPJudje(0x00,infoMal_student.dianfengshan,1); //得到学生更改变动的故障对应的故障编号信息，不仲裁
+    00AF7 E081      LDI	R24,1
+    00AF8 8388      ST	Y,R24
+    00AF9 9120 0105 LDS	R18,infoMal_student
+    00AFB 2700      CLR	R16
+    00AFC 940E 0386 CALL	_OPJudje
+(0366) 									reaptRes();				//学生变动提交老师
+    00AFE DD70      RCALL	_reaptRes
+(0367) 										
+(0368) 									break;
+    00AFF C13E      RJMP	0x0C3E
+(0369) 									
+(0370) 					case 0x20:		for(loopa = 0;loopa < 2;loopa ++)		  						//微波炉，2个设故点
+    00B00 2744      CLR	R20
+    00B01 C00F      RJMP	0x0B11
+(0371) 						 				if(ITFR_BUF[loopa+2] == '1')weibolu_IO('S',loopa+1);		//loop+2为了跳过包头两个字节
+    00B02 E58A      LDI	R24,0x5A
+    00B03 E096      LDI	R25,6
+    00B04 2FE4      MOV	R30,R20
+    00B05 27FF      CLR	R31
+    00B06 0FE8      ADD	R30,R24
+    00B07 1FF9      ADC	R31,R25
+    00B08 8180      LD	R24,Z
+    00B09 3381      CPI	R24,0x31
+    00B0A F429      BNE	0x0B10
+    00B0B 2F24      MOV	R18,R20
+    00B0C 5F2F      SUBI	R18,0xFF
+    00B0D E503      LDI	R16,0x53
+    00B0E 940E 0446 CALL	_weibolu_IO
+    00B10 9543      INC	R20
+    00B11 3042      CPI	R20,2
+    00B12 F378      BCS	0x0B02
+(0372) 										
+(0373) 									OPJudje(infoMal_teacher.weibolu,infoMal_student.weibolu,8);		
+    00B13 E088      LDI	R24,0x8
+    00B14 8388      ST	Y,R24
+    00B15 9120 0107 LDS	R18,infoMal_student+2
+    00B17 9100 0102 LDS	R16,infoMal_teacher+2
+    00B19 940E 0386 CALL	_OPJudje
+(0374) 									for(loopa = 0;loopa < 2;loopa ++)				
+    00B1B 2744      CLR	R20
+    00B1C C01D      RJMP	0x0B3A
+(0375) 									    for(loopb = 8;loopb <= 9;loopb ++)										//8-9
+    00B1D E068      LDI	R22,0x8
+    00B1E C017      RJMP	0x0B36
+(0376) 										    if(resIOJudge[loopa] == loopb)ITFR_PUTS((char*)ITFR_CMD[loopb-1]);
+    00B1F E08A      LDI	R24,0xA
+    00B20 E091      LDI	R25,1
+    00B21 2FE4      MOV	R30,R20
+    00B22 27FF      CLR	R31
+    00B23 0FE8      ADD	R30,R24
+    00B24 1FF9      ADC	R31,R25
+    00B25 8020      LD	R2,Z
+    00B26 1626      CP	R2,R22
+    00B27 F469      BNE	0x0B35
+    00B28 E18F      LDI	R24,0x1F
+    00B29 E091      LDI	R25,1
+    00B2A 2FE6      MOV	R30,R22
+    00B2B 27FF      CLR	R31
+    00B2C 9731      SBIW	R30,1
+    00B2D 0FEE      LSL	R30
+    00B2E 1FFF      ROL	R31
+    00B2F 0FE8      ADD	R30,R24
+    00B30 1FF9      ADC	R31,R25
+    00B31 8100      LD	R16,Z
+    00B32 8111      LDD	R17,Z+1
+    00B33 940E 0552 CALL	_puts0
+    00B35 9563      INC	R22
+    00B36 E089      LDI	R24,0x9
+    00B37 1786      CP	R24,R22
+    00B38 F730      BCC	0x0B1F
+    00B39 9543      INC	R20
+    00B3A 3042      CPI	R20,2
+    00B3B F308      BCS	0x0B1D
+(0377) 										
+(0378) 									memset(resIOJudge,0,sizeof(uchar)*9);
+    00B3C E089      LDI	R24,0x9
+    00B3D E090      LDI	R25,0
+    00B3E 8399      STD	Y+1,R25
+    00B3F 8388      ST	Y,R24
+    00B40 2722      CLR	R18
+    00B41 2733      CLR	R19
+    00B42 E00A      LDI	R16,0xA
+    00B43 E011      LDI	R17,1
+    00B44 940E 0CC6 CALL	_memset
+(0379) 									OPJudje(0x00,infoMal_student.weibolu,8);
+    00B46 E088      LDI	R24,0x8
+    00B47 8388      ST	Y,R24
+    00B48 9120 0107 LDS	R18,infoMal_student+2
+    00B4A 2700      CLR	R16
+    00B4B 940E 0386 CALL	_OPJudje
+(0380) 									reaptRes();
+    00B4D DD21      RCALL	_reaptRes
+(0381) 																		
+(0382) 									break;	
+    00B4E C0EF      RJMP	0x0C3E
+(0383) 									
+(0384) 					case 0x30:		for(loopa = 0;loopa < 3;loopa ++)						   		 //电饭煲，3个设故点
+    00B4F 2744      CLR	R20
+    00B50 C00F      RJMP	0x0B60
+(0385) 						 				if(ITFR_BUF[loopa+2] == '1')dianfanbao_IO('S',loopa+1);
+    00B51 E58A      LDI	R24,0x5A
+    00B52 E096      LDI	R25,6
+    00B53 2FE4      MOV	R30,R20
+    00B54 27FF      CLR	R31
+    00B55 0FE8      ADD	R30,R24
+    00B56 1FF9      ADC	R31,R25
+    00B57 8180      LD	R24,Z
+    00B58 3381      CPI	R24,0x31
+    00B59 F429      BNE	0x0B5F
+    00B5A 2F24      MOV	R18,R20
+    00B5B 5F2F      SUBI	R18,0xFF
+    00B5C E503      LDI	R16,0x53
+    00B5D 940E 03FC CALL	_dianfanbao_IO
+    00B5F 9543      INC	R20
+    00B60 3043      CPI	R20,3
+    00B61 F378      BCS	0x0B51
+(0386) 										
+(0387) 									OPJudje(infoMal_teacher.dianfanbao,infoMal_student.dianfanbao,5);	
+    00B62 E085      LDI	R24,5
+    00B63 8388      ST	Y,R24
+    00B64 9120 0106 LDS	R18,infoMal_student+1
+    00B66 9100 0101 LDS	R16,infoMal_teacher+1
+    00B68 940E 0386 CALL	_OPJudje
+(0388) 									for(loopa = 0;loopa < 3;loopa ++)							
+    00B6A 2744      CLR	R20
+    00B6B C01D      RJMP	0x0B89
+(0389) 									    for(loopb = 5;loopb <= 7;loopb ++)										//5-7
+    00B6C E065      LDI	R22,5
+    00B6D C017      RJMP	0x0B85
+(0390) 										    if(resIOJudge[loopa] == loopb)ITFR_PUTS((char*)ITFR_CMD[loopb-1]);
+    00B6E E08A      LDI	R24,0xA
+    00B6F E091      LDI	R25,1
+    00B70 2FE4      MOV	R30,R20
+    00B71 27FF      CLR	R31
+    00B72 0FE8      ADD	R30,R24
+    00B73 1FF9      ADC	R31,R25
+    00B74 8020      LD	R2,Z
+    00B75 1626      CP	R2,R22
+    00B76 F469      BNE	0x0B84
+    00B77 E18F      LDI	R24,0x1F
+    00B78 E091      LDI	R25,1
+    00B79 2FE6      MOV	R30,R22
+    00B7A 27FF      CLR	R31
+    00B7B 9731      SBIW	R30,1
+    00B7C 0FEE      LSL	R30
+    00B7D 1FFF      ROL	R31
+    00B7E 0FE8      ADD	R30,R24
+    00B7F 1FF9      ADC	R31,R25
+    00B80 8100      LD	R16,Z
+    00B81 8111      LDD	R17,Z+1
+    00B82 940E 0552 CALL	_puts0
+    00B84 9563      INC	R22
+    00B85 E087      LDI	R24,7
+    00B86 1786      CP	R24,R22
+    00B87 F730      BCC	0x0B6E
+    00B88 9543      INC	R20
+    00B89 3043      CPI	R20,3
+    00B8A F308      BCS	0x0B6C
+(0391) 									
+(0392) 									memset(resIOJudge,0,sizeof(uchar)*9);	
+    00B8B E089      LDI	R24,0x9
+    00B8C E090      LDI	R25,0
+    00B8D 8399      STD	Y+1,R25
+    00B8E 8388      ST	Y,R24
+    00B8F 2722      CLR	R18
+    00B90 2733      CLR	R19
+    00B91 E00A      LDI	R16,0xA
+    00B92 E011      LDI	R17,1
+    00B93 940E 0CC6 CALL	_memset
+(0393) 									OPJudje(0x00,infoMal_student.dianfanbao,5);
+    00B95 E085      LDI	R24,5
+    00B96 8388      ST	Y,R24
+    00B97 9120 0106 LDS	R18,infoMal_student+1
+    00B99 2700      CLR	R16
+    00B9A 940E 0386 CALL	_OPJudje
+(0394) 									reaptRes();
+    00B9C DCD2      RCALL	_reaptRes
+(0395) 				
+(0396) 									break;
+    00B9D C0A0      RJMP	0x0C3E
+(0397) 									
+(0398) 					case 0x40:		for(loopa = 0;loopa < 3;loopa ++)								 //洗衣机，3个设故点
+    00B9E 2744      CLR	R20
+    00B9F C00F      RJMP	0x0BAF
+(0399) 						 				if(ITFR_BUF[loopa+2] == '1')xiyiji_IO('S',loopa+1);
+    00BA0 E58A      LDI	R24,0x5A
+    00BA1 E096      LDI	R25,6
+    00BA2 2FE4      MOV	R30,R20
+    00BA3 27FF      CLR	R31
+    00BA4 0FE8      ADD	R30,R24
+    00BA5 1FF9      ADC	R31,R25
+    00BA6 8180      LD	R24,Z
+    00BA7 3381      CPI	R24,0x31
+    00BA8 F429      BNE	0x0BAE
+    00BA9 2F24      MOV	R18,R20
+    00BAA 5F2F      SUBI	R18,0xFF
+    00BAB E503      LDI	R16,0x53
+    00BAC 940E 04BA CALL	_xiyiji_IO
+    00BAE 9543      INC	R20
+    00BAF 3043      CPI	R20,3
+    00BB0 F378      BCS	0x0BA0
+(0400) 										
+(0401) 									OPJudje(infoMal_teacher.xiyiji,infoMal_student.xiyiji,12);		
+    00BB1 E08C      LDI	R24,0xC
+    00BB2 8388      ST	Y,R24
+    00BB3 9120 0109 LDS	R18,infoMal_student+4
+    00BB5 9100 0104 LDS	R16,infoMal_teacher+4
+    00BB7 940E 0386 CALL	_OPJudje
+(0402) 									for(loopa = 0;loopa < 3;loopa ++)								
+    00BB9 2744      CLR	R20
+    00BBA C01D      RJMP	0x0BD8
+(0403) 									    for(loopb = 12;loopb <= 14;loopb ++)									//12-14
+    00BBB E06C      LDI	R22,0xC
+    00BBC C017      RJMP	0x0BD4
+(0404) 										    if(resIOJudge[loopa] == loopb)ITFR_PUTS((char*)ITFR_CMD[loopb-1]);
+    00BBD E08A      LDI	R24,0xA
+    00BBE E091      LDI	R25,1
+    00BBF 2FE4      MOV	R30,R20
+    00BC0 27FF      CLR	R31
+    00BC1 0FE8      ADD	R30,R24
+    00BC2 1FF9      ADC	R31,R25
+    00BC3 8020      LD	R2,Z
+    00BC4 1626      CP	R2,R22
+    00BC5 F469      BNE	0x0BD3
+    00BC6 E18F      LDI	R24,0x1F
+    00BC7 E091      LDI	R25,1
+    00BC8 2FE6      MOV	R30,R22
+    00BC9 27FF      CLR	R31
+    00BCA 9731      SBIW	R30,1
+    00BCB 0FEE      LSL	R30
+    00BCC 1FFF      ROL	R31
+    00BCD 0FE8      ADD	R30,R24
+    00BCE 1FF9      ADC	R31,R25
+    00BCF 8100      LD	R16,Z
+    00BD0 8111      LDD	R17,Z+1
+    00BD1 940E 0552 CALL	_puts0
+    00BD3 9563      INC	R22
+    00BD4 E08E      LDI	R24,0xE
+    00BD5 1786      CP	R24,R22
+    00BD6 F730      BCC	0x0BBD
+    00BD7 9543      INC	R20
+    00BD8 3043      CPI	R20,3
+    00BD9 F308      BCS	0x0BBB
+(0405) 										
+(0406) 									memset(resIOJudge,0,sizeof(uchar)*9);
+    00BDA E089      LDI	R24,0x9
+    00BDB E090      LDI	R25,0
+    00BDC 8399      STD	Y+1,R25
+    00BDD 8388      ST	Y,R24
+    00BDE 2722      CLR	R18
+    00BDF 2733      CLR	R19
+    00BE0 E00A      LDI	R16,0xA
+    00BE1 E011      LDI	R17,1
+    00BE2 940E 0CC6 CALL	_memset
+(0407) 									OPJudje(0x00,infoMal_student.xiyiji,12);
+    00BE4 E08C      LDI	R24,0xC
+    00BE5 8388      ST	Y,R24
+    00BE6 9120 0109 LDS	R18,infoMal_student+4
+    00BE8 2700      CLR	R16
+    00BE9 940E 0386 CALL	_OPJudje
+(0408) 									reaptRes();
+    00BEB DC83      RCALL	_reaptRes
+(0409) 									
+(0410) 									break;
+    00BEC C051      RJMP	0x0C3E
+(0411) 									
+(0412) 					case 0x50:		for(loopa = 0;loopa < 2;loopa ++)						  		 //消毒柜，2个设故点
+    00BED 2744      CLR	R20
+    00BEE C00F      RJMP	0x0BFE
+(0413) 						 				if(ITFR_BUF[loopa+2] == '1')xiaodugui_IO('S',loopa+1);
+    00BEF E58A      LDI	R24,0x5A
+    00BF0 E096      LDI	R25,6
+    00BF1 2FE4      MOV	R30,R20
+    00BF2 27FF      CLR	R31
+    00BF3 0FE8      ADD	R30,R24
+    00BF4 1FF9      ADC	R31,R25
+    00BF5 8180      LD	R24,Z
+    00BF6 3381      CPI	R24,0x31
+    00BF7 F429      BNE	0x0BFD
+    00BF8 2F24      MOV	R18,R20
+    00BF9 5F2F      SUBI	R18,0xFF
+    00BFA E503      LDI	R16,0x53
+    00BFB 940E 0480 CALL	_xiaodugui_IO
+    00BFD 9543      INC	R20
+    00BFE 3042      CPI	R20,2
+    00BFF F378      BCS	0x0BEF
+(0414) 										
+(0415) 									OPJudje(infoMal_teacher.xiaodugui,infoMal_student.xiaodugui,10);		
+    00C00 E08A      LDI	R24,0xA
+    00C01 8388      ST	Y,R24
+    00C02 9120 0108 LDS	R18,infoMal_student+3
+    00C04 9100 0103 LDS	R16,infoMal_teacher+3
+    00C06 940E 0386 CALL	_OPJudje
+(0416) 									for(loopa = 0;loopa < 2;loopa ++)				
+    00C08 2744      CLR	R20
+    00C09 C01D      RJMP	0x0C27
+(0417) 										for(loopb = 10;loopb <= 11;loopb ++)									//10-11
+    00C0A E06A      LDI	R22,0xA
+    00C0B C017      RJMP	0x0C23
+(0418) 											if(resIOJudge[loopa] == loopb)ITFR_PUTS((char*)ITFR_CMD[loopb-1]);
+    00C0C E08A      LDI	R24,0xA
+    00C0D E091      LDI	R25,1
+    00C0E 2FE4      MOV	R30,R20
+    00C0F 27FF      CLR	R31
+    00C10 0FE8      ADD	R30,R24
+    00C11 1FF9      ADC	R31,R25
+    00C12 8020      LD	R2,Z
+    00C13 1626      CP	R2,R22
+    00C14 F469      BNE	0x0C22
+    00C15 E18F      LDI	R24,0x1F
+    00C16 E091      LDI	R25,1
+    00C17 2FE6      MOV	R30,R22
+    00C18 27FF      CLR	R31
+    00C19 9731      SBIW	R30,1
+    00C1A 0FEE      LSL	R30
+    00C1B 1FFF      ROL	R31
+    00C1C 0FE8      ADD	R30,R24
+    00C1D 1FF9      ADC	R31,R25
+    00C1E 8100      LD	R16,Z
+    00C1F 8111      LDD	R17,Z+1
+    00C20 940E 0552 CALL	_puts0
+    00C22 9563      INC	R22
+    00C23 E08B      LDI	R24,0xB
+    00C24 1786      CP	R24,R22
+    00C25 F730      BCC	0x0C0C
+    00C26 9543      INC	R20
+    00C27 3042      CPI	R20,2
+    00C28 F308      BCS	0x0C0A
+(0419) 										
+(0420) 									memset(resIOJudge,0,sizeof(uchar)*9);
+    00C29 E089      LDI	R24,0x9
+    00C2A E090      LDI	R25,0
+    00C2B 8399      STD	Y+1,R25
+    00C2C 8388      ST	Y,R24
+    00C2D 2722      CLR	R18
+    00C2E 2733      CLR	R19
+    00C2F E00A      LDI	R16,0xA
+    00C30 E011      LDI	R17,1
+    00C31 940E 0CC6 CALL	_memset
+(0421) 									OPJudje(0x00,infoMal_student.xiaodugui,10);
+    00C33 E08A      LDI	R24,0xA
+    00C34 8388      ST	Y,R24
+    00C35 9120 0108 LDS	R18,infoMal_student+3
+    00C37 2700      CLR	R16
+    00C38 940E 0386 CALL	_OPJudje
+(0422) 									reaptRes();
+    00C3A DC34      RCALL	_reaptRes
+(0423) 
+(0424) 									//ITFR_PUTS("Result xiaodugui hand up");		//测试输出
+(0425) 									//putchar1(resIOJudge[0]+0x30);	   				//测试比较结果输出
+(0426) 									//putchar1(resIOJudge[1]+0x30);
+(0427) 									//putchar1(resIOJudge[2]+0x30);
+(0428) 									//putchar1(resIOJudge[3]+0x30);
+(0429) 									//putchar1(resIOJudge[6]+0x30);
+(0430) 									//putchar1(resIOJudge[7]+0x30);
+(0431) 									//putchar1(resIOJudge[8]+0x30);										
+(0432) 									break;
+    00C3B C002      RJMP	0x0C3E
+(0433) 									
+(0434) 					case 0x0f:		IOReinstate();									//结果提交完成，设备复位后重新开放选择界面
+    00C3C 940E 0370 CALL	_IOReinstate
+(0435) 						 			//ITFR_PUTS("device_select.dfs.txt=\"0\"");		//冰封所有选项，等待老师重新设故
+(0436) 									//ITFR_PUTS("device_select.wbl.txt=\"0\"");
+(0437) 									//ITFR_PUTS("device_select.dfb.txt=\"0\"");
+(0438) 									//ITFR_PUTS("device_select.xyj.txt=\"0\"");
+(0439) 									//ITFR_PUTS("device_select.xdg.txt=\"0\"");								
+(0440) 						 			//ITFR_PUTS("page device_select");				//开放设故选择界面
+(0441) 									
+(0442) 					default:		break;
+(0443) 			 }
+(0444) 			 
+(0445) 			 if(!strcmp(userMe_temp.userID,userMe.userID) && !strcmp(userMe_temp.password,userMe.password)){	//用户名及密码验证
+    00C3E E625      LDI	R18,0x65
+    00C3F E031      LDI	R19,1
+    00C40 E707      LDI	R16,0x77
+    00C41 E011      LDI	R17,1
+    00C42 940E 0CD1 CALL	_strcmp
+    00C44 3000      CPI	R16,0
+    00C45 0701      CPC	R16,R17
+    00C46 F481      BNE	0x0C57
+    00C47 E62E      LDI	R18,0x6E
+    00C48 E031      LDI	R19,1
+    00C49 E800      LDI	R16,0x80
+    00C4A E011      LDI	R17,1
+    00C4B 940E 0CD1 CALL	_strcmp
+    00C4D 3000      CPI	R16,0
+    00C4E 0701      CPC	R16,R17
+    00C4F F439      BNE	0x0C57
+(0446) 		 			
+(0447) 		 			ITFR_PUTS("page device_select");	//开放设故选择界面
+    00C50 E80E      LDI	R16,0x8E
+    00C51 E012      LDI	R17,2
+    00C52 940E 0552 CALL	_puts0
+(0448) 					UI_pt = 0x02;
+    00C54 E082      LDI	R24,2
+    00C55 9380 0189 STS	UI_pt,R24
+(0449) 		 	 }
+(0450) 		 	 memset(ITFR_BUF,0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);		  //屏幕处理缓存清空
+    00C57 E18E      LDI	R24,0x1E
+    00C58 E090      LDI	R25,0
+    00C59 8399      STD	Y+1,R25
+    00C5A 8388      ST	Y,R24
+    00C5B 2722      CLR	R18
+    00C5C 2733      CLR	R19
+    00C5D E508      LDI	R16,0x58
+    00C5E E016      LDI	R17,6
+    00C5F 940E 0CC6 CALL	_memset
+(0451) 			 memset(userMe_temp.password,0,sizeof(uchar)*9);			  //用户输入密码清空
+    00C61 E089      LDI	R24,0x9
+    00C62 E090      LDI	R25,0
+    00C63 8399      STD	Y+1,R25
+    00C64 8388      ST	Y,R24
+    00C65 2722      CLR	R18
+    00C66 2733      CLR	R19
+    00C67 E800      LDI	R16,0x80
+    00C68 E011      LDI	R17,1
+    00C69 940E 0CC6 CALL	_memset
+(0452) 		 	 memset(resIOJudge,0,sizeof(uchar)*9);						  //学生提交与老师设故仲裁结果清空
+    00C6B E089      LDI	R24,0x9
+    00C6C E090      LDI	R25,0
+    00C6D 8399      STD	Y+1,R25
+    00C6E 8388      ST	Y,R24
+    00C6F 2722      CLR	R18
+    00C70 2733      CLR	R19
+    00C71 E00A      LDI	R16,0xA
+    00C72 E011      LDI	R17,1
+    00C73 940E 0CC6 CALL	_memset
+(0453) 		}
+(0454) 		
+(0455) 	  /*********************************************PROCESSING_HEARTBEAT*******************************************/
+(0456) 	  	if(heartBeat_A > 300000){					//周期发送心跳包
+    00C75 EE80      LDI	R24,0xE0
+    00C76 E993      LDI	R25,0x93
+    00C77 E0A4      LDI	R26,4
+    00C78 E0B0      LDI	R27,0
+    00C79 802E      LDD	R2,Y+6
+    00C7A 803F      LDD	R3,Y+7
+    00C7B 8448      LDD	R4,Y+8
+    00C7C 8459      LDD	R5,Y+9
+    00C7D 1582      CP	R24,R2
+    00C7E 0593      CPC	R25,R3
+    00C7F 05A4      CPC	R26,R4
+    00C80 05B5      CPC	R27,R5
+    00C81 F450      BCC	0x0C8C
+(0457) 		
+(0458) 			heartBeat_A = 0;	   
+    00C82 E080      LDI	R24,0
+    00C83 838E      STD	Y+6,R24
+    00C84 838F      STD	Y+7,R24
+    00C85 8788      STD	Y+8,R24
+    00C86 8789      STD	Y+9,R24
+(0459) 			WIFI_PUTS((char*)cntConfirm);
+    00C87 E50D      LDI	R16,0x5D
+    00C88 E011      LDI	R17,1
+    00C89 940E 0568 CALL	_puts1
+(0460) 		}else heartBeat_A ++;
+    00C8B C010      RJMP	0x0C9C
+    00C8C E081      LDI	R24,1
+    00C8D E090      LDI	R25,0
+    00C8E E0A0      LDI	R26,0
+    00C8F E0B0      LDI	R27,0
+    00C90 802E      LDD	R2,Y+6
+    00C91 803F      LDD	R3,Y+7
+    00C92 8448      LDD	R4,Y+8
+    00C93 8459      LDD	R5,Y+9
+    00C94 0E28      ADD	R2,R24
+    00C95 1E39      ADC	R3,R25
+    00C96 1E4A      ADC	R4,R26
+    00C97 1E5B      ADC	R5,R27
+    00C98 822E      STD	Y+6,R2
+    00C99 823F      STD	Y+7,R3
+    00C9A 8648      STD	Y+8,R4
+    00C9B 8659      STD	Y+9,R5
+(0461) 		
+(0462) 		if(heartBeat_B > 2000000){		 			//周期接收心跳回复   发三次有一次收到就行
+    00C9C E880      LDI	R24,0x80
+    00C9D E894      LDI	R25,0x84
+    00C9E E1AE      LDI	R26,0x1E
+    00C9F E0B0      LDI	R27,0
+    00CA0 802A      LDD	R2,Y+2
+    00CA1 803B      LDD	R3,Y+3
+    00CA2 804C      LDD	R4,Y+4
+    00CA3 805D      LDD	R5,Y+5
+    00CA4 1582      CP	R24,R2
+    00CA5 0593      CPC	R25,R3
+    00CA6 05A4      CPC	R26,R4
+    00CA7 05B5      CPC	R27,R5
+    00CA8 F438      BCC	0x0CB0
+(0463) 			
+(0464) 			heartBeat_B = 0;
+    00CA9 E080      LDI	R24,0
+    00CAA 838A      STD	Y+2,R24
+    00CAB 838B      STD	Y+3,R24
+    00CAC 838C      STD	Y+4,R24
+    00CAD 838D      STD	Y+5,R24
+(0465) 			wifiReconnect();
+    00CAE DC4F      RCALL	_wifiReconnect
+(0466) 		}else heartBeat_B ++;
+    00CAF C010      RJMP	0x0CC0
+    00CB0 E081      LDI	R24,1
+    00CB1 E090      LDI	R25,0
+    00CB2 E0A0      LDI	R26,0
+    00CB3 E0B0      LDI	R27,0
+    00CB4 802A      LDD	R2,Y+2
+    00CB5 803B      LDD	R3,Y+3
+    00CB6 804C      LDD	R4,Y+4
+    00CB7 805D      LDD	R5,Y+5
+    00CB8 0E28      ADD	R2,R24
+    00CB9 1E39      ADC	R3,R25
+    00CBA 1E4A      ADC	R4,R26
+    00CBB 1E5B      ADC	R5,R27
+    00CBC 822A      STD	Y+2,R2
+    00CBD 823B      STD	Y+3,R3
+    00CBE 824C      STD	Y+4,R4
+    00CBF 825D      STD	Y+5,R5
+    00CC0 CC86      RJMP	0x0947
+    00CC1 962A      ADIW	R28,0xA
+    00CC2 940C 0D28 JMP	pop_xgsetF000
+(0467) 	}
+(0468) }
+(0469) 
+(0470) void main(void){
+(0471) 
+(0472) 	
+(0473) 	
+(0474) 	bspInit();
+_main:
+    00CC4 DBCE      RCALL	_bspInit
+(0475) 	
+(0476) 	//WIFI_PUTS("i'm WIFI test start!!!");
+(0477) 	//ITFR_PUTS("i'm ITFR test start!!!");
+(0478) 	//IO_test();
+(0479) 	
+(0480) 	thread_main();
+FILE: <library>
+    00CC5 CC73      RJMP	_thread_main
+_memset:
+    00CC6 8188      LD	R24,Y
+    00CC7 8199      LDD	R25,Y+1
+    00CC8 3080      CPI	R24,0
+    00CC9 0789      CPC	R24,R25
+    00CCA F029      BEQ	0x0CD0
+    00CCB 2FE0      MOV	R30,R16
+    00CCC 2FF1      MOV	R31,R17
+    00CCD 9321      ST	Z+,R18
+    00CCE 9701      SBIW	R24,1
+    00CCF F7E9      BNE	0x0CCD
+    00CD0 9508      RET
+_strcmp:
+    00CD1 2FE0      MOV	R30,R16
+    00CD2 2FF1      MOV	R31,R17
+    00CD3 2FA2      MOV	R26,R18
+    00CD4 2FB3      MOV	R27,R19
+    00CD5 9101      LD	R16,Z+
+    00CD6 911D      LD	R17,X+
+    00CD7 1B01      SUB	R16,R17
+    00CD8 F419      BNE	0x0CDC
+    00CD9 2311      TST	R17
+    00CDA F7D1      BNE	0x0CD5
+    00CDB 2700      CLR	R16
+    00CDC 0B11      SBC	R17,R17
+    00CDD 9508      RET
+_strcpy:
+    00CDE 2FA0      MOV	R26,R16
+    00CDF 2FB1      MOV	R27,R17
+    00CE0 2FE2      MOV	R30,R18
+    00CE1 2FF3      MOV	R31,R19
+    00CE2 9001      LD	R0,Z+
+    00CE3 920D      ST	X+,R0
+    00CE4 2000      TST	R0
+    00CE5 F7E1      BNE	0x0CE2
+    00CE6 9508      RET
+mod16u:
+    00CE7 9468      BSET	6
+    00CE8 C001      RJMP	xdiv16u
+div16u:
+    00CE9 94E8      BCLR	6
+xdiv16u:
+    00CEA 92EA      ST	-Y,R14
+    00CEB 92FA      ST	-Y,R15
+    00CEC 938A      ST	-Y,R24
+    00CED 24EE      CLR	R14
+    00CEE 24FF      CLR	R15
+    00CEF E180      LDI	R24,0x10
+    00CF0 0F00      LSL	R16
+    00CF1 1F11      ROL	R17
+    00CF2 1CEE      ROL	R14
+    00CF3 1CFF      ROL	R15
+    00CF4 16E2      CP	R14,R18
+    00CF5 06F3      CPC	R15,R19
+    00CF6 F018      BCS	0x0CFA
+    00CF7 1AE2      SUB	R14,R18
+    00CF8 0AF3      SBC	R15,R19
+    00CF9 9503      INC	R16
+    00CFA 958A      DEC	R24
+    00CFB F7A1      BNE	0x0CF0
+    00CFC F416      BRTC	0x0CFF
+    00CFD 2D0E      MOV	R16,R14
+    00CFE 2D1F      MOV	R17,R15
+    00CFF 9189      LD	R24,Y+
+    00D00 90F9      LD	R15,Y+
+    00D01 90E9      LD	R14,Y+
+    00D02 9508      RET
+pop_xgsetF0FC:
+    00D03 90A9      LD	R10,Y+
+    00D04 90B9      LD	R11,Y+
+    00D05 90C9      LD	R12,Y+
+    00D06 90D9      LD	R13,Y+
+    00D07 90E9      LD	R14,Y+
+    00D08 90F9      LD	R15,Y+
+    00D09 9149      LD	R20,Y+
+    00D0A 9159      LD	R21,Y+
+    00D0B 9169      LD	R22,Y+
+    00D0C 9179      LD	R23,Y+
+    00D0D 9508      RET
+push_xgsetF0FC:
+    00D0E 937A      ST	-Y,R23
+    00D0F 936A      ST	-Y,R22
+push_xgset30FC:
+    00D10 935A      ST	-Y,R21
+    00D11 934A      ST	-Y,R20
+push_xgset00FC:
+    00D12 92FA      ST	-Y,R15
+    00D13 92EA      ST	-Y,R14
+push_xgset003C:
+    00D14 92DA      ST	-Y,R13
+    00D15 92CA      ST	-Y,R12
+    00D16 92BA      ST	-Y,R11
+    00D17 92AA      ST	-Y,R10
+    00D18 9508      RET
+push_xgset300C:
+    00D19 935A      ST	-Y,R21
+    00D1A 934A      ST	-Y,R20
+    00D1B 92BA      ST	-Y,R11
+    00D1C 92AA      ST	-Y,R10
+    00D1D 9508      RET
+pop_xgset300C:
+    00D1E 90A9      LD	R10,Y+
+    00D1F 90B9      LD	R11,Y+
+    00D20 9149      LD	R20,Y+
+    00D21 9159      LD	R21,Y+
+    00D22 9508      RET
+push_xgsetF000:
+    00D23 937A      ST	-Y,R23
+    00D24 936A      ST	-Y,R22
+    00D25 935A      ST	-Y,R21
+    00D26 934A      ST	-Y,R20
+    00D27 9508      RET
+pop_xgsetF000:
+    00D28 9149      LD	R20,Y+
+    00D29 9159      LD	R21,Y+
+    00D2A 9169      LD	R22,Y+
+    00D2B 9179      LD	R23,Y+
+    00D2C 9508      RET
+push_xgsetF00C:
+    00D2D 937A      ST	-Y,R23
+    00D2E 936A      ST	-Y,R22
+    00D2F 935A      ST	-Y,R21
+    00D30 934A      ST	-Y,R20
+    00D31 92BA      ST	-Y,R11
+    00D32 92AA      ST	-Y,R10
+    00D33 9508      RET
+pop_xgsetF00C:
+    00D34 90A9      LD	R10,Y+
+    00D35 90B9      LD	R11,Y+
+    00D36 9149      LD	R20,Y+
+    00D37 9159      LD	R21,Y+
+    00D38 9169      LD	R22,Y+
+    00D39 9179      LD	R23,Y+
+    00D3A 9508      RET
+push_xgsetF03C:
+    00D3B 937A      ST	-Y,R23
+    00D3C 936A      ST	-Y,R22
+    00D3D 935A      ST	-Y,R21
+    00D3E 934A      ST	-Y,R20
+    00D3F 92DA      ST	-Y,R13
+    00D40 92CA      ST	-Y,R12
+    00D41 92BA      ST	-Y,R11
+    00D42 92AA      ST	-Y,R10
+    00D43 9508      RET
+pop_xgsetF03C:
+    00D44 90A9      LD	R10,Y+
+    00D45 90B9      LD	R11,Y+
+    00D46 90C9      LD	R12,Y+
+    00D47 90D9      LD	R13,Y+
+    00D48 9149      LD	R20,Y+
+    00D49 9159      LD	R21,Y+
+    00D4A 9169      LD	R22,Y+
+    00D4B 9179      LD	R23,Y+
+    00D4C 9508      RET
+lsl8:
+    00D4D 2311      TST	R17
+    00D4E F019      BEQ	0x0D52
+    00D4F 0F00      LSL	R16
+    00D50 951A      DEC	R17
+    00D51 CFFB      RJMP	lsl8
+    00D52 9508      RET
+lsr8:
+    00D53 2311      TST	R17
+    00D54 F019      BEQ	0x0D58
+    00D55 9506      LSR	R16
+    00D56 951A      DEC	R17
+    00D57 CFFB      RJMP	lsr8
+    00D58 9508      RET

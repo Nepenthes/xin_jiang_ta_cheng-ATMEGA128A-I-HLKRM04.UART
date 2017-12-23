@@ -1,6 +1,0 @@
-#include <ioM16v.h>
-
-void main(void)
-{
- 	 ;
-}

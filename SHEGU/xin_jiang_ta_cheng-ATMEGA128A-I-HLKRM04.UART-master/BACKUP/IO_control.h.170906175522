@@ -1,7 +1,0 @@
-#ifndef _IO_CONTROL_H__
-#define _IO_CONTROL_H__
-
-#include<iom128v.h>
-#include<macros.h>
-
-#endif

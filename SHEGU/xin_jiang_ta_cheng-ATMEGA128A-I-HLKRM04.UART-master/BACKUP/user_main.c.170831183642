@@ -1,9 +1,0 @@
-#include "usart.h"
-
-extern uchar UART0_RxBuff[UART0_RX_BUFFER_SIZE];				//´®¿Ú0»º´æ
-extern uchar UART1_RxBuff[UART1_RX_BUFFER_SIZE];				//´®¿Ú1»º´æ
-
-void main(void){
-
-	 ;
-}

@@ -1,0 +1,1410 @@
+                        .module usart.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile usart.c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile usart.c
+ 0000           _WIFICmd::
+ 0000                   .blkb 2
+                        .area idata
+ 0000 0000              .word 0
+                        .area data(ram, con, rel)
+ 0002                   .dbfile usart.c
+ 0002                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0002                   .dbsym e WIFICmd _WIFICmd A[2:1]pc
+ 0002           _ITFRCmd::
+ 0002                   .blkb 2
+                        .area idata
+ 0002 0000              .word 0
+                        .area data(ram, con, rel)
+ 0004                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0004                   .dbsym e ITFRCmd _ITFRCmd A[2:1]pc
+                        .area text(rom, con, rel)
+ 0000                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0000                   .dbfunc e delay _delay fV
+ 0000           ;              i -> R20,R21
+ 0000           ;              j -> R22,R23
+ 0000           ;             ms -> R16,R17
+                        .even
+ 0000           _delay::
+ 0000 0E940000          xcall push_xgsetF000
+ 0004                   .dbline -1
+ 0004                   .dbline 22
+ 0004           ; #include "usart.h"
+ 0004           ; 
+ 0004           ; 
+ 0004           ; const uchar *WIFICmd[] = {
+ 0004           ; 
+ 0004           ;       0  
+ 0004           ; };
+ 0004           ; 
+ 0004           ; const uchar *ITFRCmd[] = {
+ 0004           ; 
+ 0004           ;       0  
+ 0004           ; };
+ 0004           ; 
+ 0004           ; static volatile uchar UART0_RxHead,UART1_RxHead;              //串口数据缓存游标
+ 0004           ; 
+ 0004           ; uchar UART0_RxBuff[UART0_RX_BUFFER_SIZE];                             //串口0缓存
+ 0004           ; uchar UART1_RxBuff[UART1_RX_BUFFER_SIZE];                             //串口1缓存
+ 0004           ; 
+ 0004           ; uchar UART0_RxBuff_Queue[BUFFER0_QLENTH][UART0_RX_BUFFER_SIZE];         //串口0缓存队列
+ 0004           ; uchar UART1_RxBuff_Queue[BUFFER1_QLENTH][UART1_RX_BUFFER_SIZE];         //串口1缓存队列
+ 0004           ; 
+ 0004           ; void delay(unsigned int ms){
+ 0004                   .dbline 25
+ 0004           ; 
+ 0004           ;        unsigned int i,j;
+ 0004           ;        for( i=0;i<ms;i++)
+ 0004 4427              clr R20
+ 0006 5527              clr R21
+ 0008 0BC0              xjmp L8
+ 000A           L5:
+ 000A                   .dbline 26
+ 000A           ;        for(j=0;j<1141;j++); //1141是在8MHz晶振下，通过软件仿真反复实验得到的数值
+ 000A 6627              clr R22
+ 000C 7727              clr R23
+ 000E 02C0              xjmp L12
+ 0010           L9:
+ 0010                   .dbline 26
+ 0010           L10:
+ 0010                   .dbline 26
+ 0010 6F5F              subi R22,255  ; offset = 1
+ 0012 7F4F              sbci R23,255
+ 0014           L12:
+ 0014                   .dbline 26
+ 0014 6537              cpi R22,117
+ 0016 E4E0              ldi R30,4
+ 0018 7E07              cpc R23,R30
+ 001A D0F3              brlo L9
+ 001C           X0:
+ 001C           L6:
+ 001C                   .dbline 25
+ 001C 4F5F              subi R20,255  ; offset = 1
+ 001E 5F4F              sbci R21,255
+ 0020           L8:
+ 0020                   .dbline 25
+ 0020 4017              cp R20,R16
+ 0022 5107              cpc R21,R17
+ 0024 90F3              brlo L5
+ 0026           X1:
+ 0026                   .dbline -2
+ 0026           L4:
+ 0026                   .dbline 0 ; func end
+ 0026 0C940000          xjmp pop_xgsetF000
+ 002A                   .dbsym r i 20 i
+ 002A                   .dbsym r j 22 i
+ 002A                   .dbsym r ms 16 i
+ 002A                   .dbend
+ 002A                   .dbfunc e usart0Init _usart0Init fV
+                        .even
+ 002A           _usart0Init::
+ 002A                   .dbline -1
+ 002A                   .dbline 29
+ 002A           ; }
+ 002A           ; 
+ 002A           ; void usart0Init(void){
+ 002A                   .dbline 31
+ 002A           ; 
+ 002A           ;        UART0_RxHead = 0;
+ 002A 2224              clr R2
+ 002C 20926901          sts _UART0_RxHead,R2
+ 0030                   .dbline 33
+ 0030           ; 
+ 0030           ;        UCSR0B = 0x00;                         //关闭UART00
+ 0030 2AB8              out 0xa,R2
+ 0032                   .dbline 34
+ 0032           ;        UCSR0A =0x00;                          //不使用倍速发送（异步）
+ 0032 2BB8              out 0xb,R2
+ 0034                   .dbline 35
+ 0034           ;        UCSR0C =(1<<UCSZ01)|(1<<UCSZ00);   //数据位为8位
+ 0034 86E0              ldi R24,6
+ 0036 80939500          sts 149,R24
+ 003A                   .dbline 36
+ 003A           ;        UBRR0L=(FOSC/16/(BAUD0+1))%256;    //异步正常情况下的计算公式
+ 003A 84E3              ldi R24,52
+ 003C 89B9              out 0x9,R24
+ 003E                   .dbline 37
+ 003E           ;        UBRR0H=(FOSC/16/(BAUD0+1))/256;
+ 003E 20929000          sts 144,R2
+ 0042                   .dbline 38
+ 0042           ;        UCSR0B =(1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);     //接收使能和发送使能以及中断
+ 0042 88E9              ldi R24,152
+ 0044 8AB9              out 0xa,R24
+ 0046                   .dbline -2
+ 0046           L13:
+ 0046                   .dbline 0 ; func end
+ 0046 0895              ret
+ 0048                   .dbend
+ 0048                   .dbfunc e usart1Init _usart1Init fV
+                        .even
+ 0048           _usart1Init::
+ 0048                   .dbline -1
+ 0048                   .dbline 41
+ 0048           ; }
+ 0048           ; 
+ 0048           ; void usart1Init(void){
+ 0048                   .dbline 43
+ 0048           ; 
+ 0048           ;        UART1_RxHead = 0;
+ 0048 2224              clr R2
+ 004A 20926801          sts _UART1_RxHead,R2
+ 004E                   .dbline 45
+ 004E           ; 
+ 004E           ;        UCSR1B = 0x00;                                         //关闭USART1
+ 004E 20929A00          sts 154,R2
+ 0052                   .dbline 46
+ 0052           ;        UCSR1A = 0x00;                                         //不适使用倍速发送
+ 0052 20929B00          sts 155,R2
+ 0056                   .dbline 47
+ 0056           ;        UCSR1C = (1<<UCSZ11)|(1<<UCSZ10);      //数据位为八位
+ 0056 86E0              ldi R24,6
+ 0058 80939D00          sts 157,R24
+ 005C                   .dbline 48
+ 005C           ;        UBRR1L=(FOSC/16/(BAUD1+1))%256;        //异步正常模式下，UBRR的计算公式
+ 005C 84E3              ldi R24,52
+ 005E 80939900          sts 153,R24
+ 0062                   .dbline 49
+ 0062           ;        UBRR1H=(FOSC/16/(BAUD1+1))/256;
+ 0062 20929800          sts 152,R2
+ 0066                   .dbline 50
+ 0066           ;        UCSR1B =(1<<RXEN1)|(1<<TXEN1)|(1<<RXCIE1);     //接收使能，传送使能以及中断
+ 0066 88E9              ldi R24,152
+ 0068 80939A00          sts 154,R24
+ 006C                   .dbline -2
+ 006C           L14:
+ 006C                   .dbline 0 ; func end
+ 006C 0895              ret
+ 006E                   .dbend
+ 006E                   .dbfunc e putchar0 _putchar0 fV
+ 006E           ;              c -> R16
+                        .even
+ 006E           _putchar0::
+ 006E                   .dbline -1
+ 006E                   .dbline 53
+ 006E           ; }
+ 006E           ; 
+ 006E           ; void putchar0(unsigned char c){  
+ 006E           L16:
+ 006E                   .dbline 55
+ 006E           ; 
+ 006E           ;      while (!(UCSR0A&(1<<UDRE0)));            //表明发送器已经准备就绪
+ 006E           L17:
+ 006E                   .dbline 55
+ 006E 5D9B              sbis 0xb,5
+ 0070 FECF              rjmp L16
+ 0072           X2:
+ 0072                   .dbline 56
+ 0072           ;      UDR0=c;                                                  //将要发送的数据装入UDR0寄存器
+ 0072 0CB9              out 0xc,R16
+ 0074                   .dbline -2
+ 0074           L15:
+ 0074                   .dbline 0 ; func end
+ 0074 0895              ret
+ 0076                   .dbsym r c 16 c
+ 0076                   .dbend
+ 0076                   .dbfunc e putchar1 _putchar1 fV
+ 0076           ;              c -> R16
+                        .even
+ 0076           _putchar1::
+ 0076                   .dbline -1
+ 0076                   .dbline 59
+ 0076           ; }
+ 0076           ; 
+ 0076           ; void putchar1(unsigned char c){  
+ 0076           L20:
+ 0076                   .dbline 61
+ 0076           ; 
+ 0076           ;      while (!(UCSR1A&(1<<UDRE1)));
+ 0076           L21:
+ 0076                   .dbline 61
+ 0076 20909B00          lds R2,155
+ 007A 25FE              sbrs R2,5
+ 007C FCCF              rjmp L20
+ 007E           X3:
+ 007E                   .dbline 62
+ 007E           ;        UDR1=c;    
+ 007E 00939C00          sts 156,R16
+ 0082                   .dbline -2
+ 0082           L19:
+ 0082                   .dbline 0 ; func end
+ 0082 0895              ret
+ 0084                   .dbsym r c 16 c
+ 0084                   .dbend
+ 0084                   .dbfunc e puts0 _puts0 fV
+ 0084           ;              s -> R20,R21
+                        .even
+ 0084           _puts0::
+ 0084 4A93              st -y,R20
+ 0086 5A93              st -y,R21
+ 0088 A801              movw R20,R16
+ 008A                   .dbline -1
+ 008A                   .dbline 65
+ 008A           ; }
+ 008A           ; 
+ 008A           ; void puts0(char *s){
+ 008A 05C0              xjmp L25
+ 008C           L24:
+ 008C                   .dbline 67
+ 008C           ;        
+ 008C           ;        while (*s){
+ 008C                   .dbline 69
+ 008C           ;        
+ 008C           ;                putchar0(*s);
+ 008C FA01              movw R30,R20
+ 008E 0081              ldd R16,z+0
+ 0090 EEDF              xcall _putchar0
+ 0092                   .dbline 70
+ 0092           ;                s++;
+ 0092 4F5F              subi R20,255  ; offset = 1
+ 0094 5F4F              sbci R21,255
+ 0096                   .dbline 71
+ 0096           ;     } 
+ 0096           L25:
+ 0096                   .dbline 67
+ 0096 FA01              movw R30,R20
+ 0098 2080              ldd R2,z+0
+ 009A 2220              tst R2
+ 009C B9F7              brne L24
+ 009E           X4:
+ 009E                   .dbline 73
+ 009E           ;       
+ 009E           ;       putchar0(0xff);   //包尾标识
+ 009E 0FEF              ldi R16,255
+ 00A0 E6DF              xcall _putchar0
+ 00A2                   .dbline 74
+ 00A2           ;       putchar0(0xff);
+ 00A2 0FEF              ldi R16,255
+ 00A4 E4DF              xcall _putchar0
+ 00A6                   .dbline 75
+ 00A6           ;       putchar0(0xff);
+ 00A6 0FEF              ldi R16,255
+ 00A8 E2DF              xcall _putchar0
+ 00AA                   .dbline -2
+ 00AA           L23:
+ 00AA                   .dbline 0 ; func end
+ 00AA 5991              ld R21,y+
+ 00AC 4991              ld R20,y+
+ 00AE 0895              ret
+ 00B0                   .dbsym r s 20 pc
+ 00B0                   .dbend
+ 00B0                   .dbfunc e puts1 _puts1 fV
+ 00B0           ;              s -> R20,R21
+                        .even
+ 00B0           _puts1::
+ 00B0 4A93              st -y,R20
+ 00B2 5A93              st -y,R21
+ 00B4 A801              movw R20,R16
+ 00B6                   .dbline -1
+ 00B6                   .dbline 78
+ 00B6           ; }
+ 00B6           ;  
+ 00B6           ; void puts1(char *s){
+ 00B6 05C0              xjmp L29
+ 00B8           L28:
+ 00B8                   .dbline 80
+ 00B8           ; 
+ 00B8           ;        while (*s){
+ 00B8                   .dbline 82
+ 00B8           ;        
+ 00B8           ;                putchar1(*s);
+ 00B8 FA01              movw R30,R20
+ 00BA 0081              ldd R16,z+0
+ 00BC DCDF              xcall _putchar1
+ 00BE                   .dbline 83
+ 00BE           ;                s++;
+ 00BE 4F5F              subi R20,255  ; offset = 1
+ 00C0 5F4F              sbci R21,255
+ 00C2                   .dbline 84
+ 00C2           ;       }
+ 00C2           L29:
+ 00C2                   .dbline 80
+ 00C2 FA01              movw R30,R20
+ 00C4 2080              ldd R2,z+0
+ 00C6 2220              tst R2
+ 00C8 B9F7              brne L28
+ 00CA           X5:
+ 00CA                   .dbline 86
+ 00CA           ;       
+ 00CA           ;       putchar1('\r');   //包尾标识
+ 00CA 0DE0              ldi R16,13
+ 00CC D4DF              xcall _putchar1
+ 00CE                   .dbline 87
+ 00CE           ;       putchar1('\n');
+ 00CE 0AE0              ldi R16,10
+ 00D0 D2DF              xcall _putchar1
+ 00D2                   .dbline -2
+ 00D2           L27:
+ 00D2                   .dbline 0 ; func end
+ 00D2 5991              ld R21,y+
+ 00D4 4991              ld R20,y+
+ 00D6 0895              ret
+ 00D8                   .dbsym r s 20 pc
+ 00D8                   .dbend
+                        .area vector(rom, abs)
+                        .org 72
+ 0048 0C946C00          jmp _uart0_rx_isr
+                        .area text(rom, con, rel)
+ 00D8                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 00D8                   .dbfunc e uart0_rx_isr _uart0_rx_isr fV
+ 00D8           ;            crp -> R10
+ 00D8           ;           data -> R20
+ 00D8           ;         status -> R22
+ 00D8           ;           loop -> R22
+                        .even
+ 00D8           _uart0_rx_isr::
+ 00D8 0A92              st -y,R0
+ 00DA 1A92              st -y,R1
+ 00DC 2A92              st -y,R2
+ 00DE 3A92              st -y,R3
+ 00E0 4A92              st -y,R4
+ 00E2 5A92              st -y,R5
+ 00E4 6A92              st -y,R6
+ 00E6 7A92              st -y,R7
+ 00E8 8A92              st -y,R8
+ 00EA 9A92              st -y,R9
+ 00EC 0A93              st -y,R16
+ 00EE 1A93              st -y,R17
+ 00F0 2A93              st -y,R18
+ 00F2 3A93              st -y,R19
+ 00F4 8A93              st -y,R24
+ 00F6 9A93              st -y,R25
+ 00F8 AA93              st -y,R26
+ 00FA BA93              st -y,R27
+ 00FC EA93              st -y,R30
+ 00FE FA93              st -y,R31
+ 0100 0FB6              IN R0,63
+ 0102 0A92              st -y,R0
+ 0104 0E940000          xcall push_xgsetF00C
+ 0108 2297              sbiw R28,2
+ 010A                   .dbline -1
+ 010A                   .dbline 91
+ 010A           ; } 
+ 010A           ; 
+ 010A           ; #pragma interrupt_handler uart0_rx_isr:iv_USART0_RXC
+ 010A           ; void uart0_rx_isr(void){
+ 010A                   .dbline 94
+ 010A           ;        
+ 010A           ;       uchar data,status,loop;
+ 010A           ;       uchar crp = UART0_RxHead;
+ 010A A0906901          lds R10,_UART0_RxHead
+ 010E                   .dbline 96
+ 010E           ;       
+ 010E           ;       data   = UDR0;
+ 010E 4CB1              in R20,0xc
+ 0110                   .dbline 97
+ 0110           ;       status = UCSR0A;
+ 0110 6BB1              in R22,0xb
+ 0112                   .dbline 99
+ 0112           ; 
+ 0112           ;       if(!(status & 0x18)){           
+ 0112 862F              mov R24,R22
+ 0114 8871              andi R24,24
+ 0116 09F0              breq X11
+ 0118 4FC0              xjmp L32
+ 011A           X11:
+ 011A           X6:
+ 011A                   .dbline 99
+ 011A                   .dbline 101
+ 011A           ;       
+ 011A           ;               if((UART0_RxHead > (UART0_RX_BUFFER_SIZE-2)) || ((data == '\n') && (UART0_RxBuff[crp-1] == '\r'))){
+ 011A 8CE1              ldi R24,28
+ 011C 20906901          lds R2,_UART0_RxHead
+ 0120 8215              cp R24,R2
+ 0122 60F0              brlo L37
+ 0124           X7:
+ 0124 4A30              cpi R20,10
+ 0126 09F0              breq X12
+ 0128 39C0              xjmp L34
+ 012A           X12:
+ 012A           X8:
+ 012A 80E0              ldi R24,<_UART0_RxBuff-1
+ 012C 90E0              ldi R25,>_UART0_RxBuff-1
+ 012E EA2D              mov R30,R10
+ 0130 FF27              clr R31
+ 0132 E80F              add R30,R24
+ 0134 F91F              adc R31,R25
+ 0136 8081              ldd R24,z+0
+ 0138 8D30              cpi R24,13
+ 013A 81F5              brne L34
+ 013C           X9:
+ 013C           L37:
+ 013C                   .dbline 101
+ 013C                   .dbline 103
+ 013C           ;                       
+ 013C           ;                       UART0_RxHead = 0;
+ 013C 2224              clr R2
+ 013E 20926901          sts _UART0_RxHead,R2
+ 0142                   .dbline 105
+ 0142           ;                       
+ 0142           ;                       UART0_RxBuff[crp-1] = 0;
+ 0142 80E0              ldi R24,<_UART0_RxBuff-1
+ 0144 90E0              ldi R25,>_UART0_RxBuff-1
+ 0146 EA2D              mov R30,R10
+ 0148 FF27              clr R31
+ 014A E80F              add R30,R24
+ 014C F91F              adc R31,R25
+ 014E 2082              std z+0,R2
+ 0150                   .dbline 107
+ 0150           ;                               
+ 0150           ;                       for(loop = BUFFER0_QLENTH;loop > 1;loop --)                     
+ 0150 65E0              ldi R22,5
+ 0152 10C0              xjmp L42
+ 0154           L39:
+ 0154                   .dbline 108
+ 0154           ;                               strcpy(UART0_RxBuff_Queue[loop - 1],UART0_RxBuff_Queue[loop - 2]);
+ 0154 0EE1              ldi R16,30
+ 0156 162F              mov R17,R22
+ 0158 0103              mulsu R16,R17
+ 015A 80E0              ldi R24,<_UART0_RxBuff_Queue-60
+ 015C 90E0              ldi R25,>_UART0_RxBuff_Queue-60
+ 015E 9001              movw R18,R0
+ 0160 280F              add R18,R24
+ 0162 391F              adc R19,R25
+ 0164 80E0              ldi R24,<_UART0_RxBuff_Queue-30
+ 0166 90E0              ldi R25,>_UART0_RxBuff_Queue-30
+ 0168 8001              movw R16,R0
+ 016A 080F              add R16,R24
+ 016C 191F              adc R17,R25
+ 016E 0E940000          xcall _strcpy
+ 0172           L40:
+ 0172                   .dbline 107
+ 0172 6A95              dec R22
+ 0174           L42:
+ 0174                   .dbline 107
+ 0174 81E0              ldi R24,1
+ 0176 8617              cp R24,R22
+ 0178 68F3              brlo L39
+ 017A           X10:
+ 017A                   .dbline 110
+ 017A           ;                               
+ 017A           ;                       strcpy(UART0_RxBuff_Queue[0],UART0_RxBuff);
+ 017A 20E0              ldi R18,<_UART0_RxBuff
+ 017C 30E0              ldi R19,>_UART0_RxBuff
+ 017E 00E0              ldi R16,<_UART0_RxBuff_Queue
+ 0180 10E0              ldi R17,>_UART0_RxBuff_Queue
+ 0182 0E940000          xcall _strcpy
+ 0186                   .dbline 111
+ 0186           ;                       memset(UART0_RxBuff,0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);      //缓存清空
+ 0186 8EE1              ldi R24,30
+ 0188 90E0              ldi R25,0
+ 018A 9983              std y+1,R25
+ 018C 8883              std y+0,R24
+ 018E 2227              clr R18
+ 0190 3327              clr R19
+ 0192 00E0              ldi R16,<_UART0_RxBuff
+ 0194 10E0              ldi R17,>_UART0_RxBuff
+ 0196 0E940000          xcall _memset
+ 019A                   .dbline 113
+ 019A           ;       
+ 019A           ;               }else UART0_RxBuff[UART0_RxHead++] = data;
+ 019A 0EC0              xjmp L35
+ 019C           L34:
+ 019C                   .dbline 113
+ 019C 20906901          lds R2,_UART0_RxHead
+ 01A0 3324              clr R3
+ 01A2 822D              mov R24,R2
+ 01A4 8F5F              subi R24,255    ; addi 1
+ 01A6 80936901          sts _UART0_RxHead,R24
+ 01AA 80E0              ldi R24,<_UART0_RxBuff
+ 01AC 90E0              ldi R25,>_UART0_RxBuff
+ 01AE E22D              mov R30,R2
+ 01B0 FF27              clr R31
+ 01B2 E80F              add R30,R24
+ 01B4 F91F              adc R31,R25
+ 01B6 4083              std z+0,R20
+ 01B8           L35:
+ 01B8                   .dbline 114
+ 01B8           ;       }
+ 01B8           L32:
+ 01B8                   .dbline -2
+ 01B8           L31:
+ 01B8                   .dbline 0 ; func end
+ 01B8 2296              adiw R28,2
+ 01BA 0E940000          xcall pop_xgsetF00C
+ 01BE 0990              ld R0,y+
+ 01C0 0FBE              OUT 63,R0
+ 01C2 F991              ld R31,y+
+ 01C4 E991              ld R30,y+
+ 01C6 B991              ld R27,y+
+ 01C8 A991              ld R26,y+
+ 01CA 9991              ld R25,y+
+ 01CC 8991              ld R24,y+
+ 01CE 3991              ld R19,y+
+ 01D0 2991              ld R18,y+
+ 01D2 1991              ld R17,y+
+ 01D4 0991              ld R16,y+
+ 01D6 9990              ld R9,y+
+ 01D8 8990              ld R8,y+
+ 01DA 7990              ld R7,y+
+ 01DC 6990              ld R6,y+
+ 01DE 5990              ld R5,y+
+ 01E0 4990              ld R4,y+
+ 01E2 3990              ld R3,y+
+ 01E4 2990              ld R2,y+
+ 01E6 1990              ld R1,y+
+ 01E8 0990              ld R0,y+
+ 01EA 1895              reti
+ 01EC                   .dbsym r crp 10 c
+ 01EC                   .dbsym r data 20 c
+ 01EC                   .dbsym r status 22 c
+ 01EC                   .dbsym r loop 22 c
+ 01EC                   .dbend
+                        .area vector(rom, abs)
+                        .org 120
+ 0078 0C94F600          jmp _uart1_rx_isr
+                        .area text(rom, con, rel)
+ 01EC                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 01EC                   .dbfunc e uart1_rx_isr _uart1_rx_isr fV
+ 01EC           ;            crp -> R10
+ 01EC           ;           data -> R20
+ 01EC           ;         status -> R22
+ 01EC           ;           loop -> R22
+                        .even
+ 01EC           _uart1_rx_isr::
+ 01EC 0A92              st -y,R0
+ 01EE 1A92              st -y,R1
+ 01F0 2A92              st -y,R2
+ 01F2 3A92              st -y,R3
+ 01F4 4A92              st -y,R4
+ 01F6 5A92              st -y,R5
+ 01F8 6A92              st -y,R6
+ 01FA 7A92              st -y,R7
+ 01FC 8A92              st -y,R8
+ 01FE 9A92              st -y,R9
+ 0200 0A93              st -y,R16
+ 0202 1A93              st -y,R17
+ 0204 2A93              st -y,R18
+ 0206 3A93              st -y,R19
+ 0208 8A93              st -y,R24
+ 020A 9A93              st -y,R25
+ 020C AA93              st -y,R26
+ 020E BA93              st -y,R27
+ 0210 EA93              st -y,R30
+ 0212 FA93              st -y,R31
+ 0214 0FB6              IN R0,63
+ 0216 0A92              st -y,R0
+ 0218 0E940000          xcall push_xgsetF00C
+ 021C 2297              sbiw R28,2
+ 021E                   .dbline -1
+ 021E                   .dbline 118
+ 021E           ; }
+ 021E           ; 
+ 021E           ; #pragma interrupt_handler uart1_rx_isr:iv_USART1_RXC
+ 021E           ; void uart1_rx_isr(void){
+ 021E                   .dbline 121
+ 021E           ;        
+ 021E           ;       uchar data,status,loop;
+ 021E           ;       uchar crp = UART1_RxHead;
+ 021E A0906801          lds R10,_UART1_RxHead
+ 0222                   .dbline 123
+ 0222           ;       
+ 0222           ;       data   = UDR1;
+ 0222 40919C00          lds R20,156
+ 0226                   .dbline 124
+ 0226           ;       status = UCSR1A;
+ 0226 60919B00          lds R22,155
+ 022A                   .dbline 126
+ 022A           ; 
+ 022A           ;       if(!(status & 0x18)){           
+ 022A 862F              mov R24,R22
+ 022C 8871              andi R24,24
+ 022E 09F0              breq X18
+ 0230 4FC0              xjmp L46
+ 0232           X18:
+ 0232           X13:
+ 0232                   .dbline 126
+ 0232                   .dbline 128
+ 0232           ;       
+ 0232           ;               if((UART1_RxHead > (UART1_RX_BUFFER_SIZE-2)) || ((data == '\n') && (UART1_RxBuff[crp-1] == '\r'))){
+ 0232 8CE1              ldi R24,28
+ 0234 20906801          lds R2,_UART1_RxHead
+ 0238 8215              cp R24,R2
+ 023A 60F0              brlo L51
+ 023C           X14:
+ 023C 4A30              cpi R20,10
+ 023E 09F0              breq X19
+ 0240 39C0              xjmp L48
+ 0242           X19:
+ 0242           X15:
+ 0242 80E0              ldi R24,<_UART1_RxBuff-1
+ 0244 90E0              ldi R25,>_UART1_RxBuff-1
+ 0246 EA2D              mov R30,R10
+ 0248 FF27              clr R31
+ 024A E80F              add R30,R24
+ 024C F91F              adc R31,R25
+ 024E 8081              ldd R24,z+0
+ 0250 8D30              cpi R24,13
+ 0252 81F5              brne L48
+ 0254           X16:
+ 0254           L51:
+ 0254                   .dbline 128
+ 0254                   .dbline 130
+ 0254           ;               
+ 0254           ;                       UART1_RxHead = 0;
+ 0254 2224              clr R2
+ 0256 20926801          sts _UART1_RxHead,R2
+ 025A                   .dbline 132
+ 025A           ;                       
+ 025A           ;                       UART1_RxBuff[crp-1] = 0;
+ 025A 80E0              ldi R24,<_UART1_RxBuff-1
+ 025C 90E0              ldi R25,>_UART1_RxBuff-1
+ 025E EA2D              mov R30,R10
+ 0260 FF27              clr R31
+ 0262 E80F              add R30,R24
+ 0264 F91F              adc R31,R25
+ 0266 2082              std z+0,R2
+ 0268                   .dbline 134
+ 0268           ;                               
+ 0268           ;                       for(loop = BUFFER1_QLENTH;loop > 1;loop --)                     
+ 0268 65E0              ldi R22,5
+ 026A 10C0              xjmp L56
+ 026C           L53:
+ 026C                   .dbline 135
+ 026C           ;                               strcpy(UART1_RxBuff_Queue[loop - 1],UART1_RxBuff_Queue[loop - 2]);
+ 026C 0EE1              ldi R16,30
+ 026E 162F              mov R17,R22
+ 0270 0103              mulsu R16,R17
+ 0272 80E0              ldi R24,<_UART1_RxBuff_Queue-60
+ 0274 90E0              ldi R25,>_UART1_RxBuff_Queue-60
+ 0276 9001              movw R18,R0
+ 0278 280F              add R18,R24
+ 027A 391F              adc R19,R25
+ 027C 80E0              ldi R24,<_UART1_RxBuff_Queue-30
+ 027E 90E0              ldi R25,>_UART1_RxBuff_Queue-30
+ 0280 8001              movw R16,R0
+ 0282 080F              add R16,R24
+ 0284 191F              adc R17,R25
+ 0286 0E940000          xcall _strcpy
+ 028A           L54:
+ 028A                   .dbline 134
+ 028A 6A95              dec R22
+ 028C           L56:
+ 028C                   .dbline 134
+ 028C 81E0              ldi R24,1
+ 028E 8617              cp R24,R22
+ 0290 68F3              brlo L53
+ 0292           X17:
+ 0292                   .dbline 137
+ 0292           ;                               
+ 0292           ;                       strcpy(UART1_RxBuff_Queue[0],UART1_RxBuff);
+ 0292 20E0              ldi R18,<_UART1_RxBuff
+ 0294 30E0              ldi R19,>_UART1_RxBuff
+ 0296 00E0              ldi R16,<_UART1_RxBuff_Queue
+ 0298 10E0              ldi R17,>_UART1_RxBuff_Queue
+ 029A 0E940000          xcall _strcpy
+ 029E                   .dbline 138
+ 029E           ;                       memset(UART1_RxBuff,0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);      //缓存清空
+ 029E 8EE1              ldi R24,30
+ 02A0 90E0              ldi R25,0
+ 02A2 9983              std y+1,R25
+ 02A4 8883              std y+0,R24
+ 02A6 2227              clr R18
+ 02A8 3327              clr R19
+ 02AA 00E0              ldi R16,<_UART1_RxBuff
+ 02AC 10E0              ldi R17,>_UART1_RxBuff
+ 02AE 0E940000          xcall _memset
+ 02B2                   .dbline 140
+ 02B2           ;                       
+ 02B2           ;               }else UART1_RxBuff[UART1_RxHead++] = data;              
+ 02B2 0EC0              xjmp L49
+ 02B4           L48:
+ 02B4                   .dbline 140
+ 02B4 20906801          lds R2,_UART1_RxHead
+ 02B8 3324              clr R3
+ 02BA 822D              mov R24,R2
+ 02BC 8F5F              subi R24,255    ; addi 1
+ 02BE 80936801          sts _UART1_RxHead,R24
+ 02C2 80E0              ldi R24,<_UART1_RxBuff
+ 02C4 90E0              ldi R25,>_UART1_RxBuff
+ 02C6 E22D              mov R30,R2
+ 02C8 FF27              clr R31
+ 02CA E80F              add R30,R24
+ 02CC F91F              adc R31,R25
+ 02CE 4083              std z+0,R20
+ 02D0           L49:
+ 02D0                   .dbline 141
+ 02D0           ;       }
+ 02D0           L46:
+ 02D0                   .dbline -2
+ 02D0           L45:
+ 02D0                   .dbline 0 ; func end
+ 02D0 2296              adiw R28,2
+ 02D2 0E940000          xcall pop_xgsetF00C
+ 02D6 0990              ld R0,y+
+ 02D8 0FBE              OUT 63,R0
+ 02DA F991              ld R31,y+
+ 02DC E991              ld R30,y+
+ 02DE B991              ld R27,y+
+ 02E0 A991              ld R26,y+
+ 02E2 9991              ld R25,y+
+ 02E4 8991              ld R24,y+
+ 02E6 3991              ld R19,y+
+ 02E8 2991              ld R18,y+
+ 02EA 1991              ld R17,y+
+ 02EC 0991              ld R16,y+
+ 02EE 9990              ld R9,y+
+ 02F0 8990              ld R8,y+
+ 02F2 7990              ld R7,y+
+ 02F4 6990              ld R6,y+
+ 02F6 5990              ld R5,y+
+ 02F8 4990              ld R4,y+
+ 02FA 3990              ld R3,y+
+ 02FC 2990              ld R2,y+
+ 02FE 1990              ld R1,y+
+ 0300 0990              ld R0,y+
+ 0302 1895              reti
+ 0304                   .dbsym r crp 10 c
+ 0304                   .dbsym r data 20 c
+ 0304                   .dbsym r status 22 c
+ 0304                   .dbsym r loop 22 c
+ 0304                   .dbend
+ 0304                   .dbfunc e ATTX_M1 _ATTX_M1 fc
+ 0304           ;     time_point -> R20
+ 0304           ;            rep -> R12
+ 0304           ;      wait_time -> R14,R15
+ 0304           ;            crp -> R10
+ 0304           ;            rec -> y+14
+ 0304           ;        command -> y+12
+ 0304           ;      interface -> R22
+                        .even
+ 0304           _ATTX_M1::
+ 0304 3A93              st -y,r19
+ 0306 2A93              st -y,r18
+ 0308 0E940000          xcall push_xgsetF0FC
+ 030C 602F              mov R22,R16
+ 030E 2297              sbiw R28,2
+ 0310 A888              ldd R10,y+16
+ 0312 EA88              ldd R14,y+18
+ 0314 FB88              ldd R15,y+19
+ 0316 CC88              ldd R12,y+20
+ 0318                   .dbline -1
+ 0318                   .dbline 155
+ 0318           ; }
+ 0318           ; 
+ 0318           ; 
+ 0318           ; //输入：
+ 0318           ; //            interface：接口类型，'A'表示串口0，'B'表示串口1
+ 0318           ; //            command  ：命令
+ 0318           ; //            rec              ：反馈
+ 0318           ; //            crp              : 缓存游标
+ 0318           ; //            wait_time：单次等待时间
+ 0318           ; //            rep              ：等待次数
+ 0318           ; //输出返回：
+ 0318           ; //            0：成功，1：失败
+ 0318           ; uchar ATTX_M1(uchar interface,uchar *command,uchar *rec,uchar crp,uint wait_time,uchar rep)
+ 0318           ; {
+ 0318                   .dbline 156
+ 0318           ;       uchar time_point = 1;
+ 0318 41E0              ldi R20,1
+ 031A                   .dbline 158
+ 031A           ;       
+ 031A           ;       delay(100);
+ 031A 04E6              ldi R16,100
+ 031C 10E0              ldi R17,0
+ 031E 70DE              xcall _delay
+ 0320                   .dbline 160
+ 0320           ; 
+ 0320           ;       if(interface == 'A'){
+ 0320 6134              cpi R22,65
+ 0322 09F0              breq X26
+ 0324 3FC0              xjmp L60
+ 0326           X26:
+ 0326           X20:
+ 0326                   .dbline 160
+ 0326 1FC0              xjmp L63
+ 0328           L62:
+ 0328                   .dbline 162
+ 0328           ;               
+ 0328           ;               while(strcmp(rec,UART0_RxBuff_Queue[crp])){
+ 0328                   .dbline 164
+ 0328           ;               
+ 0328           ;                       memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);
+ 0328 8EE1              ldi R24,30
+ 032A 90E0              ldi R25,0
+ 032C 9983              std y+1,R25
+ 032E 8883              std y+0,R24
+ 0330 2227              clr R18
+ 0332 3327              clr R19
+ 0334 0EE1              ldi R16,30
+ 0336 1A2D              mov R17,R10
+ 0338 0103              mulsu R16,R17
+ 033A 8001              movw R16,R0
+ 033C 80E0              ldi R24,<_UART0_RxBuff_Queue
+ 033E 90E0              ldi R25,>_UART0_RxBuff_Queue
+ 0340 080F              add R16,R24
+ 0342 191F              adc R17,R25
+ 0344 0E940000          xcall _memset
+ 0348                   .dbline 165
+ 0348           ;                       puts0(command);
+ 0348 0C85              ldd R16,y+12
+ 034A 1D85              ldd R17,y+13
+ 034C 9BDE              xcall _puts0
+ 034E                   .dbline 166
+ 034E           ;                       delay(wait_time);
+ 034E 8701              movw R16,R14
+ 0350 57DE              xcall _delay
+ 0352                   .dbline 167
+ 0352           ;                       time_point++;
+ 0352 4395              inc R20
+ 0354                   .dbline 168
+ 0354           ;                       if(time_point > rep)return 1;
+ 0354 2C2C              mov R2,R12
+ 0356 3324              clr R3
+ 0358 442E              mov R4,R20
+ 035A 5524              clr R5
+ 035C 2414              cp R2,R4
+ 035E 3504              cpc R3,R5
+ 0360 14F4              brge L65
+ 0362           X21:
+ 0362                   .dbline 168
+ 0362 01E0              ldi R16,1
+ 0364 65C0              xjmp L59
+ 0366           L65:
+ 0366                   .dbline 169
+ 0366           ;               }
+ 0366           L63:
+ 0366                   .dbline 162
+ 0366 0EE1              ldi R16,30
+ 0368 1A2D              mov R17,R10
+ 036A 0103              mulsu R16,R17
+ 036C 9001              movw R18,R0
+ 036E 80E0              ldi R24,<_UART0_RxBuff_Queue
+ 0370 90E0              ldi R25,>_UART0_RxBuff_Queue
+ 0372 280F              add R18,R24
+ 0374 391F              adc R19,R25
+ 0376 0E85              ldd R16,y+14
+ 0378 1F85              ldd R17,y+15
+ 037A 0E940000          xcall _strcmp
+ 037E 0030              cpi R16,0
+ 0380 0107              cpc R16,R17
+ 0382 91F6              brne L62
+ 0384           X22:
+ 0384                   .dbline 170
+ 0384           ;               memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);   //缓存清空
+ 0384 8EE1              ldi R24,30
+ 0386 90E0              ldi R25,0
+ 0388 9983              std y+1,R25
+ 038A 8883              std y+0,R24
+ 038C 2227              clr R18
+ 038E 3327              clr R19
+ 0390 0EE1              ldi R16,30
+ 0392 1A2D              mov R17,R10
+ 0394 0103              mulsu R16,R17
+ 0396 8001              movw R16,R0
+ 0398 80E0              ldi R24,<_UART0_RxBuff_Queue
+ 039A 90E0              ldi R25,>_UART0_RxBuff_Queue
+ 039C 080F              add R16,R24
+ 039E 191F              adc R17,R25
+ 03A0 0E940000          xcall _memset
+ 03A4                   .dbline 171
+ 03A4           ;       }
+ 03A4           L60:
+ 03A4                   .dbline 173
+ 03A4           ;               
+ 03A4           ;       if(interface == 'B'){
+ 03A4 6234              cpi R22,66
+ 03A6 09F0              breq X27
+ 03A8 3FC0              xjmp L67
+ 03AA           X27:
+ 03AA           X23:
+ 03AA                   .dbline 173
+ 03AA 1FC0              xjmp L70
+ 03AC           L69:
+ 03AC                   .dbline 175
+ 03AC           ;               
+ 03AC           ;               while(strcmp(rec,UART1_RxBuff_Queue[crp])){
+ 03AC                   .dbline 177
+ 03AC           ;               
+ 03AC           ;                       memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);
+ 03AC 8EE1              ldi R24,30
+ 03AE 90E0              ldi R25,0
+ 03B0 9983              std y+1,R25
+ 03B2 8883              std y+0,R24
+ 03B4 2227              clr R18
+ 03B6 3327              clr R19
+ 03B8 0EE1              ldi R16,30
+ 03BA 1A2D              mov R17,R10
+ 03BC 0103              mulsu R16,R17
+ 03BE 8001              movw R16,R0
+ 03C0 80E0              ldi R24,<_UART1_RxBuff_Queue
+ 03C2 90E0              ldi R25,>_UART1_RxBuff_Queue
+ 03C4 080F              add R16,R24
+ 03C6 191F              adc R17,R25
+ 03C8 0E940000          xcall _memset
+ 03CC                   .dbline 178
+ 03CC           ;                       puts1(command);
+ 03CC 0C85              ldd R16,y+12
+ 03CE 1D85              ldd R17,y+13
+ 03D0 6FDE              xcall _puts1
+ 03D2                   .dbline 179
+ 03D2           ;                       delay(wait_time);
+ 03D2 8701              movw R16,R14
+ 03D4 15DE              xcall _delay
+ 03D6                   .dbline 180
+ 03D6           ;                       time_point++;
+ 03D6 4395              inc R20
+ 03D8                   .dbline 181
+ 03D8           ;                       if(time_point > rep)return 1;
+ 03D8 2C2C              mov R2,R12
+ 03DA 3324              clr R3
+ 03DC 442E              mov R4,R20
+ 03DE 5524              clr R5
+ 03E0 2414              cp R2,R4
+ 03E2 3504              cpc R3,R5
+ 03E4 14F4              brge L72
+ 03E6           X24:
+ 03E6                   .dbline 181
+ 03E6 01E0              ldi R16,1
+ 03E8 23C0              xjmp L59
+ 03EA           L72:
+ 03EA                   .dbline 182
+ 03EA           ;               }
+ 03EA           L70:
+ 03EA                   .dbline 175
+ 03EA 0EE1              ldi R16,30
+ 03EC 1A2D              mov R17,R10
+ 03EE 0103              mulsu R16,R17
+ 03F0 9001              movw R18,R0
+ 03F2 80E0              ldi R24,<_UART1_RxBuff_Queue
+ 03F4 90E0              ldi R25,>_UART1_RxBuff_Queue
+ 03F6 280F              add R18,R24
+ 03F8 391F              adc R19,R25
+ 03FA 0E85              ldd R16,y+14
+ 03FC 1F85              ldd R17,y+15
+ 03FE 0E940000          xcall _strcmp
+ 0402 0030              cpi R16,0
+ 0404 0107              cpc R16,R17
+ 0406 91F6              brne L69
+ 0408           X25:
+ 0408                   .dbline 183
+ 0408           ;               memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);   //缓存清空
+ 0408 8EE1              ldi R24,30
+ 040A 90E0              ldi R25,0
+ 040C 9983              std y+1,R25
+ 040E 8883              std y+0,R24
+ 0410 2227              clr R18
+ 0412 3327              clr R19
+ 0414 0EE1              ldi R16,30
+ 0416 1A2D              mov R17,R10
+ 0418 0103              mulsu R16,R17
+ 041A 8001              movw R16,R0
+ 041C 80E0              ldi R24,<_UART1_RxBuff_Queue
+ 041E 90E0              ldi R25,>_UART1_RxBuff_Queue
+ 0420 080F              add R16,R24
+ 0422 191F              adc R17,R25
+ 0424 0E940000          xcall _memset
+ 0428                   .dbline 184
+ 0428           ;       }
+ 0428           L67:
+ 0428                   .dbline 186
+ 0428           ;               
+ 0428           ;       delay(100);
+ 0428 04E6              ldi R16,100
+ 042A 10E0              ldi R17,0
+ 042C E9DD              xcall _delay
+ 042E                   .dbline 187
+ 042E           ;       return 0;
+ 042E 0027              clr R16
+ 0430                   .dbline -2
+ 0430           L59:
+ 0430                   .dbline 0 ; func end
+ 0430 2296              adiw R28,2
+ 0432 0E940000          xcall pop_xgsetF0FC
+ 0436 2296              adiw R28,2
+ 0438 0895              ret
+ 043A                   .dbsym r time_point 20 c
+ 043A                   .dbsym r rep 12 c
+ 043A                   .dbsym r wait_time 14 i
+ 043A                   .dbsym r crp 10 c
+ 043A                   .dbsym l rec 14 pc
+ 043A                   .dbsym l command 12 pc
+ 043A                   .dbsym r interface 22 c
+ 043A                   .dbend
+ 043A                   .dbfunc e ATTX_M2 _ATTX_M2 fc
+ 043A           ;           freq -> R22,R23
+ 043A           ;     time_point -> R20,R21
+ 043A           ;      over_time -> R12,R13
+ 043A           ;            crp -> R10
+ 043A           ;            rec -> y+14
+ 043A           ;        command -> y+12
+ 043A           ;      interface -> R14
+                        .even
+ 043A           _ATTX_M2::
+ 043A 3A93              st -y,r19
+ 043C 2A93              st -y,r18
+ 043E 0E940000          xcall push_xgsetF0FC
+ 0442 E02E              mov R14,R16
+ 0444 2297              sbiw R28,2
+ 0446 A888              ldd R10,y+16
+ 0448 CA88              ldd R12,y+18
+ 044A DB88              ldd R13,y+19
+ 044C                   .dbline -1
+ 044C                   .dbline 199
+ 044C           ; }
+ 044C           ; 
+ 044C           ; //输入：
+ 044C           ; //            interface：接口类型，'A'表示串口0，'B'表示串口1
+ 044C           ; //            command  ：命令
+ 044C           ; //            rec              ：反馈
+ 044C           ; //            crp              : 缓存游标
+ 044C           ; //            over_time：等待时间
+ 044C           ; //输出返回：
+ 044C           ; //            0：成功，1：失败
+ 044C           ; uchar ATTX_M2(uchar interface,uchar *command,uchar *rec,uchar crp,uint over_time)
+ 044C           ; {
+ 044C                   .dbline 201
+ 044C           ;               
+ 044C           ;       uint time_point = 1;
+ 044C 41E0              ldi R20,1
+ 044E 50E0              ldi R21,0
+ 0450                   .dbline 202
+ 0450           ;       const uint freq = 200;                  //轮询频次设定，200ms轮询一次
+ 0450 68EC              ldi R22,200
+ 0452 70E0              ldi R23,0
+ 0454                   .dbline 204
+ 0454           ;       
+ 0454           ;       delay(100);
+ 0454 04E6              ldi R16,100
+ 0456 10E0              ldi R17,0
+ 0458 D3DD              xcall _delay
+ 045A                   .dbline 206
+ 045A           ;               
+ 045A           ;       if(interface == 'A'){
+ 045A 8E2D              mov R24,R14
+ 045C 8134              cpi R24,65
+ 045E 81F5              brne L75
+ 0460           X28:
+ 0460                   .dbline 206
+ 0460                   .dbline 208
+ 0460           ;       
+ 0460           ;               puts0(command);
+ 0460 0C85              ldd R16,y+12
+ 0462 1D85              ldd R17,y+13
+ 0464 0FDE              xcall _puts0
+ 0466 0DC0              xjmp L78
+ 0468           L77:
+ 0468                   .dbline 209
+ 0468           ;               while(strcmp(rec,UART0_RxBuff_Queue[crp])){
+ 0468                   .dbline 211
+ 0468           ;                       
+ 0468           ;                               delay(freq);
+ 0468 8B01              movw R16,R22
+ 046A CADD              xcall _delay
+ 046C                   .dbline 212
+ 046C           ;                               if(time_point > over_time/freq)return 1;
+ 046C 9B01              movw R18,R22
+ 046E 8601              movw R16,R12
+ 0470 0E940000          xcall div16u
+ 0474 0417              cp R16,R20
+ 0476 1507              cpc R17,R21
+ 0478 10F4              brsh L80
+ 047A           X29:
+ 047A                   .dbline 212
+ 047A 01E0              ldi R16,1
+ 047C 58C0              xjmp L74
+ 047E           L80:
+ 047E                   .dbline 213
+ 047E           ;                               time_point++;
+ 047E 4F5F              subi R20,255  ; offset = 1
+ 0480 5F4F              sbci R21,255
+ 0482                   .dbline 214
+ 0482           ;               }
+ 0482           L78:
+ 0482                   .dbline 209
+ 0482 0EE1              ldi R16,30
+ 0484 1A2D              mov R17,R10
+ 0486 0103              mulsu R16,R17
+ 0488 9001              movw R18,R0
+ 048A 80E0              ldi R24,<_UART0_RxBuff_Queue
+ 048C 90E0              ldi R25,>_UART0_RxBuff_Queue
+ 048E 280F              add R18,R24
+ 0490 391F              adc R19,R25
+ 0492 0E85              ldd R16,y+14
+ 0494 1F85              ldd R17,y+15
+ 0496 0E940000          xcall _strcmp
+ 049A 0030              cpi R16,0
+ 049C 0107              cpc R16,R17
+ 049E 21F7              brne L77
+ 04A0           X30:
+ 04A0                   .dbline 215
+ 04A0           ;               memset(UART0_RxBuff_Queue[crp],0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);   //缓存清空
+ 04A0 8EE1              ldi R24,30
+ 04A2 90E0              ldi R25,0
+ 04A4 9983              std y+1,R25
+ 04A6 8883              std y+0,R24
+ 04A8 2227              clr R18
+ 04AA 3327              clr R19
+ 04AC 0EE1              ldi R16,30
+ 04AE 1A2D              mov R17,R10
+ 04B0 0103              mulsu R16,R17
+ 04B2 8001              movw R16,R0
+ 04B4 80E0              ldi R24,<_UART0_RxBuff_Queue
+ 04B6 90E0              ldi R25,>_UART0_RxBuff_Queue
+ 04B8 080F              add R16,R24
+ 04BA 191F              adc R17,R25
+ 04BC 0E940000          xcall _memset
+ 04C0                   .dbline 216
+ 04C0           ;       }
+ 04C0           L75:
+ 04C0                   .dbline 218
+ 04C0           ;       
+ 04C0           ;       if(interface == 'B'){
+ 04C0 8E2D              mov R24,R14
+ 04C2 8234              cpi R24,66
+ 04C4 81F5              brne L82
+ 04C6           X31:
+ 04C6                   .dbline 218
+ 04C6                   .dbline 220
+ 04C6           ;       
+ 04C6           ;               puts1(command);
+ 04C6 0C85              ldd R16,y+12
+ 04C8 1D85              ldd R17,y+13
+ 04CA F2DD              xcall _puts1
+ 04CC 0DC0              xjmp L85
+ 04CE           L84:
+ 04CE                   .dbline 221
+ 04CE           ;               while(strcmp(rec,UART1_RxBuff_Queue[crp])){
+ 04CE                   .dbline 223
+ 04CE           ;                       
+ 04CE           ;                               delay(freq);
+ 04CE 8B01              movw R16,R22
+ 04D0 97DD              xcall _delay
+ 04D2                   .dbline 224
+ 04D2           ;                               if(time_point > over_time/freq)return 1;
+ 04D2 9B01              movw R18,R22
+ 04D4 8601              movw R16,R12
+ 04D6 0E940000          xcall div16u
+ 04DA 0417              cp R16,R20
+ 04DC 1507              cpc R17,R21
+ 04DE 10F4              brsh L87
+ 04E0           X32:
+ 04E0                   .dbline 224
+ 04E0 01E0              ldi R16,1
+ 04E2 25C0              xjmp L74
+ 04E4           L87:
+ 04E4                   .dbline 225
+ 04E4           ;                               time_point++;
+ 04E4 4F5F              subi R20,255  ; offset = 1
+ 04E6 5F4F              sbci R21,255
+ 04E8                   .dbline 226
+ 04E8           ;               }
+ 04E8           L85:
+ 04E8                   .dbline 221
+ 04E8 0EE1              ldi R16,30
+ 04EA 1A2D              mov R17,R10
+ 04EC 0103              mulsu R16,R17
+ 04EE 9001              movw R18,R0
+ 04F0 80E0              ldi R24,<_UART1_RxBuff_Queue
+ 04F2 90E0              ldi R25,>_UART1_RxBuff_Queue
+ 04F4 280F              add R18,R24
+ 04F6 391F              adc R19,R25
+ 04F8 0E85              ldd R16,y+14
+ 04FA 1F85              ldd R17,y+15
+ 04FC 0E940000          xcall _strcmp
+ 0500 0030              cpi R16,0
+ 0502 0107              cpc R16,R17
+ 0504 21F7              brne L84
+ 0506           X33:
+ 0506                   .dbline 227
+ 0506           ;               memset(UART1_RxBuff_Queue[crp],0,sizeof(uchar)*UART1_RX_BUFFER_SIZE);   //缓存清空
+ 0506 8EE1              ldi R24,30
+ 0508 90E0              ldi R25,0
+ 050A 9983              std y+1,R25
+ 050C 8883              std y+0,R24
+ 050E 2227              clr R18
+ 0510 3327              clr R19
+ 0512 0EE1              ldi R16,30
+ 0514 1A2D              mov R17,R10
+ 0516 0103              mulsu R16,R17
+ 0518 8001              movw R16,R0
+ 051A 80E0              ldi R24,<_UART1_RxBuff_Queue
+ 051C 90E0              ldi R25,>_UART1_RxBuff_Queue
+ 051E 080F              add R16,R24
+ 0520 191F              adc R17,R25
+ 0522 0E940000          xcall _memset
+ 0526                   .dbline 228
+ 0526           ;       }
+ 0526           L82:
+ 0526                   .dbline 230
+ 0526           ; 
+ 0526           ;       delay(100);
+ 0526 04E6              ldi R16,100
+ 0528 10E0              ldi R17,0
+ 052A 6ADD              xcall _delay
+ 052C                   .dbline 231
+ 052C           ;       return 0;
+ 052C 0027              clr R16
+ 052E                   .dbline -2
+ 052E           L74:
+ 052E                   .dbline 0 ; func end
+ 052E 2296              adiw R28,2
+ 0530 0E940000          xcall pop_xgsetF0FC
+ 0534 2296              adiw R28,2
+ 0536 0895              ret
+ 0538                   .dbsym r freq 22 i
+ 0538                   .dbsym r time_point 20 i
+ 0538                   .dbsym r over_time 12 i
+ 0538                   .dbsym r crp 10 c
+ 0538                   .dbsym l rec 14 pc
+ 0538                   .dbsym l command 12 pc
+ 0538                   .dbsym r interface 14 c
+ 0538                   .dbend
+ 0538                   .dbfunc e usart_init _usart_init fV
+                        .even
+ 0538           _usart_init::
+ 0538                   .dbline -1
+ 0538                   .dbline 234
+ 0538           ; }
+ 0538           ; 
+ 0538           ; void usart_init(void){
+ 0538                   .dbline 236
+ 0538           ; 
+ 0538           ;       SEI();
+ 0538 7894              sei
+ 053A                   .dbline 238
+ 053A           ;         
+ 053A           ;       usart0Init();
+ 053A 77DD              xcall _usart0Init
+ 053C                   .dbline 239
+ 053C           ;       usart1Init();    
+ 053C                   .dbline -2
+ 053C           L89:
+ 053C                   .dbline 0 ; func end
+ 053C 85CD              xjmp _usart1Init
+ 053E                   .dbend
+ 053E                   .dbfunc e usart_test _usart_test fV
+ 053E           ;           temp -> R10
+                        .even
+ 053E           _usart_test::
+ 053E AA92              st -y,R10
+ 0540 2697              sbiw R28,6
+ 0542                   .dbline -1
+ 0542                   .dbline 243
+ 0542           ; }
+ 0542           ; 
+ 0542           ; void usart_test(void)
+ 0542           ; {
+ 0542                   .dbline 244
+ 0542           ;         uchar temp = UART1_RxHead;
+ 0542 A0906801          lds R10,_UART1_RxHead
+ 0546                   .dbline 246
+ 0546           ; 
+ 0546           ;         SEI();
+ 0546 7894              sei
+ 0548                   .dbline 248
+ 0548           ;         
+ 0548           ;         usart0Init();
+ 0548 70DD              xcall _usart0Init
+ 054A                   .dbline 249
+ 054A           ;         usart1Init();
+ 054A 7EDD              xcall _usart1Init
+ 054C                   .dbline 251
+ 054C           ;         
+ 054C           ;         ATTX_M2('B',"abc","bcd",0,9000);  
+ 054C 88E2              ldi R24,9000
+ 054E 93E2              ldi R25,35
+ 0550 9D83              std y+5,R25
+ 0552 8C83              std y+4,R24
+ 0554 2224              clr R2
+ 0556 2A82              std y+2,R2
+ 0558 80E0              ldi R24,<L92
+ 055A 90E0              ldi R25,>L92
+ 055C 9983              std y+1,R25
+ 055E 8883              std y+0,R24
+ 0560 20E0              ldi R18,<L91
+ 0562 30E0              ldi R19,>L91
+ 0564 02E4              ldi R16,66
+ 0566 69DF              xcall _ATTX_M2
+ 0568 14C0              xjmp L94
+ 056A           L93:
+ 056A                   .dbline 253
+ 056A           ;         
+ 056A           ;         while(1){
+ 056A                   .dbline 254
+ 056A           ;                          temp = UART0_RxHead;
+ 056A A0906901          lds R10,_UART0_RxHead
+ 056E                   .dbline 256
+ 056E           ;         
+ 056E           ;                       putchar1(UART1_RxBuff[temp-2]);
+ 056E 80E0              ldi R24,<_UART1_RxBuff-2
+ 0570 90E0              ldi R25,>_UART1_RxBuff-2
+ 0572 EA2D              mov R30,R10
+ 0574 FF27              clr R31
+ 0576 E80F              add R30,R24
+ 0578 F91F              adc R31,R25
+ 057A 0081              ldd R16,z+0
+ 057C 7CDD              xcall _putchar1
+ 057E                   .dbline 257
+ 057E           ;                       puts1(UART1_RxBuff_Queue[4]);
+ 057E 00E0              ldi R16,<_UART1_RxBuff_Queue+120
+ 0580 10E0              ldi R17,>_UART1_RxBuff_Queue+120
+ 0582 96DD              xcall _puts1
+ 0584                   .dbline 258
+ 0584           ;                       delay(500);
+ 0584 04EF              ldi R16,500
+ 0586 11E0              ldi R17,1
+ 0588 3BDD              xcall _delay
+ 058A                   .dbline 259
+ 058A           ;                       if(UART1_RxBuff[0]){
+ 058A 20902C01          lds R2,_UART1_RxBuff
+ 058E 2220              tst R2
+ 0590 01F0              breq L98
+ 0592           X34:
+ 0592                   .dbline 259
+ 0592                   .dbline 265
+ 0592           ;                                                               
+ 0592           ;                               //puts0(UART0_RxBuff_Queue[0]);
+ 0592           ;                               //CLI();
+ 0592           ;                               //memset(UART0_RxBuff,0,sizeof(uchar)*UART0_RX_BUFFER_SIZE);
+ 0592           ;                               //SEI();
+ 0592           ;                       }
+ 0592           L98:
+ 0592                   .dbline 266
+ 0592           ;         }
+ 0592           L94:
+ 0592                   .dbline 253
+ 0592 EBCF              xjmp L93
+ 0594           X35:
+ 0594                   .dbline -2
+ 0594           L90:
+ 0594                   .dbline 0 ; func end
+ 0594 2696              adiw R28,6
+ 0596 A990              ld R10,y+
+ 0598 0895              ret
+ 059A                   .dbsym r temp 10 c
+ 059A                   .dbend
+                        .area bss(ram, con, rel)
+ 0000                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0000           _UART1_RxBuff_Queue::
+ 0000                   .blkb 150
+ 0096                   .dbsym e UART1_RxBuff_Queue _UART1_RxBuff_Queue A[150:5:30]c
+ 0096           _UART0_RxBuff_Queue::
+ 0096                   .blkb 150
+ 012C                   .dbsym e UART0_RxBuff_Queue _UART0_RxBuff_Queue A[150:5:30]c
+ 012C           _UART1_RxBuff::
+ 012C                   .blkb 30
+ 014A                   .dbsym e UART1_RxBuff _UART1_RxBuff A[30:30]c
+ 014A           _UART0_RxBuff::
+ 014A                   .blkb 30
+ 0168                   .dbsym e UART0_RxBuff _UART0_RxBuff A[30:30]c
+ 0168           _UART1_RxHead:
+ 0168                   .blkb 1
+ 0169                   .dbsym s UART1_RxHead _UART1_RxHead c
+ 0169           _UART0_RxHead:
+ 0169                   .blkb 1
+ 016A                   .dbsym s UART0_RxHead _UART0_RxHead c
+                        .area data(ram, con, rel)
+ 0004                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0004           L92:
+ 0004                   .blkb 4
+                        .area idata
+ 0004 62636400          .byte 'b,'c,'d,0
+                        .area data(ram, con, rel)
+ 0008                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 0008           L91:
+ 0008                   .blkb 4
+                        .area idata
+ 0008 61626300          .byte 'a,'b,'c,0
+                        .area data(ram, con, rel)
+ 000C                   .dbfile E:\My_GTAProject\塔城设故板\Software\SHEGU\usart.c
+ 000C           ; }
